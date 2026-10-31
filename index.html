@@ -102,6 +102,22 @@ h1{font-size:38px;letter-spacing:-.5px}.top{margin:0 8px 24px}.top .sub{font-siz
 a.btn{text-decoration:none;display:inline-block;color:inherit}a.btn.p{color:var(--ondark)}
 body.cp .side,body.cp .tabs,body.cp .bar,body.cp #cpLink{display:none!important}
 body.cp .main{max-width:760px;margin:0 auto;width:100%}
+
+/* ===== Tema roxo com degradê + cantos retos (somente visual) ===== */
+:root{--bg:#f3eefc;--card:#fff;--text:#2a1646;--muted:#7a6a96;--line:#e6dcf5;--col:#f0e9fb;--side:#fff;--dark:#7c3aed;--ondark:#fff;--act:#ede3fc;--green:#a855f7;--pri:#7c3aed;--grad:linear-gradient(135deg,#6d28d9 0%,#9333ea 55%,#c026d3 100%);--g1:#ece3fd;--g2:#f8f3ff;--sh:rgba(91,33,182,.10)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#140b24;--card:#1f1336;--text:#f0e9ff;--muted:#a898c8;--line:#35245a;--col:#190f2c;--side:#1f1336;--dark:#8b5cf6;--ondark:#fff;--act:#2d1d4f;--green:#c084fc;--pri:#a78bfa;--g1:#120a21;--g2:#26124a;--sh:rgba(0,0,0,.35)}}
+:root[data-theme="dark"]{--bg:#140b24;--card:#1f1336;--text:#f0e9ff;--muted:#a898c8;--line:#35245a;--col:#190f2c;--side:#1f1336;--dark:#8b5cf6;--ondark:#fff;--act:#2d1d4f;--green:#c084fc;--pri:#a78bfa;--g1:#120a21;--g2:#26124a;--sh:rgba(0,0,0,.35)}
+body{background:linear-gradient(135deg,var(--g1),var(--g2)) fixed}
+.btn.p,a.btn.p{background:var(--grad);border:0;color:#fff}
+.btn.p:hover{filter:brightness(1.1)}
+.nav.on{background:var(--grad);color:#fff}
+.nav:hover:not(.on){background:var(--act);color:var(--text)}
+.pbar span{background:var(--grad)}
+.side,.bar,.card,.task{box-shadow:0 4px 22px var(--sh)}
+.ch-Instagram{background:#7c3aed!important}.ch-Facebook{background:#c026d3!important}.ch-Stories{background:#a78bfa!important}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:0}
+*,*::before,*::after{border-radius:0!important}
+.dot,.av{border-radius:50%!important}
 </style>
 </head>
 <body>
