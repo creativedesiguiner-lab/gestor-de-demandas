@@ -160,6 +160,9 @@ textarea{border-radius:16px}
 .row.insr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:12px;align-items:end}
 .insr .pct{font-size:18px}.up{color:#16a34a;font-weight:750}.down{color:#dc2626;font-weight:750}
 @media(max-width:700px){.row.insr{grid-template-columns:1fr 1fr}.row.insr label:first-child{grid-column:1/-1}}
+.ahd{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:0;text-align:left;color:var(--text);cursor:pointer}
+.ahl{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}.ahl strong{font-size:16px}
+.chev{font-size:16px;color:var(--muted);flex:none}.abody{margin-top:10px}
 </style>
 </head>
 <body>
@@ -427,15 +430,23 @@ function renderProc(){$('#procs').innerHTML=S.proc.map(function(p){return '<div 
 document.addEventListener('input',function(e){var t=e.target,p;if(t.dataset&&(t.dataset.pt||t.dataset.px)){p=S.proc.find(function(x){return x.id==(t.dataset.pt||t.dataset.px)});if(p){if(t.dataset.pt)p.title=t.value;else p.text=t.value;save()}}});
 function fresh(a){return a.status!=='pending'&&a.seen===false}
 function updBadge(){var n=S.appr.filter(fresh).length;document.querySelectorAll('.nav[data-v="aprovacao"]').forEach(function(b){if(n&&!CP)b.setAttribute('data-n',n);else b.removeAttribute('data-n')})}
+var ao={},ntx={},cOpen=true,af='';
+function aoOpen(a){return ao[a.id]===undefined?a.status!=='approved':ao[a.id]}
+function fname(t){return String(t||'peca').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-+|-+$/g,'').toLowerCase()||'peca'}
+function dlFile(u,n){var l=document.createElement('a');l.href=u;l.download=n;document.body.appendChild(l);l.click();l.remove()}
+document.addEventListener('input',function(e){var t=e.target;if(t.tagName==='TEXTAREA'&&t.id&&t.id.indexOf('n-')===0)ntx[t.id.slice(2)]=t.value});
 function itemHtml(a,adm){var lbl={pending:'Aguardando aprovação',approved:'Aprovado',changes:'Com consideração'}[a.status]||'',nw=adm&&fresh(a);
- var h='<div class="card pbox'+(nw?' new':'')+'"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><strong>'+esc(a.title)+'</strong><span class="pill '+a.status+'">'+lbl+'</span></div><div class="sub" style="margin:6px 0">'+(adm?esc(a.client)+' · ':'')+'Enviado em '+fmt(a.date)+(a.resp?' · Respondido em '+fmt(a.resp):'')+'</div>';
+ var op=aoOpen(a),h='<div class="card pbox'+(nw?' new':'')+'"><button class="ahd" data-tgl="'+a.id+'"><span class="ahl"><strong>'+esc(a.title)+'</strong><span class="sub">'+(adm?esc(a.client)+' · ':'')+'Enviado em '+fmt(a.date)+(a.resp?' · Respondido em '+fmt(a.resp):'')+'</span></span><span class="pill '+a.status+'">'+lbl+'</span><span class="chev">'+(op?'▾':'▸')+'</span></button>';
+ if(!op)return h+'</div>';
+ h+='<div class="abody">';
  if(a.img)h+='<img class="pimg" src="'+a.img+'" alt="">';
  if(a.desc)h+='<div style="white-space:pre-wrap;margin:8px 0">'+esc(a.desc)+'</div>';
+ if(a.img||a.desc)h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">'+(a.img?'<button class="btn" data-dl="'+a.id+'">⬇ Baixar imagem</button>':'')+(a.desc?'<button class="btn" data-dlt="'+a.id+'">⬇ Baixar texto</button>':'')+'</div>';
  if(a.note)h+='<div class="note"><b>'+(adm?'Retorno do cliente':'Seu comentário')+':</b><br>'+esc(a.note)+'</div>';
  if(adm)h+='<div class="act"><span></span><div>'+(nw?'<button class="btn p" data-sn="'+a.id+'">Marcar como visto</button>':'')+(a.status!=='pending'?'<button class="btn" data-rs="'+a.id+'">Reabrir</button>':'')+'<button class="btn" data-ea="'+a.id+'">Editar</button><button class="btn d" data-da="'+a.id+'">Excluir</button></div></div>';
- else if(a.status==='pending')h+='<textarea id="n-'+a.id+'" placeholder="Comentário ou consideração (obrigatório para pedir ajuste)" style="min-height:70px;margin-top:10px"></textarea><div class="er" id="ne-'+a.id+'"></div><div class="act"><span></span><div><button class="btn" data-ch="'+a.id+'">Enviar consideração</button><button class="btn p" data-ap="'+a.id+'">Aprovar</button></div></div>';
+ else if(a.status==='pending')h+='<textarea id="n-'+a.id+'" placeholder="Comentário ou consideração (obrigatório para pedir ajuste)" style="min-height:70px;margin-top:10px">'+esc(ntx[a.id]||'')+'</textarea><div class="er" id="ne-'+a.id+'"></div><div class="act"><span></span><div><button class="btn" data-ch="'+a.id+'">Enviar consideração</button><button class="btn p" data-ap="'+a.id+'">Aprovar</button></div></div>';
  else if(a.status==='changes')h+='<div class="sub">Sua consideração foi enviada. Aguarde a nova versão.</div>';
- return h+'</div>'}
+ return h+'</div></div>'}
 function renderAppr(){var box=$('#appr');$('#logout').style.display=sess?'':'none';updBadge();
  $('#apH').textContent=CP?'Área do cliente':'Aprovação';
  if(!sess){$('#apSub').textContent=CP?'Entre com o login e a senha que você recebeu.':'Entre como administrador para enviar peças e acompanhar as respostas.';box.innerHTML='<div class="card lg"><h3>Entrar</h3><input id="lgU" placeholder="Login'+(CP?' (ex.: gg_nomedocliente)':'')+'" autocomplete="off"><input id="lgP" type="password" placeholder="Senha"><button class="btn p" data-lg>Entrar</button><div class="er" id="lgE"></div>'+(!CP&&!S.admin.pass?'<div class="sub">Primeiro acesso do administrador ('+esc(S.admin.login)+'): a senha digitada agora será criada.</div>':'')+'</div>';return}
@@ -444,16 +455,18 @@ function renderAppr(){var box=$('#appr');$('#logout').style.display=sess?'':'non
   $('#apSub').textContent='Olá, '+sess.client+'. '+(pc?'Você tem '+pc+' peça(s) aguardando sua resposta.':'Nenhuma peça aguardando sua resposta.');
   box.innerHTML=mine.map(function(a){return itemHtml(a,false)}).join('')||'<div class="card">Nada para aprovar por enquanto.</div>';return}
  $('#apSub').textContent='Administrador · envie peças e acompanhe as respostas dos clientes.';
- var A=S.appr,n1=A.filter(fresh).sort(nw),n2=A.filter(function(a){return a.status==='pending'}).sort(srt),n3=A.filter(function(a){return a.status!=='pending'&&!fresh(a)}).sort(nw);
+ var cO=cOpen||!!dr.edit;if(af&&!S.clients.some(function(c){return c.name===af}))af='';
+ var A=S.appr.filter(function(a){return !af||a.client===af}),n1=A.filter(fresh).sort(nw),n2=A.filter(function(a){return a.status==='pending'}).sort(srt),n3=A.filter(function(a){return a.status!=='pending'&&!fresh(a)}).sort(nw);
  if(!dr.client||!S.clients.some(function(c){return c.name===dr.client}))dr.client=S.clients.length?S.clients[0].name:'';
  var link=location.href.split('#')[0]+'#cliente';
+ var fbar=S.appr.length?'<div class="card pbox" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between"><div class="tfb"><span class="sub">Filtrar por cliente:</span><button class="tgf'+(!af?' on':'')+'" data-af="" style="--c:var(--pri);--ink:var(--ondark)">Todos</button>'+S.clients.map(function(c){return '<button class="tgf'+(af===c.name?' on':'')+'" data-af="'+esc(c.name)+'" style="--c:var(--pri);--ink:var(--ondark)">'+esc(c.name)+'</button>'}).join('')+'</div>'+(A.length?'<button class="btn d" data-dall>'+(af?'Apagar todas de '+esc(af):'Apagar todas as aprovações')+' ('+A.length+')</button>':'')+'</div>':'';
  var sec=function(t,l){return l.length?'<h3 class="hs">'+t+' ('+l.length+')</h3>'+l.map(function(a){return itemHtml(a,true)}).join(''):''};
  box.innerHTML='<div class="card pbox"><h3>Link da página do cliente</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="cpU" readonly value="'+esc(link)+'" style="flex:1;margin:0;width:auto;min-width:220px"><button class="btn" data-cl>Copiar link</button></div><div class="sub" style="margin-top:8px">Cada cliente entra com o login e a senha definidos na aba Clientes. <span id="clM"></span></div></div>'+
- '<div class="card pbox"><h3>'+(dr.edit?'Editar peça (volta para aprovação do cliente)':'Nova peça para aprovação')+'</h3>'+
+ '<div class="card pbox"><button class="ahd" data-ccr="1"><span class="ahl"><strong>'+(dr.edit?'Editar peça (volta para aprovação do cliente)':'Nova peça para aprovação')+'</strong></span><span class="chev">'+(cO?'▾':'▸')+'</span></button>'+(cO?'<div class="abody">':'')+
  (S.clients.length?'<label style="margin-bottom:10px">Cliente<select id="aC" style="width:100%">'+S.clients.map(function(c){return '<option value="'+esc(c.name)+'"'+(c.name===dr.client?' selected':'')+'>'+esc(c.name)+(c.pass?'':' (sem senha)')+'</option>'}).join('')+'</select></label>':'<div class="sub" style="margin-bottom:10px">Cadastre um cliente na aba Clientes primeiro.</div>')+
  '<input id="aT" placeholder="Título (ex.: Arte do post de segunda)" value="'+esc(dr.title)+'"><label style="margin-bottom:10px">Imagem<input type="file" id="aF" accept="image/*"></label>'+(dr.img?'<img class="pimg" src="'+dr.img+'" style="cursor:default"><button class="btn" data-rmimg style="margin-bottom:10px">Remover imagem</button>':'')+
- '<textarea id="aD" placeholder="Texto / legenda da peça">'+esc(dr.desc)+'</textarea><div class="er" id="aE"></div><div class="act"><span></span><div>'+(dr.edit?'<button class="btn" data-cancelap>Cancelar</button>':'')+'<button class="btn p" data-addap>'+(dr.edit?'Salvar e reenviar':'Enviar para aprovação')+'</button></div></div></div>'+
- sec('Respostas novas dos clientes',n1)+sec('Aguardando resposta do cliente',n2)+sec('Histórico',n3)+
+ '<textarea id="aD" placeholder="Texto / legenda da peça">'+esc(dr.desc)+'</textarea><div class="er" id="aE"></div><div class="act"><span></span><div>'+(dr.edit?'<button class="btn" data-cancelap>Cancelar</button>':'')+'<button class="btn p" data-addap>'+(dr.edit?'Salvar e reenviar':'Enviar para aprovação')+'</button></div></div>'+(cO?'</div>':'')+'</div>'+
+ fbar+sec('Respostas novas dos clientes',n1)+sec('Aguardando resposta do cliente',n2)+sec('Histórico',n3)+
  '<div class="card pbox"><h3>Senha do administrador</h3><input id="aPw" type="password" placeholder="Nova senha"><button class="btn" data-sp>Salvar senha</button> <span class="sub" id="aPm"></span></div>'}
 function doLogin(){var u=$('#lgU').value.trim().toLowerCase(),p=$('#lgP').value,er=function(m){$('#lgE').textContent=m};
  if(CP){var c=S.clients.find(function(x){return x.login.toLowerCase()===u});if(c&&c.pass&&c.pass===p){sess={role:'cli',client:c.name};sSave();return renderAppr()}return er('Login ou senha incorretos.')}
@@ -467,6 +480,14 @@ document.addEventListener('click',function(e){if(e.target.classList&&e.target.cl
 window.addEventListener('storage',function(e){if(e.key!==K||!e.newValue)return;try{var n=JSON.parse(e.newValue);if(n&&n.tasks){S=n;norm();render()}}catch(x){}});
 window.addEventListener('hashchange',function(){location.reload()});
 function apprClick(b){var d=b.dataset,a=function(id){return S.appr.find(function(x){return x.id==id})},x;
+ if(d.tgl!==undefined&&(x=a(d.tgl))){ao[x.id]=!aoOpen(x);renderAppr();return true}
+ if(d.ccr!==undefined){cOpen=!cOpen;renderAppr();return true}
+ if(d.af!==undefined){af=d.af;renderAppr();return true}
+ if(d.dall!==undefined){var vis=S.appr.filter(function(y){return !af||y.client===af});if(!vis.length)return true;
+  if(!confirm('Apagar '+vis.length+' aprovação(ões)'+(af?' de '+af:'')+'? Essa ação não pode ser desfeita.'))return true;
+  var vid={};vis.forEach(function(y){vid[y.id]=1});S.appr=S.appr.filter(function(y){return !vid[y.id]});if(dr.edit&&vid[dr.edit])dr.edit=null;save();renderAppr();return true}
+ if(d.dl!==undefined&&(x=a(d.dl))){if(x.img)dlFile(x.img,fname(x.title)+'.jpg');return true}
+ if(d.dlt!==undefined&&(x=a(d.dlt))){var u=URL.createObjectURL(new Blob([x.title+'\n\n'+(x.desc||'')],{type:'text/plain;charset=utf-8'}));dlFile(u,fname(x.title)+'.txt');setTimeout(function(){URL.revokeObjectURL(u)},4000);return true}
  if(b.id==='logout'){sess=null;sSave();renderAppr();return true}
  if(b.hasAttribute('data-lg')){doLogin();return true}
  if(b.hasAttribute('data-cl')){var i=$('#cpU');i.select();var ok=false;try{ok=document.execCommand('copy')}catch(z){}$('#clM').textContent=ok?'Link copiado!':'Selecione e copie o link acima.';return true}
@@ -476,14 +497,14 @@ function apprClick(b){var d=b.dataset,a=function(id){return S.appr.find(function
   if(!c)return er('Cadastre e escolha um cliente.');
   if(!t)return er('Informe um título.');
   if(!dr.img&&!dr.desc.trim())return er('Envie uma imagem ou escreva um texto.');
-  if(dr.edit&&(x=a(dr.edit))){Object.assign(x,{client:c,title:t,desc:dr.desc,img:dr.img,status:'pending',note:'',resp:'',seen:true})}
+  if(dr.edit&&(x=a(dr.edit))){delete ao[x.id];Object.assign(x,{client:c,title:t,desc:dr.desc,img:dr.img,status:'pending',note:'',resp:'',seen:true})}
   else S.appr.push({id:S.n++,client:c,title:t,desc:dr.desc,img:dr.img,status:'pending',note:'',date:iso(T0()),resp:'',seen:true});
   dr={client:c,title:'',desc:'',img:'',edit:null};save();renderAppr();return true}
- if(d.ea&&(x=a(d.ea))){dr={client:x.client,title:x.title,desc:x.desc||'',img:x.img||'',edit:x.id};renderAppr();try{window.scrollTo(0,0)}catch(z){}return true}
+ if(d.ea&&(x=a(d.ea))){cOpen=true;dr={client:x.client,title:x.title,desc:x.desc||'',img:x.img||'',edit:x.id};renderAppr();try{window.scrollTo(0,0)}catch(z){}return true}
  if(d.sn&&(x=a(d.sn))){x.seen=true;save();renderAppr();return true}
- if(d.ap&&(x=a(d.ap))){x.status='approved';x.note=($('#n-'+d.ap).value||'').trim();x.resp=iso(T0());x.seen=false;save();renderAppr();return true}
- if(d.ch&&(x=a(d.ch))){var nt=($('#n-'+d.ch).value||'').trim();if(!nt){$('#ne-'+d.ch).textContent='Escreva sua consideração para o administrador.';return true}x.status='changes';x.note=nt;x.resp=iso(T0());x.seen=false;save();renderAppr();return true}
- if(d.rs&&(x=a(d.rs))){x.status='pending';x.note='';x.resp='';x.seen=true;save();renderAppr();return true}
+ if(d.ap&&(x=a(d.ap))){x.status='approved';ao[x.id]=false;delete ntx[x.id];x.note=($('#n-'+d.ap).value||'').trim();x.resp=iso(T0());x.seen=false;save();renderAppr();return true}
+ if(d.ch&&(x=a(d.ch))){var nt=($('#n-'+d.ch).value||'').trim();if(!nt){$('#ne-'+d.ch).textContent='Escreva sua consideração para o administrador.';return true}x.status='changes';delete ao[x.id];delete ntx[x.id];x.note=nt;x.resp=iso(T0());x.seen=false;save();renderAppr();return true}
+ if(d.rs&&(x=a(d.rs))){delete ao[x.id];x.status='pending';x.note='';x.resp='';x.seen=true;save();renderAppr();return true}
  if(d.da){if(!confirm('Excluir esta peça?'))return true;S.appr=S.appr.filter(function(y){return y.id!=d.da});if(dr.edit==d.da)dr.edit=null;save();renderAppr();return true}
  if(b.hasAttribute('data-sp')){var v=$('#aPw').value;if(v){S.admin.pass=v;save();$('#aPw').value='';$('#aPm').textContent='Senha atualizada.'}return true}
  return false}
