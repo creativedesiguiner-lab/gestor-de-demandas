@@ -166,13 +166,24 @@ textarea{border-radius:16px}
 .ahd{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:0;text-align:left;color:var(--text);cursor:pointer}
 .ahl{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}.ahl strong{font-size:16px}
 .chev{font-size:16px;color:var(--muted);flex:none}.abody{margin-top:10px}
+.tmb{margin-top:8px;font-size:12px;font-weight:700;color:var(--muted)}
+.tbar{margin:0 8px 12px}.tbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}.tbl b{color:var(--text)}
+.tbt{height:8px;border-radius:99px;background:var(--act)}.tbt i{display:block;height:100%;border-radius:99px;background:var(--pri);transition:width .25s}
+/* Processos: 3 por linha, redimensionáveis */
+#procs{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+#procs .pcard{width:calc((100% - 28px)/3);min-width:220px;max-width:100%;min-height:210px;resize:both;overflow:hidden;display:flex;flex-direction:column;margin:0;padding:16px}
+#procs .pcard input{margin-bottom:8px}
+#procs .pcard textarea{flex:1;min-height:80px;margin-bottom:8px;resize:none}
+#procs .pcard .pft{text-align:right;margin-right:16px}
+@media(max-width:900px){#procs .pcard{width:calc((100% - 14px)/2)}}
+@media(max-width:600px){#procs .pcard{width:100%}}
 </style>
 </head>
 <body>
 <div id="app">
 <aside class="side"><div class="brand"><svg class="i" viewBox="0 0 24 24" style="width:42px;height:42px;color:var(--pri)"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 7v8M12 7v5M16 7v10"/></svg><div><b>Demandas</b><span>Painel de demandas</span></div></div><div id="navS"></div><button class="nav" id="theme"><svg class="i" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4 7 7 0 0 0 20 14.5z"/></svg><span class="tx">Tema escuro</span></button><hr><button class="nav" id="coll"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg><span class="tx">Recolher menu</span></button></aside>
 <main class="main">
-<div class="bar"><div class="bc">Demandas · <b id="bc">Visão geral</b></div><div class="upd"><span><i class="dot"></i><span id="upd"></span></span><button class="ghost" id="ref"><svg class="i" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5"/></svg>Atualizar</button></div></div>
+<div class="bar"><div class="bc">Demandas · <b id="bc">Visão geral</b></div></div>
 <section class="sec on" id="v-dashboard">
  <div class="top"><div><h1>Visão geral</h1><div class="sub" id="hoje"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="goTags" style="display:inline-flex;align-items:center;gap:8px"><svg class="i" viewBox="0 0 24 24"><path d="M3 12V4h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/></svg>Tags</button><button class="btn p" data-new>+ Nova demanda</button></div></div>
  <div class="grid">
@@ -191,7 +202,7 @@ textarea{border-radius:16px}
 </section>
 <section class="sec" id="v-tagsdem">
  <div class="top"><div><h1>Demandas com tags</h1><div class="sub">Só aparecem as demandas que têm pelo menos uma tag.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-v="dashboard">← Visão geral</button><button class="btn p" data-new>+ Nova demanda</button></div></div>
- <div class="card pbox" style="margin:0 0 6px"><h3>Criar tag</h3><form id="tgF2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input id="tgN2" placeholder="Nome da tag (ex.: Urgente, Vídeo, Aprovação)" required style="flex:1;min-width:200px;margin:0;width:auto"><input type="color" id="tgC2" value="#7c3aed" style="padding:2px;width:52px;height:46px;margin:0"><button class="btn p">Criar tag</button></form><div class="sub" style="margin-top:8px">Cada tag criada vira um botão de filtro aqui (marque uma ou mais) e um botão dentro de cada demanda.</div></div>
+ <div class="card pbox" style="margin:0 0 6px"><h3>Criar tag</h3><form id="tgF2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input id="tgN2" placeholder="Nome da tag (ex.: Urgente, Vídeo, Aprovação)" required style="flex:1;min-width:200px;margin:0;width:auto"><input type="color" id="tgC2" value="#7c3aed" style="padding:2px;width:52px;height:46px;margin:0"><select id="tgT2" title="Tempo gasto nesta tag" style="margin:0;width:auto;min-width:150px"></select><button class="btn p">Criar tag</button></form><div class="sub" style="margin-top:8px">Cada tag criada vira um botão de filtro aqui (marque uma ou mais) e um botão dentro de cada demanda. O tempo da tag entra na barra de tempo das colunas.</div></div>
  <div class="tools"><div class="tfb" id="tfb2"></div><span class="dc" id="tcnt"></span></div>
  <div class="board" id="tboard"></div>
 </section>
@@ -209,11 +220,11 @@ textarea{border-radius:16px}
  <div class="card"><div id="insList"></div></div>
 </section>
 <section class="sec" id="v-processos">
- <div class="top"><div><h1>Processos</h1><div class="sub">Anote os processos da operação e crie as tags das demandas.</div></div><button class="btn p" id="newProc">+ Novo processo</button></div>
+ <div class="top"><div><h1>Processos</h1><div class="sub">Anote os processos da operação e crie as tags das demandas.</div></div><div id="pbtns" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="szProc" title="Voltar os quadros ao tamanho padrão">↺ Tamanho padrão</button><button class="btn" id="pdfProc">⬇ Baixar PDF</button><button class="btn p" id="newProc">+ Novo processo</button></div></div>
  <div class="seg" id="pseg" style="display:inline-flex;margin:0 8px 18px"><button class="on" data-ptab="proc">Processos</button><button data-ptab="tags">Tags</button></div>
  <div id="pbox"><div id="procs"></div></div>
  <div id="tbox" style="display:none">
-  <div class="card pbox"><h3>Nova tag</h3><form id="tgF" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input id="tgN" placeholder="Nome da tag (ex.: Urgente, Vídeo, Aprovação)" required style="flex:1;min-width:200px;margin:0;width:auto"><input type="color" id="tgC" value="#7c3aed" style="padding:2px;width:52px;height:46px;margin:0"><button class="btn p">Criar tag</button></form><div class="sub" style="margin-top:8px">As tags criadas aparecem como botões ao criar ou editar uma demanda, e você filtra por elas na Visão geral.</div></div>
+  <div class="card pbox"><h3>Nova tag</h3><form id="tgF" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input id="tgN" placeholder="Nome da tag (ex.: Urgente, Vídeo, Aprovação)" required style="flex:1;min-width:200px;margin:0;width:auto"><input type="color" id="tgC" value="#7c3aed" style="padding:2px;width:52px;height:46px;margin:0"><select id="tgT" title="Tempo gasto nesta tag" style="margin:0;width:auto;min-width:150px"></select><button class="btn p">Criar tag</button></form><div class="sub" style="margin-top:8px">Defina o tempo gasto em cada tag: a soma das tags de uma demanda mostra quanto tempo ela vai levar. As tags viram botões ao criar ou editar uma demanda e filtros na Visão geral.</div></div>
   <div class="card"><h3>Tags criadas</h3><div id="tgList"></div></div>
  </div>
 </section>
@@ -231,7 +242,7 @@ textarea{border-radius:16px}
 <label>Demanda<input id="fT" required></label>
 <label>Vencimento<input id="fD" type="date" required><div class="qb"><button type="button" data-md="1">+1 dia</button><button type="button" data-md="3">+3 dias</button></div></label>
 <div class="full"><div class="tgl">Cliente / projeto</div><div class="tfb" id="fCb"></div><input id="fCn" placeholder="+ novo cliente (digite o nome)" style="margin-top:8px;width:100%"></div>
-<div class="full"><div class="tgl">Tags</div><div class="tfb" id="fTg"></div></div>
+<div class="full"><div class="tgl">Tags</div><div class="tfb" id="fTg"></div><div class="sub" id="fTm" style="margin-top:8px"></div></div>
 <label class="full">Status<select id="fS"><option value="todo">A fazer</option><option value="doing">Em andamento</option><option value="done">Finalizado</option></select></label>
 <label class="full">Observação<textarea id="fN"></textarea></label></div>
 <datalist id="cl"></datalist>
@@ -297,7 +308,12 @@ runRecs();
 
 function dueLbl(t){if(t.status==='done')return ['Concluída',''];var d=diff(t.date);return d<0?['Atrasada '+(-d)+'d','late']:d===0?['Hoje','soon']:d===1?['Amanhã','soon']:d===2?['Em 2 dias','soon']:[fmt(t.date),'']}
 function card(t,mv){var l=dueLbl(t),i=ST.findIndex(function(s){return s[0]===t.status});
-return '<article class="task" draggable="'+(COARSE?'false':'true')+'" data-id="'+t.id+'">'+(t.channel?'<div class="lb"><i class="ch-'+esc(t.channel)+'"></i></div>':'')+'<div class="tt">'+esc(t.title)+'</div><div class="cl">'+esc(t.client)+'</div>'+tagsHtml(t)+'<div class="tm"><span class="'+l[1]+'">'+l[0]+'</span><b class="av" title="'+esc(t.client)+'">'+esc(t.client.charAt(0).toUpperCase())+'</b></div>'+(t.status!=='done'?ddHtml(t):'')+(mv?'<div class="mv">'+(i>0?'<button data-mv="-1">‹</button>':'')+(i<2?'<button data-mv="1">›</button>':'')+'</div>':'')+'</article>'}
+return '<article class="task" draggable="'+(COARSE?'false':'true')+'" data-id="'+t.id+'">'+(t.channel?'<div class="lb"><i class="ch-'+esc(t.channel)+'"></i></div>':'')+'<div class="tt">'+esc(t.title)+'</div><div class="cl">'+esc(t.client)+'</div>'+tagsHtml(t)+timeHtml(t)+'<div class="tm"><span class="'+l[1]+'">'+l[0]+'</span><b class="av" title="'+esc(t.client)+'">'+esc(t.client.charAt(0).toUpperCase())+'</b></div>'+(t.status!=='done'?ddHtml(t):'')+(mv?'<div class="mv">'+(i>0?'<button data-mv="-1">‹</button>':'')+(i<2?'<button data-mv="1">›</button>':'')+'</div>':'')+'</article>'}
+var TMO=[15,30,45,60,90,120,180,240,300,360,480];
+function fmtMin(m){m=Math.round(m||0);if(m<60)return m+' min';var h=Math.floor(m/60),r=m%60;return h+'h'+(r?' '+r+'min':'')}
+function tmOpts(sel){return '<option value="0">Sem tempo definido</option>'+TMO.map(function(m){return '<option value="'+m+'"'+(+sel===m?' selected':'')+'>'+fmtMin(m)+'</option>'}).join('')}
+function taskMin(t){return (t.tags||[]).reduce(function(s,i){var g=tagById(i);return s+(g&&g.min?+g.min:0)},0)}
+function timeHtml(t){var m=taskMin(t);return m&&t.status!=='done'?'<div class="tmb">⏱ '+fmtMin(m)+'</div>':''}
 function ddHtml(t){return '<div class="dd"><button data-d="1">+1 dia</button><button data-d="3">+3 dias</button></div>'}
 var TGP=['#7c3aed','#c026d3','#0ea5e9','#16a34a','#f59e0b','#ef4444','#14b8a6','#6366f1'];
 function ink(h){var m=/^#?([0-9a-f]{6})$/i.exec(h||'');if(!m)return '#fff';var n=parseInt(m[1],16),r=n>>16,g=(n>>8)&255,bl=n&255;return (r*299+g*587+bl*114)/1000>150?'#1f1235':'#fff'}
@@ -307,7 +323,8 @@ function tagById(i){return S.tags.find(function(x){return x.id==i})}
 function tagOk(t){return !tf.length||(t.tags||[]).some(function(i){return tf.indexOf(+i)>=0})}
 function tagsHtml(t){var l=(t.tags||[]).map(tagById).filter(Boolean);return l.length?'<div class="tgs">'+l.map(function(g){return '<span class="tgc" style="'+tgSty(g)+'">'+esc(g.name)+'</span>'}).join('')+'</div>':''}
 function tfHtml(h){if(!S.tags.length)return h?'<span class="sub">Você ainda não criou tags. Vá em Processos › Tags para criar.</span>':'';return '<span class="sub">Filtrar por tag:</span>'+S.tags.map(function(t){return '<button class="tgf'+(tf.indexOf(t.id)>=0?' on':'')+'" data-tf="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+'</button>'}).join('')+(tf.length?'<button class="ghost" style="padding:5px 14px;font-size:13px" data-tfclr>Limpar</button>':'')}
-function kanban(fl,cn){var tot=0,h=ST.map(function(s){var l=S.tasks.filter(function(t){return t.status===s[0]&&fl(t)}).sort(byDate);tot+=l.length;return '<div class="col" data-st="'+s[0]+'"><div class="ch"><span>'+s[1]+'</span><span><span class="cnt">'+l.length+'</span>'+(s[0]==='done'&&l.length?' <button class="btn d" style="padding:3px 12px;font-size:12px" data-clrdone="'+l.map(function(t){return t.id}).join(',')+'">Apagar todas</button>':'')+'</span></div>'+l.map(function(t){return card(t,1)}).join('')+'<button class="add" data-new data-st="'+s[0]+'"'+(cn?' data-cn="'+esc(cn)+'"':'')+'><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Adicionar cartão</button></div>'}).join('');return {h:h,n:tot}}
+function kanban(fl,cn){var tot=0,L={},M={};ST.forEach(function(s){L[s[0]]=S.tasks.filter(function(t){return t.status===s[0]&&fl(t)}).sort(byDate);M[s[0]]=L[s[0]].reduce(function(a,t){return a+taskMin(t)},0)});var mx=Math.max(M.todo,M.doing,1);
+ var h=ST.map(function(s){var l=L[s[0]];tot+=l.length;return '<div class="col" data-st="'+s[0]+'">'+(s[0]!=='done'?'<div class="tbar" title="Soma do tempo das tags de cada demanda"><div class="tbl"><span>⏱ Tempo previsto</span><b>'+(M[s[0]]?fmtMin(M[s[0]]):'—')+'</b></div><div class="tbt"><i style="width:'+Math.round(M[s[0]]/mx*100)+'%"></i></div></div>':'')+'<div class="ch"><span>'+s[1]+'</span><span><span class="cnt">'+l.length+'</span>'+(s[0]==='done'&&l.length?' <button class="btn d" style="padding:3px 12px;font-size:12px" data-clrdone="'+l.map(function(t){return t.id}).join(',')+'">Apagar todas</button>':'')+'</span></div>'+l.map(function(t){return card(t,1)}).join('')+'<button class="add" data-new data-st="'+s[0]+'"'+(cn?' data-cn="'+esc(cn)+'"':'')+'><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Adicionar cartão</button></div>'}).join('');return {h:h,n:tot}}
 function byDate(a,b){return a.date.localeCompare(b.date)}
 function render(){
  var T=S.tasks,open=T.filter(function(t){return t.status!=='done'});
@@ -346,10 +363,11 @@ document.addEventListener('click',function(e){var b=e.target.closest('button,.ta
  if(b.dataset.df){df=b.dataset.df;return render()}
  if(b.dataset.ec)return openCli(b.dataset.ec);
  if(b.id==='newCli')return openCli();
+ if(b.id==='pdfProc')return pdfProc();
+ if(b.id==='szProc'){S.proc.forEach(function(p){delete p.w;delete p.h});save();return renderProc()}
  if(b.id==='newProc'){S.proc.push({id:S.n++,title:'',text:''});save();return renderProc()}
  if(b.dataset.dp){S.proc=S.proc.filter(function(p){return p.id!=b.dataset.dp});save();return renderProc()}
  if(apprClick(b))return;
- if(b.id==='ref'){stamp();runRecs();return render()}
  if(b.id==='coll'){document.getElementById('app').classList.toggle('collapsed');return}
  if(b.id==='theme'){var cur=document.documentElement.getAttribute('data-theme'),dk=cur==='dark'||(!cur&&matchMedia('(prefers-color-scheme: dark)').matches),nt=dk?'light':'dark';ap(nt);try{localStorage.setItem('demandas-tema',nt)}catch(x){}return}
  if(b.hasAttribute('data-clrdone')){var cids=(b.dataset.clrdone||'').split(','),del=S.tasks.filter(function(t){return t.status==='done'&&cids.indexOf(String(t.id))>=0});
@@ -383,7 +401,6 @@ document.addEventListener('dragover',function(e){var c=e.target.closest&&e.targe
 document.addEventListener('dragleave',function(e){var c=e.target.closest&&e.target.closest('.col[data-st]');if(c&&!c.contains(e.relatedTarget))c.classList.remove('over')});
 document.addEventListener('drop',function(e){var c=e.target.closest&&e.target.closest('.col[data-st]');if(!c||!dragId)return;e.preventDefault();var t=S.tasks.find(function(x){return x.id===dragId});if(t){t.status=c.dataset.st;save();render()}});
 document.addEventListener('visibilitychange',function(){if(!document.hidden){runRecs();render()}});
-function stamp(){var d=new Date();$('#upd').textContent='Atualizado às '+pad(d.getHours())+':'+pad(d.getMinutes())}
 function ap(t){if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme')}
 try{ap(localStorage.getItem('demandas-tema'))}catch(e){}
 var CP=location.hash==='#cliente',SK=CP?'demandas-sess-c':'demandas-sess-a',sess=null;
@@ -412,16 +429,30 @@ $('#insF').addEventListener('submit',function(e){e.preventDefault();var n=$('#in
 document.addEventListener('input',function(e){var t=e.target;if(!t.dataset)return;var id=t.dataset.in||t.dataset.io||t.dataset.iw;if(!id)return;var x=S.ins.find(function(y){return y.id==id});if(!x)return;
  if(t.dataset.in)x.name=t.value;else{var v=parseFloat(t.value);if(t.dataset.io)x.ant=isNaN(v)?null:v;else x.nov=isNaN(v)?null:v}
  var row=t.closest('.insr'),p=pctTxt(x.ant,x.nov),el=row&&row.querySelector('.pct');if(el){el.textContent=p[0];el.className='pct '+p[1]}save()});
-function renderMTags(){$('#fTg').innerHTML=S.tags.length?S.tags.map(function(t){return '<button type="button" class="tgf'+(mTags.indexOf(t.id)>=0?' on':'')+'" data-tg="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+'</button>'}).join(''):'<span class="sub">Nenhuma tag criada ainda. Crie em Processos › Tags.</span>'}
+function renderMTags(){var tt=mTags.reduce(function(s,i){var g=tagById(i);return s+(g&&g.min?+g.min:0)},0);$('#fTm').textContent=tt?'⏱ Tempo previsto desta demanda: '+fmtMin(tt):'';$('#fTg').innerHTML=S.tags.length?S.tags.map(function(t){return '<button type="button" class="tgf'+(mTags.indexOf(t.id)>=0?' on':'')+'" data-tg="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+(t.min?' · '+fmtMin(t.min):'')+'</button>'}).join(''):'<span class="sub">Nenhuma tag criada ainda. Crie em Processos › Tags.</span>'}
 function renderTagAdmin(){var L=$('#tgList');var ae=document.activeElement;if(ae&&L.contains(ae)&&/^(INPUT|TEXTAREA)$/.test(ae.tagName))return;
- L.innerHTML=S.tags.map(function(t){var n=S.tasks.filter(function(x){return (x.tags||[]).indexOf(t.id)>=0}).length;return '<div class="row"><div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0"><input type="color" data-tc="'+t.id+'" value="'+tgCol(t)+'" style="padding:2px;width:44px;height:40px;flex:none"><input data-tn="'+t.id+'" value="'+esc(t.name)+'" style="flex:1"></div><span class="sub">'+n+' demanda(s)</span><button class="btn d" data-dtg="'+t.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma tag ainda. Crie a primeira acima.</div>'}
-function setPTab(k){var tg=k==='tags';$('#pbox').style.display=tg?'none':'';$('#tbox').style.display=tg?'':'none';$('#newProc').style.display=tg?'none':'';document.querySelectorAll('#pseg button').forEach(function(x){x.classList.toggle('on',x.dataset.ptab===k)})}
-[['tgF','tgN','tgC'],['tgF2','tgN2','tgC2']].forEach(function(f){$('#'+f[0]).addEventListener('submit',function(e){e.preventDefault();var n=$('#'+f[1]).value.trim();if(!n)return;
+ L.innerHTML=S.tags.map(function(t){var n=S.tasks.filter(function(x){return (x.tags||[]).indexOf(t.id)>=0}).length;return '<div class="row"><div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0"><input type="color" data-tc="'+t.id+'" value="'+tgCol(t)+'" style="padding:2px;width:44px;height:40px;flex:none"><input data-tn="'+t.id+'" value="'+esc(t.name)+'" style="flex:1"></div><select data-tt="'+t.id+'" title="Tempo gasto nesta tag" style="width:auto;flex:none;margin:0">'+tmOpts(t.min)+'</select><span class="sub">'+n+' demanda(s)</span><button class="btn d" data-dtg="'+t.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma tag ainda. Crie a primeira acima.</div>'}
+function setPTab(k){var tg=k==='tags';$('#pbox').style.display=tg?'none':'';$('#tbox').style.display=tg?'':'none';$('#pbtns').style.display=tg?'none':'flex';document.querySelectorAll('#pseg button').forEach(function(x){x.classList.toggle('on',x.dataset.ptab===k)})}
+['tgT','tgT2'].forEach(function(x){$('#'+x).innerHTML=tmOpts(0)});
+[['tgF','tgN','tgC','tgT'],['tgF2','tgN2','tgC2','tgT2']].forEach(function(f){$('#'+f[0]).addEventListener('submit',function(e){e.preventDefault();var n=$('#'+f[1]).value.trim();if(!n)return;
  if(S.tags.some(function(x){return x.name.toLowerCase()===n.toLowerCase()})){alert('Já existe uma tag com esse nome.');return}
- S.tags.push({id:S.n++,name:n,color:$('#'+f[2]).value});var nx=TGP[S.tags.length%TGP.length];['tgN','tgN2'].forEach(function(x){$('#'+x).value=''});['tgC','tgC2'].forEach(function(x){$('#'+x).value=nx});save();render()})});
+ S.tags.push({id:S.n++,name:n,color:$('#'+f[2]).value,min:+$('#'+f[3]).value||0});var nx=TGP[S.tags.length%TGP.length];['tgN','tgN2'].forEach(function(x){$('#'+x).value=''});['tgC','tgC2'].forEach(function(x){$('#'+x).value=nx});['tgT','tgT2'].forEach(function(x){$('#'+x).value='0'});save();render()})});
 document.addEventListener('input',function(e){var t=e.target,g;if(t.dataset&&(t.dataset.tn||t.dataset.tc)){g=tagById(t.dataset.tn||t.dataset.tc);if(g){if(t.dataset.tn){if(t.value.trim())g.name=t.value.trim()}else g.color=t.value;save()}}});
-document.addEventListener('change',function(e){var t=e.target,g;if(t.dataset&&(t.dataset.tn||t.dataset.tc)){if(t.dataset.tn){g=tagById(t.dataset.tn);if(g&&!t.value.trim())t.value=g.name}render()}});
-function renderProc(){$('#procs').innerHTML=S.proc.map(function(p){return '<div class="card pbox"><input data-pt="'+p.id+'" placeholder="Título do processo" value="'+esc(p.title)+'"><textarea data-px="'+p.id+'" placeholder="Descreva o passo a passo, regras, links...">'+esc(p.text)+'</textarea><div style="text-align:right"><button class="btn d" data-dp="'+p.id+'">Remover</button></div></div>'}).join('')||'<div class="card sub">Nenhum processo. Clique em + Novo processo.</div>'}
+document.addEventListener('change',function(e){var t=e.target;if(t.dataset&&t.dataset.tt!==undefined){var gg=tagById(t.dataset.tt);if(gg){gg.min=+t.value||0;save();render()}return}var g;if(t.dataset&&(t.dataset.tn||t.dataset.tc)){if(t.dataset.tn){g=tagById(t.dataset.tn);if(g&&!t.value.trim())t.value=g.name}render()}});
+var rzUser=false;
+var pRO=window.ResizeObserver?new ResizeObserver(function(es){es.forEach(function(en){var el=en.target;if(!el._rz){el._rz=1;return}if(!rzUser)return;var p=S.proc.find(function(x){return x.id==el.dataset.pid});if(!p)return;clearTimeout(el._t);el._t=setTimeout(function(){var w=Math.round(el.offsetWidth),h=Math.round(el.offsetHeight);if(p.w!==w||p.h!==h){p.w=w;p.h=h;save()}},250)})}):null;
+document.addEventListener('mousedown',function(e){var c=e.target.closest&&e.target.closest('#procs .pcard');if(!c)return;var r=c.getBoundingClientRect();rzUser=(e.clientX>r.right-26&&e.clientY>r.bottom-26)});
+document.addEventListener('mouseup',function(){setTimeout(function(){rzUser=false},400)});
+function renderProc(){if(pRO)pRO.disconnect();$('#procs').innerHTML=S.proc.map(function(p){return '<div class="card pbox pcard" data-pid="'+p.id+'" style="'+(p.w?'width:'+p.w+'px;':'')+(p.h?'height:'+p.h+'px;':'')+'"><input data-pt="'+p.id+'" placeholder="Título do processo" value="'+esc(p.title)+'"><textarea data-px="'+p.id+'" placeholder="Descreva o passo a passo, regras, links...">'+esc(p.text)+'</textarea><div class="pft"><button class="btn d" data-dp="'+p.id+'">Remover</button></div></div>'}).join('')||'<div class="card sub">Nenhum processo. Clique em + Novo processo.</div>';if(pRO)document.querySelectorAll('#procs .pcard').forEach(function(c){pRO.observe(c)})}
+function loadJsPDF(ok,er){if(window.jspdf)return ok();var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=ok;s.onerror=er;document.head.appendChild(s)}
+function printProc(P){var w=window.open('','_blank');if(!w){alert('Permita pop-ups para gerar o PDF.');return}w.document.write('<!doctype html><meta charset="utf-8"><title>Processos</title><style>body{font:14px/1.5 Arial,sans-serif;padding:30px;max-width:780px;margin:auto}h1{font-size:24px}h2{font-size:16px;margin:22px 0 6px}p{white-space:pre-wrap;margin:0}</style><h1>Processos</h1>'+P.map(function(p,i){return '<h2>'+(i+1)+'. '+esc(p.title||'Sem título')+'</h2><p>'+esc(p.text||'')+'</p>'}).join(''));w.document.close();w.focus();setTimeout(function(){w.print()},300)}
+function pdfProc(){var P=S.proc.filter(function(p){return (p.title||'').trim()||(p.text||'').trim()});if(!P.length){alert('Nenhum processo escrito para baixar.');return}
+ loadJsPDF(function(){var d=new window.jspdf.jsPDF({unit:'mm',format:'a4'}),M=18,mw=210-2*M,y=M;
+  function chk(h){if(y+h>297-M){d.addPage();y=M}}
+  d.setFont('helvetica','bold');d.setFontSize(20);d.setTextColor(30);d.text('Processos',M,y);y+=7;d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(120);d.text('Gerado em '+new Date().toLocaleDateString('pt-BR'),M,y);y+=10;
+  P.forEach(function(p,i){d.setTextColor(30);d.setFont('helvetica','bold');d.setFontSize(13);var t=d.splitTextToSize((i+1)+'. '+(p.title||'Sem título'),mw);chk(t.length*6+6);d.text(t,M,y);y+=t.length*6+2;
+   d.setFont('helvetica','normal');d.setFontSize(11);(p.text||'').split(/\r?\n/).forEach(function(par){if(!par.trim()){y+=3;return}d.splitTextToSize(par,mw).forEach(function(l){chk(5.6);d.text(l,M,y);y+=5.6})});y+=8});
+  d.save('processos.pdf')},function(){printProc(P)})}
 document.addEventListener('input',function(e){var t=e.target,p;if(t.dataset&&(t.dataset.pt||t.dataset.px)){p=S.proc.find(function(x){return x.id==(t.dataset.pt||t.dataset.px)});if(p){if(t.dataset.pt)p.title=t.value;else p.text=t.value;save()}}});
 function fresh(a){return a.status!=='pending'&&a.seen===false}
 function updBadge(){var n=S.appr.filter(fresh).length;document.querySelectorAll('.nav[data-v="aprovacao"]').forEach(function(b){if(n&&!CP)b.setAttribute('data-n',n);else b.removeAttribute('data-n')})}
@@ -513,7 +544,7 @@ function applyRemote(row){
  if(dirty)return;
  if(isEditing()){pendingRemote=row;return}
  lastUpd=Date.parse(row.updated_at);pendingRemote=null;
- S=row.data;norm();render();stamp();
+ S=row.data;norm();render();
 }
 var pulling=false;
 async function pull(){
@@ -631,7 +662,6 @@ window.addEventListener('focus',pull);
  document.addEventListener('click',function(e){if(Date.now()<block&&e.target.closest&&e.target.closest('#dseg')){e.stopPropagation();e.preventDefault()}},true);
  document.addEventListener('contextmenu',function(e){if((el||drag)&&e.target.closest&&e.target.closest('#dseg'))e.preventDefault()});
 })();
-stamp();
 render();if(CP)view('aprovacao');
 }
 </script>
