@@ -181,7 +181,7 @@ textarea{border-radius:16px}
 .sw{width:34px;height:20px;border-radius:99px;background:var(--line);position:relative;transition:.2s;flex:none}
 .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
 #tgHide.on .sw{background:var(--pri)}#tgHide.on .sw i{left:16px}
-#v-dashboard.hide-td .tgs,#v-dashboard.hide-td .dd,#v-dashboard.hide-td .tm .dt{display:none}
+#v-dashboard.hide-td .tgs,#v-dashboard.hide-td .tmb,#v-dashboard.hide-td .dd,#v-dashboard.hide-td .tm .dt{display:none}
 </style>
 </head>
 <body>
@@ -246,7 +246,7 @@ textarea{border-radius:16px}
 <div class="modal" id="m1"><div class="mb"><h2 id="mt">Nova demanda</h2>
 <form id="f1"><div class="fg">
 <label>Demanda<input id="fT" required></label>
-<label>Vencimento<input id="fD" type="date"><div class="qb"><button type="button" data-md="1">+1 dia</button><button type="button" data-md="3">+3 dias</button><button type="button" data-cd="1">Limpar data</button></div></label>
+<label>Vencimento<input id="fD" type="date"><div class="qb"><button type="button" data-md="1">+1 dia</button><button type="button" data-md="3">+3 dias</button><button type="button" data-mclr="1">Limpar tags e data</button></div></label>
 <div class="full"><div class="tgl">Cliente / projeto</div><div class="tfb" id="fCb"></div><input id="fCn" placeholder="+ novo cliente (digite o nome)" style="margin-top:8px;width:100%"></div>
 <div class="full"><div class="tgl">Tags</div><div class="tfb" id="fTg"></div><div class="sub" id="fTm" style="margin-top:8px"></div></div>
 <label class="full">Status<select id="fS"><option value="todo">A fazer</option><option value="doing">Em andamento</option><option value="done">Finalizado</option></select></label>
@@ -286,8 +286,8 @@ var diff=function(s){return s?Math.round((P(s)-T0())/864e5):NaN};
 var fmt=function(s){return s?P(s).toLocaleDateString('pt-BR'):'Sem data'};
 var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})};
 function nextD(s,f){if(f==='Diária')return add(s,1);if(f==='Semanal')return add(s,7);var d=P(s);d.setMonth(d.getMonth()+1);return iso(d)}
-var ST=[['todo','A fazer'],['doing','Em andamento'],['done','Finalizado']];var df='Todos',dq='',tf=[];
-var hideTD=false;try{hideTD=localStorage.getItem('demandas-hide-td')==='1'}catch(x){}
+var ST=[['todo','A fazer'],['doing','Em andamento'],['done','Finalizado']];var hideTD=false;try{hideTD=localStorage.getItem('demandas-hide-td')==='1'}catch(x){}
+var df='Todos',dq='',tf=[];
 var VIEWS=[['dashboard','Visão geral'],['clientes','Clientes'],['recorrentes','Recorrentes'],['vencimentos','Vencimentos'],['insights','Insights'],['processos','Processos'],['aprovacao','Aprovação']];
 var S;
 function seed(){var t=iso(T0());return {n:10,tasks:[
@@ -315,13 +315,13 @@ runRecs();
 
 function dueLbl(t){if(t.status==='done')return ['Concluída',''];if(!t.date)return ['Sem data',''];var d=diff(t.date);return d<0?['Atrasada '+(-d)+'d','late']:d===0?['Hoje','soon']:d===1?['Amanhã','soon']:d===2?['Em 2 dias','soon']:[fmt(t.date),'']}
 function card(t,mv){var l=dueLbl(t),i=ST.findIndex(function(s){return s[0]===t.status});
-return '<article class="task" draggable="'+(COARSE?'false':'true')+'" data-id="'+t.id+'">'+(t.channel?'<div class="lb"><i class="ch-'+esc(t.channel)+'"></i></div>':'')+'<div class="tt">'+esc(t.title)+'</div><div class="cl">'+esc(t.client)+'</div>'+tagsHtml(t)+timeHtml(t)+'<div class="tm"><span class="dt '+l[1]+'">'+l[0]+'</span><b class="av" title="'+esc(t.client)+'">'+esc(t.client.charAt(0).toUpperCase())+'</b></div>'+(t.status!=='done'?ddHtml(t):'')+(mv?'<div class="mv">'+(i>0?'<button data-mv="-1">‹</button>':'')+(i<2?'<button data-mv="1">›</button>':'')+'</div>':'')+'</article>'}
+return '<article class="task" draggable="'+(COARSE?'false':'true')+'" data-id="'+t.id+'">'+(t.channel?'<div class="lb"><i class="ch-'+esc(t.channel)+'"></i></div>':'')+'<div class="tt">'+esc(t.title)+'</div><div class="cl">'+esc(t.client)+'</div>'+tagsHtml(t)+timeHtml(t)+'<div class="tm"><span class="dt '+l[1]+'">'+l[0]+'</span><b class="av" title="'+esc(t.client)+'">'+esc(t.client.charAt(0).toUpperCase())+'</b></div>'+ddHtml(t)+(mv?'<div class="mv">'+(i>0?'<button data-mv="-1">‹</button>':'')+(i<2?'<button data-mv="1">›</button>':'')+'</div>':'')+'</article>'}
 var TMO=[15,30,45,60,90,120,180,240,300,360,480];
 function fmtMin(m){m=Math.round(m||0);if(m<60)return m+' min';var h=Math.floor(m/60),r=m%60;return h+'h'+(r?' '+r+'min':'')}
 function tmOpts(sel){return '<option value="0">Sem tempo definido</option>'+TMO.map(function(m){return '<option value="'+m+'"'+(+sel===m?' selected':'')+'>'+fmtMin(m)+'</option>'}).join('')}
 function taskMin(t){return (t.tags||[]).reduce(function(s,i){var g=tagById(i);return s+(g&&g.min?+g.min:0)},0)}
 function timeHtml(t){var m=taskMin(t);return m&&t.status!=='done'?'<div class="tmb">⏱ '+fmtMin(m)+'</div>':''}
-function ddHtml(t){return '<div class="dd"><button data-d="1">+1 dia</button><button data-d="3">+3 dias</button></div>'}
+function ddHtml(t){var c=((t.tags&&t.tags.length)||t.date)?'<button data-clr="1" title="Limpar as tags e a data deste cartão">Limpar tags e data</button>':'';var a=t.status!=='done'?'<button data-d="1">+1 dia</button><button data-d="3">+3 dias</button>':'';return (a||c)?'<div class="dd">'+a+c+'</div>':''}
 var TGP=['#7c3aed','#c026d3','#0ea5e9','#16a34a','#f59e0b','#ef4444','#14b8a6','#6366f1'];
 function ink(h){var m=/^#?([0-9a-f]{6})$/i.exec(h||'');if(!m)return '#fff';var n=parseInt(m[1],16),r=n>>16,g=(n>>8)&255,bl=n&255;return (r*299+g*587+bl*114)/1000>150?'#1f1235':'#fff'}
 function tgCol(t){return /^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#7c3aed'}
@@ -332,7 +332,7 @@ function tagsHtml(t){var l=(t.tags||[]).map(tagById).filter(Boolean);return l.le
 function tfHtml(h){if(!S.tags.length)return h?'<span class="sub">Você ainda não criou tags. Vá em Processos › Tags para criar.</span>':'';return '<span class="sub">Filtrar por tag:</span>'+S.tags.map(function(t){return '<button class="tgf'+(tf.indexOf(t.id)>=0?' on':'')+'" data-tf="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+'</button>'}).join('')+(tf.length?'<button class="ghost" style="padding:5px 14px;font-size:13px" data-tfclr>Limpar</button>':'')}
 function kanban(fl,cn){var tot=0,L={},M={};ST.forEach(function(s){L[s[0]]=S.tasks.filter(function(t){return t.status===s[0]&&fl(t)}).sort(byDate);M[s[0]]=L[s[0]].reduce(function(a,t){return a+taskMin(t)},0)});var mx=Math.max(M.todo,M.doing,1);
  var h=ST.map(function(s){var l=L[s[0]];tot+=l.length;return '<div class="col" data-st="'+s[0]+'">'+(s[0]!=='done'?'<div class="tbar" title="Soma do tempo das tags de cada demanda"><div class="tbl"><span>⏱ Tempo previsto</span><b>'+(M[s[0]]?fmtMin(M[s[0]]):'—')+'</b></div><div class="tbt"><i style="width:'+Math.round(M[s[0]]/mx*100)+'%"></i></div></div>':'')+'<div class="ch"><span>'+s[1]+'</span><span><span class="cnt">'+l.length+'</span>'+(s[0]==='done'&&l.length?' <button class="btn d" style="padding:3px 12px;font-size:12px" data-clrdone="'+l.map(function(t){return t.id}).join(',')+'">Apagar todas</button>':'')+'</span></div>'+l.map(function(t){return card(t,1)}).join('')+'<button class="add" data-new data-st="'+s[0]+'"'+(cn?' data-cn="'+esc(cn)+'"':'')+'><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Adicionar cartão</button></div>'}).join('');return {h:h,n:tot}}
-function byDate(a,b){return (a.date||'9999').localeCompare(b.date||'9999')}
+function byDate(a,b){if(!a.date||!b.date)return (a.date?0:1)-(b.date?0:1);return a.date.localeCompare(b.date)}
 function render(){
  var T=S.tasks,open=T.filter(function(t){return t.status!=='done'});
  $('#hoje').textContent='Hoje é '+T0().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
@@ -342,13 +342,14 @@ function render(){
  $('#mD').textContent=open.filter(function(t){return diff(t.date)<0}).length;
  var kd=kanban(function(t){return (df==='Todos'||t.client===df)&&(!dq||t.title.toLowerCase().indexOf(dq)>=0)&&tagOk(t)});$('#board').innerHTML=kd.h;$('#dcnt').textContent=kd.n+' cartões';
  var kt=kanban(function(t){return (t.tags||[]).some(tagById)&&tagOk(t)});$('#tboard').innerHTML=kt.h;$('#tcnt').textContent=kt.n+' cartões';
- $('#v-dashboard').classList.toggle('hide-td',hideTD);$('#tgHide').classList.toggle('on',!hideTD);$('#tgHide').setAttribute('aria-checked',String(!hideTD));$('#tfb1').innerHTML=tfHtml(false);$('#tfb2').innerHTML=tfHtml(true);
+ $('#tfb1').innerHTML=tfHtml(false);$('#tfb2').innerHTML=tfHtml(true);
+ $('#v-dashboard').classList.toggle('hide-td',hideTD);var th=$('#tgHide');th.classList.toggle('on',!hideTD);th.setAttribute('aria-checked',String(!hideTD));
  ensureClients();var cls=S.clients.map(function(c){return c.name});
  $('#cl').innerHTML=cls.map(function(c){return '<option value="'+esc(c)+'">'}).join('');
  $('#dseg').innerHTML=['Todos'].concat(cls).map(function(c){return '<button data-df="'+esc(c)+'"'+(c!=='Todos'?' data-cord="1" draggable="'+(COARSE?'false':'true')+'"':'')+' class="'+(c===df?'on':'')+'">'+esc(c)+'</button>'}).join('');
  $('#clist').innerHTML=S.clients.map(function(c){var n=T.filter(function(t){return t.client===c.name}).length;return '<div class="row"><div><strong>'+esc(c.name)+'</strong><div class="sub">Login: '+esc(c.login)+' · '+(c.pass?'senha definida':'sem senha')+' · '+n+' demanda(s)</div></div><button class="ghost" style="display:inline-flex" data-ec="'+c.id+'">Gerir acesso</button></div>'}).join('')||'<div class="sub">Nenhum cliente cadastrado. Clique em + Novo cliente.</div>';
  $('#recs').innerHTML=S.recs.map(function(r){return '<div class="row"><div><strong>'+esc(r.title)+'</strong><div class="sub">'+esc(r.client)+' · '+esc(r.freq)+' · próxima: '+fmt(r.date)+'</div></div><button class="btn d" data-delrec="'+r.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma recorrência cadastrada.</div>';
- var gs=[['Atrasadas',function(d){return d<0}],['Hoje',function(d){return d===0}],['Próximos 2 dias',function(d){return d>=1&&d<=2}],['Mais tarde',function(d){return d>2}],['Sem data',function(d){return isNaN(d)}]];
+ var gs=[['Atrasadas',function(d){return d<0}],['Hoje',function(d){return d===0}],['Próximos 2 dias',function(d){return d>=1&&d<=2}],['Mais tarde',function(d){return d>2}]];
  $('#due').innerHTML=gs.map(function(g){var l=open.filter(function(t){return g[1](diff(t.date))}).sort(byDate);return l.length?'<div class="card" style="margin-bottom:14px"><h3>'+g[0]+' ('+l.length+')</h3>'+l.map(function(t){return '<div class="row task-open" data-id="'+t.id+'" style="cursor:pointer"><div><strong>'+esc(t.title)+'</strong><div class="sub">'+esc(t.client)+'</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span class="'+dueLbl(t)[1]+'">'+fmt(t.date)+'</span><span class="dd" style="margin:0"><button data-d="1">+1 dia</button><button data-d="3">+3 dias</button></span></div></div>'}).join('')+'</div>':''}).join('')||'<div class="card">Nenhum vencimento pendente.</div>';
  renderProc();renderTagAdmin();renderIns();updBadge();if(!(document.activeElement&&$('#appr').contains(document.activeElement)))renderAppr();
 }
@@ -357,19 +358,19 @@ var IC={dashboard:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y
 var nh=VIEWS.map(function(v){return '<button class="nav'+(v[0]==='dashboard'?' on':'')+'" data-v="'+v[0]+'"><svg class="i" viewBox="0 0 24 24">'+IC[v[0]]+'</svg><span class="tx">'+v[1]+'</span></button>'}).join('');
 $('#navS').innerHTML=nh;$('#navT').innerHTML=nh;
 document.addEventListener('click',function(e){var b=e.target.closest('button,.task,.task-open');if(!b)return;
+ if(b.dataset.clr!==undefined){var ch1=b.closest('[data-id]'),tk1=ch1&&S.tasks.find(function(x){return x.id==ch1.dataset.id});if(tk1){tk1.tags=[];tk1.date='';save();render()}return}
+ if(b.dataset.mclr!==undefined){mTags=[];$('#fD').value='';renderMTags();return}
  if(b.dataset.d!==undefined){var hd0=b.closest('[data-id]'),tk=hd0&&S.tasks.find(function(x){return x.id==hd0.dataset.id});if(tk){tk.date=add(tk.date,+b.dataset.d);save();render()}return}
  if(b.dataset.cb!==undefined){mClient=b.dataset.cb;$('#fCn').value='';return renderMClients()}
  if(b.dataset.di!==undefined){S.ins=S.ins.filter(function(x){return x.id!=b.dataset.di});save();return renderIns()}
- if(b.dataset.cd!==undefined){$('#fD').value='';return}
- if(b.dataset.ctg!==undefined){mTags=[];return renderMTags()}
  if(b.dataset.md!==undefined){$('#fD').value=add($('#fD').value||iso(T0()),+b.dataset.md);return}
  if(b.dataset.tg!==undefined){var gi=+b.dataset.tg,gx=mTags.indexOf(gi);if(gx>=0)mTags.splice(gx,1);else mTags.push(gi);return renderMTags()}
  if(b.dataset.tf!==undefined){var fi=+b.dataset.tf,fx=tf.indexOf(fi);if(fx>=0)tf.splice(fx,1);else tf.push(fi);return render()}
  if(b.dataset.tfclr!==undefined){tf=[];return render()}
  if(b.dataset.ptab){return setPTab(b.dataset.ptab)}
  if(b.dataset.dtg){var tg=tagById(b.dataset.dtg);if(!tg||!confirm('Remover a tag "'+tg.name+'"? Ela será tirada de todas as demandas.'))return;S.tags=S.tags.filter(function(x){return x.id!=tg.id});S.tasks.forEach(function(t){if(t.tags)t.tags=t.tags.filter(function(i){return i!=tg.id})});tf=tf.filter(function(i){return i!=tg.id});save();return render()}
+ if(b.id==='tgHide'){hideTD=!hideTD;try{localStorage.setItem('demandas-hide-td',hideTD?'1':'0')}catch(x){}return render()}
  if(b.id==='goTags')return view('tagsdem');
- if(b.id==='tgHide'){hideTD=!hideTD;try{localStorage.setItem('demandas-hide-td',hideTD?'1':'')}catch(x){}return render()}
  if(b.dataset.df){df=b.dataset.df;return render()}
  if(b.dataset.ec)return openCli(b.dataset.ec);
  if(b.id==='newCli')return openCli();
@@ -439,7 +440,7 @@ $('#insF').addEventListener('submit',function(e){e.preventDefault();var n=$('#in
 document.addEventListener('input',function(e){var t=e.target;if(!t.dataset)return;var id=t.dataset.in||t.dataset.io||t.dataset.iw;if(!id)return;var x=S.ins.find(function(y){return y.id==id});if(!x)return;
  if(t.dataset.in)x.name=t.value;else{var v=parseFloat(t.value);if(t.dataset.io)x.ant=isNaN(v)?null:v;else x.nov=isNaN(v)?null:v}
  var row=t.closest('.insr'),p=pctTxt(x.ant,x.nov),el=row&&row.querySelector('.pct');if(el){el.textContent=p[0];el.className='pct '+p[1]}save()});
-function renderMTags(){var tt=mTags.reduce(function(s,i){var g=tagById(i);return s+(g&&g.min?+g.min:0)},0);$('#fTm').textContent=tt?'⏱ Tempo previsto desta demanda: '+fmtMin(tt):'';$('#fTg').innerHTML=S.tags.length?S.tags.map(function(t){return '<button type="button" class="tgf'+(mTags.indexOf(t.id)>=0?' on':'')+'" data-tg="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+(t.min?' · '+fmtMin(t.min):'')+'</button>'}).join('')+(mTags.length?'<button type="button" class="ghost" style="padding:5px 14px;font-size:13px" data-ctg="1">Limpar tags</button>':''):'<span class="sub">Nenhuma tag criada ainda. Crie em Processos › Tags.</span>'}
+function renderMTags(){var tt=mTags.reduce(function(s,i){var g=tagById(i);return s+(g&&g.min?+g.min:0)},0);$('#fTm').textContent=tt?'⏱ Tempo previsto desta demanda: '+fmtMin(tt):'';$('#fTg').innerHTML=S.tags.length?S.tags.map(function(t){return '<button type="button" class="tgf'+(mTags.indexOf(t.id)>=0?' on':'')+'" data-tg="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+(t.min?' · '+fmtMin(t.min):'')+'</button>'}).join(''):'<span class="sub">Nenhuma tag criada ainda. Crie em Processos › Tags.</span>'}
 function tagRows(){return S.tags.map(function(t){var n=S.tasks.filter(function(x){return (x.tags||[]).indexOf(t.id)>=0}).length;return '<div class="row"><div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0"><input type="color" data-tc="'+t.id+'" value="'+tgCol(t)+'" title="Cor da tag" style="padding:2px;width:44px;height:40px;flex:none"><input data-tn="'+t.id+'" value="'+esc(t.name)+'" title="Nome da tag" style="flex:1"></div><select data-tt="'+t.id+'" title="Tempo gasto nesta tag" style="width:auto;flex:none;margin:0">'+tmOpts(t.min)+'</select><span class="sub">'+n+' demanda(s)</span><button class="btn d" data-dtg="'+t.id+'">Apagar</button></div>'}).join('')||'<div class="sub">Nenhuma tag ainda. Crie a primeira acima.</div>'}
 function renderTagAdmin(){var ae=document.activeElement;['#tgList','#tgList2'].forEach(function(id){var L=$(id);if(ae&&L.contains(ae)&&/^(INPUT|TEXTAREA)$/.test(ae.tagName))return;L.innerHTML=tagRows()})}
 function setPTab(k){var tg=k==='tags';$('#pbox').style.display=tg?'none':'';$('#tbox').style.display=tg?'':'none';$('#pbtns').style.display=tg?'none':'flex';document.querySelectorAll('#pseg button').forEach(function(x){x.classList.toggle('on',x.dataset.ptab===k)})}
