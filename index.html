@@ -203,6 +203,7 @@ textarea{border-radius:16px}
 <section class="sec" id="v-tagsdem">
  <div class="top"><div><h1>Demandas com tags</h1><div class="sub">Só aparecem as demandas que têm pelo menos uma tag.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-v="dashboard">← Visão geral</button><button class="btn p" data-new>+ Nova demanda</button></div></div>
  <div class="card pbox" style="margin:0 0 6px"><h3>Criar tag</h3><form id="tgF2" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input id="tgN2" placeholder="Nome da tag (ex.: Urgente, Vídeo, Aprovação)" required style="flex:1;min-width:200px;margin:0;width:auto"><input type="color" id="tgC2" value="#7c3aed" style="padding:2px;width:52px;height:46px;margin:0"><select id="tgT2" title="Tempo gasto nesta tag" style="margin:0;width:auto;min-width:150px"></select><button class="btn p">Criar tag</button></form><div class="sub" style="margin-top:8px">Cada tag criada vira um botão de filtro aqui (marque uma ou mais) e um botão dentro de cada demanda. O tempo da tag entra na barra de tempo das colunas.</div></div>
+ <div class="card" style="margin:0 0 6px"><h3>Editar ou apagar tags</h3><div class="sub" style="margin-bottom:10px">Mude nome, cor e tempo direto na linha. Ao apagar, a tag sai de todas as demandas.</div><div id="tgList2"></div></div>
  <div class="tools"><div class="tfb" id="tfb2"></div><span class="dc" id="tcnt"></span></div>
  <div class="board" id="tboard"></div>
 </section>
@@ -225,7 +226,7 @@ textarea{border-radius:16px}
  <div id="pbox"><div id="procs"></div></div>
  <div id="tbox" style="display:none">
   <div class="card pbox"><h3>Nova tag</h3><form id="tgF" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><input id="tgN" placeholder="Nome da tag (ex.: Urgente, Vídeo, Aprovação)" required style="flex:1;min-width:200px;margin:0;width:auto"><input type="color" id="tgC" value="#7c3aed" style="padding:2px;width:52px;height:46px;margin:0"><select id="tgT" title="Tempo gasto nesta tag" style="margin:0;width:auto;min-width:150px"></select><button class="btn p">Criar tag</button></form><div class="sub" style="margin-top:8px">Defina o tempo gasto em cada tag: a soma das tags de uma demanda mostra quanto tempo ela vai levar. As tags viram botões ao criar ou editar uma demanda e filtros na Visão geral.</div></div>
-  <div class="card"><h3>Tags criadas</h3><div id="tgList"></div></div>
+  <div class="card"><h3>Editar ou apagar tags</h3><div id="tgList"></div></div>
  </div>
 </section>
 <section class="sec" id="v-aprovacao">
@@ -430,8 +431,8 @@ document.addEventListener('input',function(e){var t=e.target;if(!t.dataset)retur
  if(t.dataset.in)x.name=t.value;else{var v=parseFloat(t.value);if(t.dataset.io)x.ant=isNaN(v)?null:v;else x.nov=isNaN(v)?null:v}
  var row=t.closest('.insr'),p=pctTxt(x.ant,x.nov),el=row&&row.querySelector('.pct');if(el){el.textContent=p[0];el.className='pct '+p[1]}save()});
 function renderMTags(){var tt=mTags.reduce(function(s,i){var g=tagById(i);return s+(g&&g.min?+g.min:0)},0);$('#fTm').textContent=tt?'⏱ Tempo previsto desta demanda: '+fmtMin(tt):'';$('#fTg').innerHTML=S.tags.length?S.tags.map(function(t){return '<button type="button" class="tgf'+(mTags.indexOf(t.id)>=0?' on':'')+'" data-tg="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+(t.min?' · '+fmtMin(t.min):'')+'</button>'}).join(''):'<span class="sub">Nenhuma tag criada ainda. Crie em Processos › Tags.</span>'}
-function renderTagAdmin(){var L=$('#tgList');var ae=document.activeElement;if(ae&&L.contains(ae)&&/^(INPUT|TEXTAREA)$/.test(ae.tagName))return;
- L.innerHTML=S.tags.map(function(t){var n=S.tasks.filter(function(x){return (x.tags||[]).indexOf(t.id)>=0}).length;return '<div class="row"><div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0"><input type="color" data-tc="'+t.id+'" value="'+tgCol(t)+'" style="padding:2px;width:44px;height:40px;flex:none"><input data-tn="'+t.id+'" value="'+esc(t.name)+'" style="flex:1"></div><select data-tt="'+t.id+'" title="Tempo gasto nesta tag" style="width:auto;flex:none;margin:0">'+tmOpts(t.min)+'</select><span class="sub">'+n+' demanda(s)</span><button class="btn d" data-dtg="'+t.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma tag ainda. Crie a primeira acima.</div>'}
+function tagRows(){return S.tags.map(function(t){var n=S.tasks.filter(function(x){return (x.tags||[]).indexOf(t.id)>=0}).length;return '<div class="row"><div style="display:flex;gap:10px;align-items:center;flex:1;min-width:0"><input type="color" data-tc="'+t.id+'" value="'+tgCol(t)+'" title="Cor da tag" style="padding:2px;width:44px;height:40px;flex:none"><input data-tn="'+t.id+'" value="'+esc(t.name)+'" title="Nome da tag" style="flex:1"></div><select data-tt="'+t.id+'" title="Tempo gasto nesta tag" style="width:auto;flex:none;margin:0">'+tmOpts(t.min)+'</select><span class="sub">'+n+' demanda(s)</span><button class="btn d" data-dtg="'+t.id+'">Apagar</button></div>'}).join('')||'<div class="sub">Nenhuma tag ainda. Crie a primeira acima.</div>'}
+function renderTagAdmin(){var ae=document.activeElement;['#tgList','#tgList2'].forEach(function(id){var L=$(id);if(ae&&L.contains(ae)&&/^(INPUT|TEXTAREA)$/.test(ae.tagName))return;L.innerHTML=tagRows()})}
 function setPTab(k){var tg=k==='tags';$('#pbox').style.display=tg?'none':'';$('#tbox').style.display=tg?'':'none';$('#pbtns').style.display=tg?'none':'flex';document.querySelectorAll('#pseg button').forEach(function(x){x.classList.toggle('on',x.dataset.ptab===k)})}
 ['tgT','tgT2'].forEach(function(x){$('#'+x).innerHTML=tmOpts(0)});
 [['tgF','tgN','tgC','tgT'],['tgF2','tgN2','tgC2','tgT2']].forEach(function(f){$('#'+f[0]).addEventListener('submit',function(e){e.preventDefault();var n=$('#'+f[1]).value.trim();if(!n)return;
@@ -538,7 +539,7 @@ $('#cpLink').href=location.href.split('#')[0]+'#cliente';
 if(CP){document.body.classList.add('cp');document.title='Área do cliente'}
 
 /* ===== Sincronização em tempo real entre aparelhos ===== */
-function isEditing(){return touchDragging||dragId||document.querySelector('.modal.show')||(document.activeElement&&($('#procs').contains(document.activeElement)||$('#tbox').contains(document.activeElement)||$('#insList').contains(document.activeElement)))}
+function isEditing(){return touchDragging||dragId||document.querySelector('.modal.show')||(document.activeElement&&($('#procs').contains(document.activeElement)||$('#tbox').contains(document.activeElement)||$('#insList').contains(document.activeElement)||$('#tgList2').contains(document.activeElement)))}
 function applyRemote(row){
  if(!row||!row.data||!row.data.tasks)return;
  if(dirty)return;
