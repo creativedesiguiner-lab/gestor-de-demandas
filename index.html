@@ -182,6 +182,7 @@ textarea{border-radius:16px}
 .sw i{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
 #tgHide.on .sw{background:var(--pri)}#tgHide.on .sw i{left:16px}
 #v-dashboard.hide-td .tgs,#v-dashboard.hide-td .tmb,#v-dashboard.hide-td .dd,#v-dashboard.hide-td .tm .dt{display:none}
+.tbt i.over{background:#dc2626}
 </style>
 </head>
 <body>
@@ -330,8 +331,9 @@ function tagById(i){return S.tags.find(function(x){return x.id==i})}
 function tagOk(t){return !tf.length||(t.tags||[]).some(function(i){return tf.indexOf(+i)>=0})}
 function tagsHtml(t){var l=(t.tags||[]).map(tagById).filter(Boolean);return l.length?'<div class="tgs">'+l.map(function(g){return '<span class="tgc" style="'+tgSty(g)+'">'+esc(g.name)+'</span>'}).join('')+'</div>':''}
 function tfHtml(h){if(!S.tags.length)return h?'<span class="sub">Você ainda não criou tags. Vá em Processos › Tags para criar.</span>':'';return '<span class="sub">Filtrar por tag:</span>'+S.tags.map(function(t){return '<button class="tgf'+(tf.indexOf(t.id)>=0?' on':'')+'" data-tf="'+t.id+'" style="'+tgSty(t)+'">'+esc(t.name)+'</button>'}).join('')+(tf.length?'<button class="ghost" style="padding:5px 14px;font-size:13px" data-tfclr>Limpar</button>':'')}
-function kanban(fl,cn){var tot=0,L={},M={};ST.forEach(function(s){L[s[0]]=S.tasks.filter(function(t){return t.status===s[0]&&fl(t)}).sort(byDate);M[s[0]]=L[s[0]].reduce(function(a,t){return a+taskMin(t)},0)});var mx=Math.max(M.todo,M.doing,1);
- var h=ST.map(function(s){var l=L[s[0]];tot+=l.length;return '<div class="col" data-st="'+s[0]+'">'+(s[0]!=='done'?'<div class="tbar" title="Soma do tempo das tags de cada demanda"><div class="tbl"><span>⏱ Tempo previsto</span><b>'+(M[s[0]]?fmtMin(M[s[0]]):'—')+'</b></div><div class="tbt"><i style="width:'+Math.round(M[s[0]]/mx*100)+'%"></i></div></div>':'')+'<div class="ch"><span>'+s[1]+'</span><span><span class="cnt">'+l.length+'</span>'+(s[0]==='done'&&l.length?' <button class="btn d" style="padding:3px 12px;font-size:12px" data-clrdone="'+l.map(function(t){return t.id}).join(',')+'">Apagar todas</button>':'')+'</span></div>'+l.map(function(t){return card(t,1)}).join('')+'<button class="add" data-new data-st="'+s[0]+'"'+(cn?' data-cn="'+esc(cn)+'"':'')+'><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Adicionar cartão</button></div>'}).join('');return {h:h,n:tot}}
+function tbar(m){var D=1440,p=Math.min(100,m/D*100);if(m>0&&p<2)p=2;return '<div class="tbar" title="Tempo previsto em relação às 24h do dia"><div class="tbl"><span>⏱ '+fmtMin(m)+' previstos</span><b>'+(m>D?'Passou '+fmtMin(m-D):'Restam '+fmtMin(D-m))+'</b></div><div class="tbt"><i class="'+(m>D?'over':'')+'" style="width:'+p.toFixed(1)+'%"></i></div></div>'}
+function kanban(fl,cn){var tot=0,L={},M={};ST.forEach(function(s){L[s[0]]=S.tasks.filter(function(t){return t.status===s[0]&&fl(t)}).sort(byDate);M[s[0]]=L[s[0]].reduce(function(a,t){return a+taskMin(t)},0)});
+ var h=ST.map(function(s){var l=L[s[0]];tot+=l.length;return '<div class="col" data-st="'+s[0]+'">'+(s[0]!=='done'?tbar(M[s[0]]):'')+'<div class="ch"><span>'+s[1]+'</span><span><span class="cnt">'+l.length+'</span>'+(s[0]==='done'&&l.length?' <button class="btn d" style="padding:3px 12px;font-size:12px" data-clrdone="'+l.map(function(t){return t.id}).join(',')+'">Apagar todas</button>':'')+'</span></div>'+l.map(function(t){return card(t,1)}).join('')+'<button class="add" data-new data-st="'+s[0]+'"'+(cn?' data-cn="'+esc(cn)+'"':'')+'><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Adicionar cartão</button></div>'}).join('');return {h:h,n:tot}}
 function byDate(a,b){if(!a.date||!b.date)return (a.date?0:1)-(b.date?0:1);return a.date.localeCompare(b.date)}
 function render(){
  var T=S.tasks,open=T.filter(function(t){return t.status!=='done'});
