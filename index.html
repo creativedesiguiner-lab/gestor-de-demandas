@@ -187,7 +187,7 @@ textarea{border-radius:16px}
 /* ===== Aprovação geral: mosaico do feed ===== */
 .feed-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
 .feed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:16px}
-.feed-tile{position:relative;aspect-ratio:1/1;overflow:hidden;background:var(--col);cursor:grab;border-radius:5px;touch-action:pan-y}
+.feed-tile{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--col);cursor:pointer;border-radius:5px;padding:0;border:0;display:block;width:100%}
 .feed-tile img{width:100%;height:100%;object-fit:cover;display:block}
 .feed-tile .feed-placeholder{height:100%;display:grid;place-items:center;padding:12px;text-align:center;color:var(--muted)}
 .feed-tile .feed-check{position:absolute;right:9px;top:9px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#16a34a;color:#fff;font-size:19px;font-weight:900;box-shadow:0 2px 8px #0004}
@@ -202,7 +202,20 @@ textarea{border-radius:16px}
 .feed-status{display:inline-block;border-radius:99px;padding:5px 11px;font-size:12px;font-weight:800;background:#fef3c7;color:#92400e}
 .feed-status.approved{background:#dcfce7;color:#166534}
 .feed-status.changes{background:#fee2e2;color:#991b1b}
-@media(max-width:650px){.feed-grid{gap:3px}.feed-detail{grid-template-columns:1fr}.feed-detail img{max-height:48vh}}
+ .feed-wrap{max-width:640px;margin:0 auto}
+.feed-prof{display:flex;align-items:center;gap:16px;max-width:640px;margin:0 auto 6px;padding:6px 2px}
+.feed-av{width:68px;height:68px;border-radius:50%;background:var(--grad,var(--pri));color:#fff;display:grid;place-items:center;font-size:28px;font-weight:800;flex:none}
+.feed-stats{display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;color:var(--muted);font-size:13px}.feed-stats b{display:block;font-size:17px;color:var(--text)}
+.feed-tile .feed-check.chg{background:#f59e0b}
+.feed-tile .feed-new{position:absolute;left:9px;top:9px;width:13px;height:13px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 2px #fff}
+.feed-tile:hover img{filter:brightness(.92)}
+.feed-pic{min-width:0}.feed-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}.feed-nav .btn{padding:8px 12px}.feed-nav .btn:disabled{opacity:.4;cursor:default}
+.feed-cap{white-space:pre-wrap;margin:8px 0;line-height:1.5}
+.gdraft{display:grid;grid-template-columns:84px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.gdraft img{width:84px;height:112px;object-fit:cover;border-radius:10px}.gdraft textarea{min-height:70px;margin-bottom:0!important}
+.cpsw{display:none;width:fit-content;max-width:100%;margin:0 0 18px}body.cp .cpsw{display:flex}
+body.cp #agLink{display:none!important}
+@media(max-width:650px){.feed-grid{gap:3px}.gdraft{grid-template-columns:64px minmax(0,1fr)}.gdraft img{width:64px;height:86px}.gdraft>.btn{grid-column:2;justify-self:start}.feed-detail{grid-template-columns:1fr}.feed-detail img{max-height:48vh}}
 
 </style>
 </head>
@@ -257,8 +270,14 @@ textarea{border-radius:16px}
  </div>
 </section>
 <section class="sec" id="v-aprovacao">
+<div class="seg cpsw"><button class="" data-v="aprovacao-geral">Aprovação geral</button><button class="on" data-v="aprovacao">Post avulso</button></div>
  <div class="top"><div><h1 id="apH">Aprovação</h1><div class="sub" id="apSub"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn p" id="cpLink" target="_blank" rel="noopener">Abrir página do cliente ↗</a><button class="btn" id="logout" style="display:none">Sair</button></div></div>
  <div id="appr"></div>
+</section>
+<section class="sec" id="v-aprovacao-geral">
+<div class="seg cpsw"><button class="on" data-v="aprovacao-geral">Aprovação geral</button><button class="" data-v="aprovacao">Post avulso</button></div>
+ <div class="top"><div><h1 id="agH">Aprovação geral</h1><div class="sub" id="agSub"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn p" id="agLink" target="_blank" rel="noopener">Abrir página do cliente ↗</a><button class="btn" id="agLogout" style="display:none">Sair</button></div></div>
+ <div id="agpr"></div>
 </section>
 </main>
 </div>
@@ -276,7 +295,8 @@ textarea{border-radius:16px}
 <datalist id="cl"></datalist>
 <div class="act"><button type="button" class="btn d" id="del">Excluir</button><div><button type="button" class="btn" data-close>Cancelar</button><button class="btn p">Salvar</button></div></div></form></div></div>
 
-<div class="modal" id="agModal"><div class="mb" style="width:min(1040px,100%)"><div id="agDetail"></div></div></div>\n<div class="modal" id="m2"><div class="mb"><h2>Nova recorrência</h2>
+<div class="modal" id="agModal"><div class="mb" style="width:min(1040px,100%)"><div id="agDetail"></div></div></div>
+<div class="modal" id="m2"><div class="mb"><h2>Nova recorrência</h2>
 <form id="f2"><div class="fg">
 <label>Cliente / projeto<input id="rC" required list="cl"></label>
 <label>Periodicidade<select id="rF"><option>Diária</option><option selected>Semanal</option><option>Mensal</option></select></label>
@@ -374,7 +394,7 @@ function render(){
  $('#recs').innerHTML=S.recs.map(function(r){return '<div class="row"><div><strong>'+esc(r.title)+'</strong><div class="sub">'+esc(r.client)+' · '+esc(r.freq)+' · próxima: '+fmt(r.date)+'</div></div><button class="btn d" data-delrec="'+r.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma recorrência cadastrada.</div>';
  var gs=[['Atrasadas',function(d){return d<0}],['Hoje',function(d){return d===0}],['Próximos 2 dias',function(d){return d>=1&&d<=2}],['Mais tarde',function(d){return d>2}]];
  $('#due').innerHTML=gs.map(function(g){var l=open.filter(function(t){return g[1](diff(t.date))}).sort(byDate);return l.length?'<div class="card" style="margin-bottom:14px"><h3>'+g[0]+' ('+l.length+')</h3>'+l.map(function(t){return '<div class="row task-open" data-id="'+t.id+'" style="cursor:pointer"><div><strong>'+esc(t.title)+'</strong><div class="sub">'+esc(t.client)+'</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span class="'+dueLbl(t)[1]+'">'+fmt(t.date)+'</span><span class="dd" style="margin:0"><button data-d="1">+1 dia</button><button data-d="3">+3 dias</button></span></div></div>'}).join('')+'</div>':''}).join('')||'<div class="card">Nenhum vencimento pendente.</div>';
- renderProc();renderTagAdmin();renderIns();updBadge();if(!(document.activeElement&&$('#appr').contains(document.activeElement)))renderAppr();if(!(document.activeElement&&$('#agpr').contains(document.activeElement)))agRender();
+ renderProc();renderTagAdmin();renderIns();updBadge();if(!(document.activeElement&&$('#appr').contains(document.activeElement)))renderAppr();var ae2=document.activeElement;if(!(ae2&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae2.tagName)&&$('#agpr').contains(ae2)))agRender();
 }
 function view(v){var nm=v==='tagsdem'?['','Visão geral · Demandas com tags']:VIEWS.find(function(x){return x[0]===v});$('#bc').textContent=nm?nm[1]:'';document.querySelectorAll('.sec').forEach(function(x){x.classList.toggle('on',x.id==='v-'+v)});document.querySelectorAll('.nav').forEach(function(x){x.classList.toggle('on',x.dataset.v===(v==='tagsdem'?'dashboard':v))});try{window.scrollTo(0,0)}catch(e){}}
 var IC={dashboard:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',clientes:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6M17 5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5-4-5.5"/>',recorrentes:'<path d="M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5"/>',vencimentos:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',insights:'<path d="M5 20V10M12 20V4M19 20v-7"/>',processos:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',aprovacao:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>','aprovacao-geral':'<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>'};
@@ -402,6 +422,7 @@ document.addEventListener('click',function(e){var b=e.target.closest('button,.ta
  if(b.id==='newProc'){S.proc.push({id:S.n++,title:'',text:''});save();return renderProc()}
  if(b.dataset.dp){S.proc=S.proc.filter(function(p){return p.id!=b.dataset.dp});save();return renderProc()}
  if(apprClick(b))return;
+ if(agClick(b))return;
  if(b.id==='coll'){document.getElementById('app').classList.toggle('collapsed');return}
  if(b.id==='theme'){var cur=document.documentElement.getAttribute('data-theme'),dk=cur==='dark'||(!cur&&matchMedia('(prefers-color-scheme: dark)').matches),nt=dk?'light':'dark';ap(nt);try{localStorage.setItem('demandas-tema',nt)}catch(x){}return}
  if(b.hasAttribute('data-clrdone')){var cids=(b.dataset.clrdone||'').split(','),del=S.tasks.filter(function(t){return t.status==='done'&&cids.indexOf(String(t.id))>=0});
@@ -451,7 +472,7 @@ $('#f3').addEventListener('submit',function(e){e.preventDefault();var n=$('#cN')
  if(S.clients.some(function(x){return x!==c&&x.name.toLowerCase()===n.toLowerCase()})){$('#cE').textContent='Já existe um cliente com esse nome.';return}
  var wasAuto=c&&c.login===autoLogin(old);if(!l||(wasAuto&&l===autoLogin(old)))l=autoLogin(n);
  if(l.toLowerCase()===S.admin.login||S.clients.some(function(x){return x!==c&&x.login.toLowerCase()===l.toLowerCase()})){$('#cE').textContent='Esse login já está em uso.';return}
- if(c){if(old!==n){S.tasks.concat(S.recs,S.appr).forEach(function(t){if(t.client===old)t.client=n})}c.name=n;c.login=l;c.pass=p}else S.clients.push({id:S.n++,name:n,login:l,pass:p});
+ if(c){if(old!==n){S.tasks.concat(S.recs,S.appr,S.apprG).forEach(function(t){if(t.client===old)t.client=n})}c.name=n;c.login=l;c.pass=p}else S.clients.push({id:S.n++,name:n,login:l,pass:p});
  save();$('#m3').classList.remove('show');render()});
 function renderMClients(){var cl=S.clients.map(function(c){return c.name});$('#fCb').innerHTML=cl.length?cl.map(function(n){return '<button type="button" class="tgf'+(n===mClient?' on':'')+'" data-cb="'+esc(n)+'" style="--c:var(--pri);--ink:var(--ondark)">'+esc(n)+'</button>'}).join(''):'<span class="sub">Nenhum cliente ainda. Digite o nome abaixo.</span>'}
 document.addEventListener('input',function(e){if(e.target.id==='fCn'&&e.target.value&&mClient){mClient='';renderMClients()}});
@@ -489,7 +510,7 @@ function pdfProc(){var P=S.proc.filter(function(p){return (p.title||'').trim()||
   d.save('processos.pdf')},function(){printProc(P)})}
 document.addEventListener('input',function(e){var t=e.target,p;if(t.dataset&&(t.dataset.pt||t.dataset.px)){p=S.proc.find(function(x){return x.id==(t.dataset.pt||t.dataset.px)});if(p){if(t.dataset.pt)p.title=t.value;else p.text=t.value;save()}}});
 function fresh(a){return a.status!=='pending'&&a.seen===false}
-function updBadge(){var n=S.appr.filter(fresh).length;document.querySelectorAll('.nav[data-v="aprovacao"]').forEach(function(b){if(n&&!CP)b.setAttribute('data-n',n);else b.removeAttribute('data-n')})}
+function updBadge(){[['aprovacao',S.appr.filter(fresh).length],['aprovacao-geral',S.apprG.filter(gfresh).length]].forEach(function(p){document.querySelectorAll('.nav[data-v="'+p[0]+'"]').forEach(function(b){if(p[1]&&!CP)b.setAttribute('data-n',p[1]);else b.removeAttribute('data-n')})})}
 var ao={},ntx={},cOpen=true,af='';
 function aoOpen(a){return ao[a.id]===undefined?a.status!=='approved':ao[a.id]}
 function fname(t){return String(t||'peca').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/gi,'-').replace(/^-+|-+$/g,'').toLowerCase()||'peca'}
@@ -528,12 +549,12 @@ function renderAppr(){var box=$('#appr');$('#logout').style.display=sess?'':'non
  '<textarea id="aD" placeholder="Texto / legenda da peça">'+esc(dr.desc)+'</textarea><div class="er" id="aE"></div><div class="act"><span></span><div>'+(dr.edit?'<button class="btn" data-cancelap>Cancelar</button>':'')+'<button class="btn p" data-addap>'+(dr.edit?'Salvar e reenviar':'Enviar para aprovação')+'</button></div></div>'+(cO?'</div>':'')+'</div>'+
  fbar+sec('Respostas novas dos clientes',n1)+sec('Aguardando resposta do cliente',n2)+sec('Histórico',n3)+
  '<div class="card pbox"><h3>Senha do administrador</h3><input id="aPw" type="password" placeholder="Nova senha"><button class="btn" data-sp>Salvar senha</button> <span class="sub" id="aPm"></span></div>'}
-function doLogin(){var u=$('#lgU').value.trim().toLowerCase(),p=$('#lgP').value,er=function(m){$('#lgE').textContent=m};
- if(CP){var c=S.clients.find(function(x){return x.login.toLowerCase()===u});if(c&&c.pass&&c.pass===p){sess={role:'cli',client:c.name};sSave();return renderAppr()}return er('Login ou senha incorretos.')}
- if(u===S.admin.login){if(!S.admin.pass){if(!p)return er('Digite a senha que deseja criar.');S.admin.pass=p;save()}if(p===S.admin.pass){sess={role:'adm'};sSave();return renderAppr()}}
+function doLogin(px){px=px||'';var u=$(px?'#agU':'#lgU').value.trim().toLowerCase(),p=$(px?'#agP':'#lgP').value,er=function(m){$(px?'#agE':'#lgE').textContent=m};
+ if(CP){var c=S.clients.find(function(x){return x.login.toLowerCase()===u});if(c&&c.pass&&c.pass===p){sess={role:'cli',client:c.name};sSave();return (renderAppr(),agRender())}return er('Login ou senha incorretos.')}
+ if(u===S.admin.login){if(!S.admin.pass){if(!p)return er('Digite a senha que deseja criar.');S.admin.pass=p;save()}if(p===S.admin.pass){sess={role:'adm'};sSave();return (renderAppr(),agRender())}}
  er('Login ou senha incorretos.')}
-document.addEventListener('keydown',function(e){if(e.key==='Enter'&&(e.target.id==='lgU'||e.target.id==='lgP')){e.preventDefault();doLogin()}});
-function readImg(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.8))};im.onerror=function(){cb('')};im.src=r.result};r.onerror=function(){cb('')};r.readAsDataURL(f)}
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&/^(lgU|lgP|agU|agP)$/.test(e.target.id||'')){e.preventDefault();doLogin(e.target.id.indexOf('ag')===0?'ag':'')}});
+function readImg(f,cb,mx,q){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,(mx||1200)/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',q||.8))};im.onerror=function(){cb('')};im.src=r.result};r.onerror=function(){cb('')};r.readAsDataURL(f)}
 document.addEventListener('input',function(e){if(e.target.id==='aT')dr.title=e.target.value;if(e.target.id==='aD')dr.desc=e.target.value});
 document.addEventListener('change',function(e){var t=e.target;if(t.id==='aC')dr.client=t.value;if(t.id==='aF'&&t.files&&t.files[0])readImg(t.files[0],function(d){if(!d){$('#aE').textContent='Não foi possível ler essa imagem.';return}dr.img=d;renderAppr()})});
 document.addEventListener('click',function(e){if(e.target.classList&&e.target.classList.contains('pimg')&&e.target.style.cursor!=='default')e.target.classList.toggle('big')});
@@ -696,6 +717,125 @@ window.addEventListener('focus',pull);
  document.addEventListener('click',function(e){if(Date.now()<block&&e.target.closest&&e.target.closest('#dseg')){e.stopPropagation();e.preventDefault()}},true);
  document.addEventListener('contextmenu',function(e){if((el||drag)&&e.target.closest&&e.target.closest('#dseg'))e.preventDefault()});
 })();
+/* ===== Aprovação geral: mosaico do feed ===== */
+var gdr={client:'',items:[]},gaf=null,gcur=null,ged=null,gedImg='',gedD='',gedC='',gOpenF=false,gnt={},gbusy='',gMsg='';
+function gFind(id){return S.apprG.find(function(x){return x.id==id})}
+function gfresh(a){return a.status!=='pending'&&a.seen===false}
+function gSort(l){return l.slice().sort(function(x,y){return (y.pdate||'9999-99-99').localeCompare(x.pdate||'9999-99-99')||x.id-y.id})}
+function gVisible(){if(!sess)return [];
+ if(sess.role==='cli')return gSort(S.apprG.filter(function(a){return a.client===sess.client}));
+ return gSort(S.apprG.filter(function(a){return !gaf||a.client===gaf}))}
+function gStats(l){var s={n:l.length,p:0,a:0,c:0,f:0};l.forEach(function(a){if(a.status==='approved')s.a++;else if(a.status==='changes')s.c++;else s.p++;if(gfresh(a))s.f++});return s}
+function gSet(box,html){if(box._h===html)return;box._h=html;box.innerHTML=html}
+function gTile(a,adm){
+ var bd=a.status==='approved'?'<span class="feed-check" title="Aprovado">✓</span>':a.status==='changes'?'<span class="feed-check chg" title="Com consideração">✎</span>':'';
+ return '<button class="feed-tile" data-gopen="'+a.id+'" aria-label="Abrir post'+(a.pdate?' de '+fmt(a.pdate):'')+'">'+(a.img?'<img src="'+a.img+'" alt="" loading="lazy" draggable="false">':'<div class="feed-placeholder">'+esc((a.desc||'').slice(0,80))+'</div>')+bd+(adm&&gfresh(a)?'<span class="feed-new" title="Resposta nova do cliente"></span>':'')+(a.pdate?'<span class="feed-order">'+fmt(a.pdate).slice(0,5)+'</span>':'')+'</button>'}
+function gProfile(name,st){
+ return '<div class="feed-prof"><div class="feed-av">'+esc((name||'?').charAt(0).toUpperCase())+'</div><div style="min-width:0"><strong style="font-size:18px">'+esc(name)+'</strong>'+
+ '<div class="feed-stats"><span><b>'+st.n+'</b>posts</span><span><b>'+st.a+'</b>aprovados</span><span><b>'+st.p+'</b>aguardando</span>'+(st.c?'<span><b>'+st.c+'</b>com consideração</span>':'')+'</div></div></div>'}
+function gFeed(l,adm){
+ if(!l.length)return '<div class="card pbox feed-wrap" style="text-align:center">'+(adm?'Nenhum post ainda. Clique em “+ Adicionar posts”.':'Nada para aprovar por enquanto.')+'</div>';
+ return '<div class="feed-wrap"><div class="feed-grid">'+l.map(function(a){return gTile(a,adm)}).join('')+'</div></div>'}
+function agRender(){
+ var box=$('#agpr');if(!box)return;
+ $('#agLogout').style.display=sess?'':'none';$('#agH').textContent=CP?'Área do cliente':'Aprovação geral';updBadge();
+ if(!sess){$('#agSub').textContent=CP?'Entre com o login e a senha que você recebeu.':'Entre como administrador para enviar posts e acompanhar as respostas.';
+  return gSet(box,'<div class="card lg"><h3>Entrar</h3><input id="agU" placeholder="Login'+(CP?' (ex.: gg_nomedocliente)':'')+'" autocomplete="off"><input id="agP" type="password" placeholder="Senha"><button class="btn p" data-aglg>Entrar</button><div class="er" id="agE"></div>'+(!CP&&!S.admin.pass?'<div class="sub">Primeiro acesso do administrador ('+esc(S.admin.login)+'): a senha digitada agora será criada.</div>':'')+'</div>')}
+ if(sess.role==='cli'){var mine=gVisible(),st=gStats(mine);
+  $('#agSub').textContent='Olá, '+sess.client+'. '+(st.p?'Você tem '+st.p+' post(s) aguardando sua resposta. Toque em um post para ver, baixar, aprovar ou comentar.':'Nenhum post aguardando sua resposta.');
+  return gSet(box,gProfile(sess.client,st)+gFeed(mine,false))}
+ $('#agSub').textContent='Administrador · suba os posts e acompanhe as respostas no mosaico.';
+ if(gaf&&!S.clients.some(function(c){return c.name===gaf}))gaf='';
+ if(gaf===null){var f=S.clients.find(function(c){return S.apprG.some(function(a){return a.client===c.name})});gaf=f?f.name:''}
+ if(!gdr.client||!S.clients.some(function(c){return c.name===gdr.client}))gdr.client=gaf||(S.clients.length?S.clients[0].name:'');
+ var L=gVisible(),st2=gStats(L),
+ tools='<div class="feed-tools"><button class="btn p" data-gtog>'+(gOpenF?'Fechar envio':'+ Adicionar posts')+'</button><button class="btn" data-gcl>Copiar link do cliente</button><span class="sub" id="agClM"></span></div>',
+ form='';
+ if(gOpenF){
+  form='<div class="card pbox"><h3>Novos posts para aprovação</h3>'+
+  (S.clients.length?'<label style="display:block;margin-bottom:10px">Cliente<select id="gC" style="width:100%">'+S.clients.map(function(c){return '<option value="'+esc(c.name)+'"'+(c.name===gdr.client?' selected':'')+'>'+esc(c.name)+(c.pass?'':' (sem senha)')+'</option>'}).join('')+'</select></label>':'<div class="sub" style="margin-bottom:10px">Cadastre um cliente na aba Clientes primeiro.</div>')+
+  '<label style="display:block;margin-bottom:10px">Imagens dos posts (pode escolher várias de uma vez)<input type="file" id="gF" accept="image/*" multiple></label>'+
+  (gbusy?'<div class="sub" style="margin-bottom:10px">'+esc(gbusy)+'</div>':'')+
+  gdr.items.map(function(it,i){return '<div class="gdraft"><img src="'+it.img+'" alt=""><div><label class="sub">Data de publicação<input type="date" data-gdd="'+i+'" value="'+esc(it.pdate||'')+'"></label><textarea data-gdc="'+i+'" placeholder="Legenda do post">'+esc(it.desc||'')+'</textarea></div><button class="btn d" data-gdrm="'+i+'" title="Remover da lista">✕</button></div>'}).join('')+
+  '<div class="er" id="gE">'+esc(gMsg)+'</div><div class="act"><span class="sub">'+gdr.items.length+' post(s) na lista</span><div><button class="btn" data-gtog>Cancelar</button><button class="btn p" data-gadd'+(gbusy?' disabled':'')+'>Enviar para aprovação</button></div></div></div>'}
+ var fbar=S.apprG.length?'<div class="card pbox" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between"><div class="tfb"><span class="sub">Cliente:</span><button class="tgf'+(!gaf?' on':'')+'" data-gaf="" style="--c:var(--pri);--ink:var(--ondark)">Todos</button>'+S.clients.map(function(c){return '<button class="tgf'+(gaf===c.name?' on':'')+'" data-gaf="'+esc(c.name)+'" style="--c:var(--pri);--ink:var(--ondark)">'+esc(c.name)+'</button>'}).join('')+'</div>'+(L.length?'<button class="btn d" data-gdall>'+(gaf?'Apagar todos de '+esc(gaf):'Apagar todos os posts')+' ('+L.length+')</button>':'')+'</div>':'';
+ gSet(box,tools+form+fbar+(st2.f?'<div class="card pbox" style="border-left:5px solid #dc2626"><strong>'+st2.f+' resposta(s) nova(s) do cliente</strong> <span class="sub">· marcadas com ponto vermelho no mosaico</span></div>':'')+gProfile(gaf||'Todos os clientes',st2)+gFeed(L,true))}
+function gOpenModal(id){var a=gFind(id);if(!a)return;gcur=a.id;ged=null;gedImg='';
+ if(sess&&sess.role==='adm'&&gfresh(a)){a.seen=true;save();agRender()}
+ agDetailRender();$('#agModal').classList.add('show')}
+function gClose(){gcur=null;ged=null;gedImg='';$('#agModal').classList.remove('show');$('#agDetail').innerHTML='';try{if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}catch(x){}}
+function gStep(n){var l=gVisible(),i=l.findIndex(function(a){return a.id==gcur});if(l[i+n])gOpenModal(l[i+n].id)}
+function agDetailRender(){
+ var a=gcur&&gFind(gcur),box=$('#agDetail');if(!a||!sess){gClose();return}
+ var adm=sess.role==='adm',l=gVisible(),i=l.findIndex(function(x){return x.id===a.id}),
+ lbl={pending:'Aguardando aprovação',approved:'Aprovado ✓',changes:'Com consideração'}[a.status]||'',
+ left='<div class="feed-pic">'+(a.img?'<img src="'+a.img+'" alt="">':'')+'<div class="feed-nav"><button class="btn" data-gprev'+(i>0?'':' disabled')+'>‹ Anterior</button><span class="sub">'+(i+1)+' de '+l.length+'</span><button class="btn" data-gnext'+(i<l.length-1?'':' disabled')+'>Próximo ›</button></div></div>',
+ head='<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:6px"><div><span class="pill '+a.status+'">'+lbl+'</span>'+(adm?'<div class="sub" style="margin-top:6px">'+esc(a.client)+'</div>':'')+'</div><button class="btn" data-gclose aria-label="Fechar">✕</button></div>',
+ info;
+ if(adm&&ged===a.id){
+  info=head+'<h3 style="margin:8px 0">Editar post</h3><label class="sub" style="display:block;margin-bottom:10px">Data de publicação<input type="date" id="gEd" value="'+esc(gedD)+'" style="width:100%"></label><textarea id="gEc" placeholder="Legenda do post">'+esc(gedC)+'</textarea><label class="sub" style="display:block;margin:10px 0">Trocar imagem (opcional)<input type="file" id="gFe" accept="image/*" style="width:100%"></label>'+(gedImg?'<div class="sub">✓ Nova imagem selecionada</div>':'')+'<div class="sub" style="margin-top:8px">Ao salvar, o post volta para aprovação do cliente.</div><div class="act"><button class="btn" data-gecancel>Cancelar</button><button class="btn p" data-gesave>Salvar e reenviar</button></div>'}
+ else{
+  info=head+'<div class="feed-date">📅 '+(a.pdate?'Publicação: '+fmt(a.pdate):'Sem data de publicação')+'</div>'+
+  (a.desc?'<div class="feed-cap">'+esc(a.desc)+'</div>':'<div class="sub" style="margin:8px 0">Sem legenda.</div>')+
+  '<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">'+(a.img?'<button class="btn" data-gdl>⬇ Baixar imagem</button>':'')+(a.desc?'<button class="btn" data-gdlt>⬇ Baixar legenda</button>':'')+'</div>'+
+  (a.note?'<div class="note"><b>'+(adm?'Retorno do cliente':'Seu comentário')+':</b><br>'+esc(a.note)+'</div>':'');
+  if(adm)info+='<div class="act" style="flex-wrap:wrap"><span></span><div style="flex-wrap:wrap">'+(a.status!=='pending'?'<button class="btn" data-grs>Reabrir</button>':'')+'<button class="btn" data-gedit>Editar</button><button class="btn d" data-gdel>Excluir</button></div></div>';
+  else if(a.status==='pending')info+='<textarea id="gn-'+a.id+'" placeholder="Comentário ou consideração (obrigatório para pedir ajuste)" style="min-height:90px;margin-top:6px">'+esc(gnt[a.id]||'')+'</textarea><div class="er" id="gne"></div><div class="act" style="flex-wrap:wrap"><span></span><div style="flex-wrap:wrap"><button class="btn" data-gch>Enviar consideração</button><button class="btn p" data-gap>Aprovar</button></div></div>';
+  else if(a.status==='changes')info+='<div class="sub">Sua consideração foi enviada. Aguarde a nova versão.</div>';
+  else info+='<div class="sub">Você aprovou este post. Obrigado!</div>'}
+ box.innerHTML='<div class="feed-detail">'+left+'<div class="feed-info">'+info+'</div></div>'}
+function gReadFiles(files,done){var arr=Array.prototype.slice.call(files),i=0,bad=0;
+ (function next(){if(i>=arr.length){gbusy='';if(bad)gMsg=bad+' arquivo(s) não puderam ser lidos como imagem.';return done()}
+  gbusy='Processando imagem '+(i+1)+' de '+arr.length+'…';if(i===0)agRender();
+  readImg(arr[i++],function(d){if(d)gdr.items.push({img:d,desc:'',pdate:''});else bad++;setTimeout(next,0)},1080,.72)})()}
+function gToast(m){var e=$('#agClM');if(e)e.textContent=m}
+function agClick(b){var d=b.dataset,x=gcur?gFind(gcur):null,adm=sess&&sess.role==='adm',cli=sess&&sess.role==='cli';
+ if(d.gopen!==undefined){gOpenModal(d.gopen);return true}
+ if(d.gclose!==undefined){gClose();return true}
+ if(d.gprev!==undefined){gStep(-1);return true}
+ if(d.gnext!==undefined){gStep(1);return true}
+ if(d.aglg!==undefined){doLogin('ag');return true}
+ if(b.id==='agLogout'){sess=null;sSave();gClose();renderAppr();agRender();return true}
+ if(d.gtog!==undefined){gOpenF=!gOpenF;gMsg='';agRender();return true}
+ if(d.gaf!==undefined){gaf=d.gaf;agRender();return true}
+ if(d.gcl!==undefined){var u=location.href.split('#')[0]+'#cliente',ok=false,t=document.createElement('input');t.value=u;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{ok=document.execCommand('copy')}catch(z){}t.remove();
+  if(!ok&&navigator.clipboard){navigator.clipboard.writeText(u).then(function(){gToast('Link copiado!')},function(){gToast(u)});return true}gToast(ok?'Link copiado!':u);return true}
+ if(d.gdrm!==undefined){gdr.items.splice(+d.gdrm,1);agRender();return true}
+ if(d.gadd!==undefined){var c=$('#gC')?$('#gC').value:gdr.client,er=function(m){gMsg=m;$('#gE').textContent=m;$('#agpr')._h='';return true};
+  if(!c)return er('Cadastre e escolha um cliente.');
+  if(!gdr.items.length)return er('Escolha pelo menos uma imagem.');
+  var n=gdr.items.length;gdr.items.forEach(function(it){S.apprG.push({id:S.n++,client:c,img:it.img,desc:it.desc||'',pdate:it.pdate||'',status:'pending',note:'',date:iso(T0()),resp:'',seen:true})});
+  gaf=c;gdr={client:c,items:[]};gOpenF=false;gMsg='';save();agRender();return true}
+ if(d.gdall!==undefined){var vis=S.apprG.filter(function(y){return !gaf||y.client===gaf});if(!vis.length)return true;
+  if(!confirm('Apagar '+vis.length+' post(s)'+(gaf?' de '+gaf:'')+'? Essa ação não pode ser desfeita.'))return true;
+  var ids={};vis.forEach(function(y){ids[y.id]=1});S.apprG=S.apprG.filter(function(y){return !ids[y.id]});save();agRender();return true}
+ if(!x)return false;
+ if(d.gdl!==undefined){if(x.img)dlFile(x.img,fname(x.client+'-'+(x.pdate||x.id))+'.jpg');return true}
+ if(d.gdlt!==undefined){var url=URL.createObjectURL(new Blob([x.desc||''],{type:'text/plain;charset=utf-8'}));dlFile(url,fname(x.client+'-'+(x.pdate||x.id))+'-legenda.txt');setTimeout(function(){URL.revokeObjectURL(url)},4000);return true}
+ if(d.gap!==undefined&&cli&&x.client===sess.client&&x.status==='pending'){var tx=$('#gn-'+x.id);x.status='approved';x.note=(tx?tx.value:'').trim();delete gnt[x.id];x.resp=iso(T0());x.seen=false;save();agRender();agDetailRender();return true}
+ if(d.gch!==undefined&&cli&&x.client===sess.client&&x.status==='pending'){var tx2=$('#gn-'+x.id),nt=(tx2?tx2.value:'').trim();if(!nt){$('#gne').textContent='Escreva sua consideração para o administrador.';return true}x.status='changes';x.note=nt;delete gnt[x.id];x.resp=iso(T0());x.seen=false;save();agRender();agDetailRender();return true}
+ if(!adm)return d.gedit!==undefined||d.gdel!==undefined||d.grs!==undefined;
+ if(d.grs!==undefined){x.status='pending';x.note='';x.resp='';x.seen=true;save();agRender();agDetailRender();return true}
+ if(d.gedit!==undefined){ged=x.id;gedImg='';gedD=x.pdate||'';gedC=x.desc||'';agDetailRender();return true}
+ if(d.gecancel!==undefined){ged=null;gedImg='';agDetailRender();return true}
+ if(d.gesave!==undefined){x.pdate=($('#gEd')?$('#gEd').value:gedD)||'';x.desc=$('#gEc')?$('#gEc').value:gedC;if(gedImg)x.img=gedImg;x.status='pending';x.note='';x.resp='';x.seen=true;ged=null;gedImg='';save();agRender();agDetailRender();return true}
+ if(d.gdel!==undefined){if(!confirm('Excluir este post?'))return true;S.apprG=S.apprG.filter(function(y){return y.id!==x.id});gClose();save();agRender();return true}
+ return false}
+document.addEventListener('input',function(e){var t=e.target,ds=t.dataset||{};
+ if(ds.gdd!==undefined&&gdr.items[ds.gdd])gdr.items[ds.gdd].pdate=t.value;
+ if(ds.gdc!==undefined&&gdr.items[ds.gdc])gdr.items[ds.gdc].desc=t.value;
+ if(t.id==='gEd')gedD=t.value;if(t.id==='gEc')gedC=t.value;
+ if(t.tagName==='TEXTAREA'&&t.id&&t.id.indexOf('gn-')===0)gnt[t.id.slice(3)]=t.value});
+document.addEventListener('change',function(e){var t=e.target;
+ if(t.id==='gC')gdr.client=t.value;
+ if(t.id==='gF'&&t.files&&t.files.length){gMsg='';var fl=t.files;gReadFiles(fl,function(){agRender()})}
+ if(t.id==='gFe'&&t.files&&t.files[0])readImg(t.files[0],function(d){if(d){gedImg=d;agDetailRender()}},1080,.72)});
+$('#agModal').addEventListener('click',function(e){if(e.target===this)gClose()});
+document.addEventListener('keydown',function(e){if(!$('#agModal').classList.contains('show'))return;var tg=e.target.tagName;
+ if(e.key==='Escape'){gClose();return}
+ if(tg==='TEXTAREA'||tg==='INPUT')return;
+ if(e.key==='ArrowLeft'){gStep(-1)}else if(e.key==='ArrowRight'){gStep(1)}});
+$('#agLink').href=location.href.split('#')[0]+'#cliente';
 render();if(CP)view('aprovacao-geral');
 }
 </script>
