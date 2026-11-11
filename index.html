@@ -239,6 +239,7 @@ body.cp #agLink{display:none!important}
 <section class="sec" id="v-clientes">
  <div class="top"><div><h1>Clientes</h1><div class="sub">Gerencie o acesso (login e senha) e cadastre novos clientes.</div></div><button class="btn p" id="newCli">+ Novo cliente</button></div>
  <div class="card" id="clist"></div>
+ <div class="card pbox" style="margin-top:14px;max-width:520px"><h3>Senha do administrador</h3><div class="sub" style="margin-bottom:10px">Login: <b id="admLg"></b></div><form id="admPwF" autocomplete="off"><input id="cPw" type="password" placeholder="Nova senha" autocomplete="new-password" required><input id="cPw2" type="password" placeholder="Repita a nova senha" autocomplete="new-password" required><button class="btn p">Salvar senha</button> <span class="sub" id="cPm"></span></form></div>
 </section>
 <section class="sec" id="v-tagsdem">
  <div class="top"><div><h1>Demandas com tags</h1><div class="sub">Só aparecem as demandas que têm pelo menos uma tag.</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-v="dashboard">← Visão geral</button><button class="btn p" data-new>+ Nova demanda</button></div></div>
@@ -391,6 +392,7 @@ function render(){
  $('#cl').innerHTML=cls.map(function(c){return '<option value="'+esc(c)+'">'}).join('');
  $('#dseg').innerHTML=['Todos'].concat(cls).map(function(c){return '<button data-df="'+esc(c)+'"'+(c!=='Todos'?' data-cord="1" draggable="'+(COARSE?'false':'true')+'"':'')+' class="'+(c===df?'on':'')+'">'+esc(c)+'</button>'}).join('');
  $('#clist').innerHTML=S.clients.map(function(c){var n=T.filter(function(t){return t.client===c.name}).length;return '<div class="row"><div><strong>'+esc(c.name)+'</strong><div class="sub">Login: '+esc(c.login)+' · '+(c.pass?'senha definida':'sem senha')+' · '+n+' demanda(s)</div></div><button class="ghost" style="display:inline-flex" data-ec="'+c.id+'">Gerir acesso</button></div>'}).join('')||'<div class="sub">Nenhum cliente cadastrado. Clique em + Novo cliente.</div>';
+ $('#admLg').textContent=S.admin.login;
  $('#recs').innerHTML=S.recs.map(function(r){return '<div class="row"><div><strong>'+esc(r.title)+'</strong><div class="sub">'+esc(r.client)+' · '+esc(r.freq)+' · próxima: '+fmt(r.date)+'</div></div><button class="btn d" data-delrec="'+r.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma recorrência cadastrada.</div>';
  var gs=[['Atrasadas',function(d){return d<0}],['Hoje',function(d){return d===0}],['Próximos 2 dias',function(d){return d>=1&&d<=2}],['Mais tarde',function(d){return d>2}]];
  $('#due').innerHTML=gs.map(function(g){var l=open.filter(function(t){return g[1](diff(t.date))}).sort(byDate);return l.length?'<div class="card" style="margin-bottom:14px"><h3>'+g[0]+' ('+l.length+')</h3>'+l.map(function(t){return '<div class="row task-open" data-id="'+t.id+'" style="cursor:pointer"><div><strong>'+esc(t.title)+'</strong><div class="sub">'+esc(t.client)+'</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span class="'+dueLbl(t)[1]+'">'+fmt(t.date)+'</span><span class="dd" style="margin:0"><button data-d="1">+1 dia</button><button data-d="3">+3 dias</button></span></div></div>'}).join('')+'</div>':''}).join('')||'<div class="card">Nenhum vencimento pendente.</div>';
@@ -446,6 +448,10 @@ $('#f1').addEventListener('submit',function(e){e.preventDefault();var d={title:$
  save();$('#m1').classList.remove('show');render()});
 $('#m1').addEventListener('keydown',function(e){if(e.key!=='Enter'||e.isComposing||e.shiftKey)return;var t=e.target,g=t.tagName;if(g==='TEXTAREA'){if(!(e.ctrlKey||e.metaKey))return}else if(g!=='INPUT'&&g!=='SELECT')return;e.preventDefault();var f=$('#f1');if(f.requestSubmit)f.requestSubmit();else f.dispatchEvent(new Event('submit',{cancelable:true}))});
 $('#del').onclick=function(){if(!confirm('Excluir esta demanda?'))return;S.tasks=S.tasks.filter(function(x){return x.id!==editing});save();$('#m1').classList.remove('show');render()};
+$('#admPwF').addEventListener('submit',function(e){e.preventDefault();var a=$('#cPw').value,b=$('#cPw2').value,m=$('#cPm');
+ if(a!==b){m.style.color='#dc2626';m.textContent='As senhas não são iguais.';return}
+ if(a.length<3){m.style.color='#dc2626';m.textContent='Use pelo menos 3 caracteres.';return}
+ S.admin.pass=a;save();$('#cPw').value=$('#cPw2').value='';m.style.color='#16a34a';m.textContent='Senha do administrador atualizada.';setTimeout(function(){m.textContent=''},4000)});
 $('#newRec').onclick=function(){$('#f2').reset();$('#rD').value=add(iso(T0()),1);$('#m2').classList.add('show')};
 $('#f2').addEventListener('submit',function(e){e.preventDefault();S.recs.push({id:S.n++,client:$('#rC').value.trim(),title:$('#rT').value.trim(),freq:$('#rF').value,date:$('#rD').value});save();$('#m2').classList.remove('show');runRecs();render()});
 $('#dq').addEventListener('input',function(){dq=this.value.toLowerCase();render()});
