@@ -217,6 +217,465 @@ textarea{border-radius:16px}
 body.cp #agLink{display:none!important}
 @media(max-width:650px){.feed-grid{gap:3px}.gdraft{grid-template-columns:64px minmax(0,1fr)}.gdraft img{width:64px;height:86px}.gdraft>.btn{grid-column:2;justify-self:start}.feed-detail{grid-template-columns:1fr}.feed-detail img{max-height:48vh}}
 
+
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:12px}
+.pal button{border:2px solid var(--line);background:var(--card);border-radius:16px;padding:10px;text-align:left;font-weight:700;color:var(--text)}
+.pal button.on{border-color:var(--pri)}
+.pal i{display:block;height:34px;border-radius:10px;margin-bottom:8px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:12px}
+.cgrid label{flex-direction:row;align-items:center;justify-content:space-between;gap:10px;background:var(--col);border-radius:14px;padding:10px 12px;font-size:13px;color:var(--text)}
+.cgrid input[type=color]{width:46px;height:36px;padding:2px;flex:none}
+.cprev{height:70px;border-radius:18px;margin-top:14px;display:grid;place-items:center;color:#fff;font-weight:800}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+#crmRoot *{box-sizing:border-box}
+#crmRoot{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--text)}
+#crmRoot button,#crmRoot input,#crmRoot select,#crmRoot textarea{font:inherit}
+#crmRoot button{cursor:pointer;border:0;border-radius:10px;padding:11px 16px;font-weight:700}
+#crmRoot .primary{background:var(--green);color:white}
+#crmRoot .secondary{background:var(--act);color:var(--dark)}
+#crmRoot .danger{background:#fff0f0;color:var(--red)}
+#crmRoot .small{padding:7px 10px;font-size:12px}
+#crmRoot #loginView{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#123c2e,#08784d)}
+#crmRoot .login-card{background:var(--card);padding:34px;border-radius:20px;width:min(420px,100%);box-shadow:0 20px 60px #0003}
+#crmRoot .crm-brand{font-size:13px;letter-spacing:2px;color:var(--green);font-weight:800}
+#crmRoot .login-card h1{margin:10px 0 6px}
+#crmRoot .muted{color:var(--muted);font-size:13px}
+#crmRoot .field{display:flex;flex-direction:column;gap:7px;margin:14px 0}
+#crmRoot .field label,#crmRoot .group-label{font-weight:700;font-size:13px}
+#crmRoot .field input,#crmRoot .field select,#crmRoot .field textarea,#crmRoot .crm-search{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--card);min-width:0;width:100%;outline:none}
+#crmRoot .field input:focus,#crmRoot .field select:focus,#crmRoot .field textarea:focus{border-color:var(--green)}
+#crmRoot .error{color:var(--red);font-size:13px;min-height:18px}
+#crmRoot #appView{display:none}
+#crmRoot .topbar{background:var(--card);border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+#crmRoot .topbar strong{color:var(--green);letter-spacing:1px}
+#crmRoot .wrap{max-width:1180px;margin:26px auto;padding:0 18px}
+#crmRoot .heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#crmRoot .heading h1{margin:0 0 5px;font-size:26px}
+#crmRoot .actions{display:flex;gap:8px;flex-wrap:wrap}
+#crmRoot .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:22px 0}
+#crmRoot .stat,#crmRoot .panel,#crmRoot .form-card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:18px}
+#crmRoot .stat span{font-size:12px;color:var(--muted)}
+#crmRoot .stat b{display:block;font-size:27px;margin-top:7px}
+#crmRoot .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+#crmRoot .toolbar .crm-search{max-width:330px}
+#crmRoot .toolbar select{padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+#crmRoot .table-wrap{overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:15px}
+#crmRoot table{width:100%;border-collapse:collapse;min-width:780px}
+#crmRoot th,#crmRoot td{text-align:left;padding:13px 14px;border-bottom:1px solid var(--line);font-size:13px}
+#crmRoot th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);background:var(--col)}
+#crmRoot tr:last-child td{border-bottom:0}
+#crmRoot .tag{display:inline-block;border-radius:30px;padding:5px 9px;font-size:11px;font-weight:800;background:var(--col);color:#53635a}
+#crmRoot .tag.green{background:var(--act);color:#08733f}
+#crmRoot .tag.orange{background:#fff1d6;color:#916000}
+#crmRoot .tag.red{background:#ffe5e5;color:#a83232}
+#crmRoot .empty{text-align:center;padding:35px;color:var(--muted)}
+#crmRoot .hidden{display:none!important}
+#crmRoot .form-page{max-width:680px;margin:30px auto;padding:0 16px}
+#crmRoot .form-card{padding:26px}
+#crmRoot .form-card h1{margin:5px 0}
+#crmRoot .form-card .intro{color:var(--muted);font-size:14px;line-height:1.5;margin-bottom:22px}
+#crmRoot .two{display:grid;grid-template-columns:110px 1fr;gap:10px}
+#crmRoot .choices{display:flex;gap:9px;flex-wrap:wrap;margin-top:8px}
+#crmRoot .choice{display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;background:var(--card)}
+#crmRoot .choice:has(input:checked){border-color:var(--green);background:var(--act)}
+#crmRoot .choice input{accent-color:var(--green)}
+#crmRoot .section{padding:14px 0;border-top:1px solid var(--line)}
+#crmRoot .section:first-of-type{border-top:0}
+#crmRoot .section .field{margin:10px 0}
+#crmRoot .hint{font-size:12px;color:var(--muted);margin-top:5px}
+#crmRoot .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#crmRoot .detail{background:var(--col);padding:12px;border-radius:10px}
+#crmRoot .detail small{display:block;color:var(--muted);margin-bottom:5px}
+#crmRoot .detail b{font-size:14px;overflow-wrap:anywhere}
+#crmRoot .modal-bg{position:fixed;inset:0;background:#10251dcc;display:grid;place-items:center;padding:16px;z-index:10}
+#crmRoot .crm-modal{background:var(--card);border-radius:16px;width:min(700px,100%);max-height:90vh;overflow:auto;padding:22px}
+#crmRoot .modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+#crmRoot .crm-modal h2{margin:0}
+#crmRoot .close{background:var(--col);padding:7px 11px}
+#crmRoot .message{white-space:pre-wrap;background:var(--col);padding:14px;border-radius:10px;font-size:13px;line-height:1.5}
+#crmRoot .footer-note{text-align:center;color:var(--muted);font-size:11px;margin:18px}
+@media(max-width:720px){#crmRoot .stats{grid-template-columns:repeat(2,1fr)}
+#crmRoot .topbar{padding:12px 15px}
+#crmRoot .wrap{margin:18px auto}
+#crmRoot .detail-grid{grid-template-columns:1fr}
+#crmRoot .form-card{padding:19px}}
+#crmRoot #loginView,#crmRoot .form-page{background:radial-gradient(ellipse at 8% 0%,#356c2a 0%,transparent 45%),#101810}
+#crmRoot #loginView .login-card{border:1px solid var(--line);border-radius:26px}
+#crmRoot #loginView .primary,#crmRoot .form-page .primary{border-radius:999px;background:#a9fa89;color:#142511;box-shadow:0 4px 18px #67dc5550;min-height:46px}
+#crmRoot #loginView .primary:hover,#crmRoot .form-page .primary:hover{background:#bdffa4}
+#crmRoot .form-page{max-width:860px;padding:clamp(14px,4vw,34px);border-radius:30px;color:#f4fff1;overflow:hidden}
+#crmRoot .form-hero{position:relative;isolation:isolate;overflow:hidden;padding:clamp(20px,5vw,48px) clamp(10px,4vw,30px)}
+#crmRoot .form-hero::after{content:'';position:absolute;z-index:-1;width:330px;height:330px;right:-65px;top:-130px;border:1px dashed #83d46a66;border-radius:50%;box-shadow:0 0 0 28px #8af0710c,0 0 0 60px #8af07109,inset 0 0 95px #75e45544}
+#crmRoot .form-hero .crm-brand{display:inline-block;background:#a9fa89;color:#142511;border-radius:999px;padding:8px 15px;font-size:11px}
+#crmRoot .form-hero h1{font-size:clamp(32px,6vw,60px);letter-spacing:-.045em;line-height:1.04;margin:18px 0 12px}
+#crmRoot .form-hero em{font-style:normal;color:#a9fa89}
+#crmRoot .form-hero p{max-width:420px;color:#d4e5d0;line-height:1.55;margin:0}
+#crmRoot .form-page .form-card{color:#172518;border-radius:24px;padding:clamp(16px,4vw,36px)}
+#crmRoot .form-page .choice{background:#f1f8ee;border-radius:999px;min-height:42px;cursor:pointer}
+#crmRoot .form-page .choice:has(input:checked){background:#c8ffb6;border-color:#477b39}
+#crmRoot .form-page .footer-note{color:#c5d9bf}
+#crmRoot:has(.topbar[style*="none"]){background:#101810}
+@media(max-width:480px){#crmRoot .form-page{margin:0 auto;border-radius:20px}
+#crmRoot .two{grid-template-columns:64px minmax(0,1fr)}}
+#crmRoot .form-page.interactive-glow button,#crmRoot .form-page.interactive-glow .choice,#crmRoot .form-page.interactive-glow a{transition:box-shadow .22s ease,filter .22s ease,transform .22s ease}
+#crmRoot .form-page.interactive-glow button:not(:disabled):hover,#crmRoot .form-page.interactive-glow .choice:hover,#crmRoot .form-page.interactive-glow a:hover{box-shadow:0 0 0 2px color-mix(in srgb,var(--form-accent) 72%,white),0 0 22px 5px color-mix(in srgb,var(--form-accent) 65%,white 35%);filter:brightness(1.07);transform:translateY(-1px)}
+@media(prefers-reduced-motion:reduce){#crmRoot .form-page.interactive-glow button,#crmRoot .form-page.interactive-glow .choice,#crmRoot .form-page.interactive-glow a{transition:none}}
+#crmRoot #formEditor{width:min(900px,96vw);max-width:96vw;border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 90px #082d2440;padding:30px}
+#crmRoot #formEditor::backdrop,#crmRoot #formList::backdrop{background:#09241bb8;backdrop-filter:blur(5px)}
+#crmRoot #formEditor h2{font-size:25px;letter-spacing:-.03em}
+#crmRoot #formEditor h3{margin:28px 0 14px;padding-bottom:12px;border-bottom:1px solid var(--line);color:#123e32}
+#crmRoot #formEditor fieldset{border:1px solid var(--line);border-radius:17px;padding:20px!important;background:var(--col);position:relative}
+#crmRoot #formEditor legend{font-weight:800;color:#08724f;padding:0 10px}
+#crmRoot #formEditor fieldset label{font-size:13px;font-weight:650}
+#crmRoot #formEditor fieldset select,#crmRoot #formEditor fieldset input:not([type=checkbox]),#crmRoot #formEditor .appearance-options input,#crmRoot #formEditor .appearance-options select{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--card);max-width:100%}
+#crmRoot #formEditor fieldset p{margin:12px 0}
+#crmRoot #formEditor .field input{min-height:43px}
+#crmRoot .editor-steps{display:flex;gap:8px;flex-wrap:wrap;margin:17px 0}
+#crmRoot .editor-steps span{padding:8px 12px;border-radius:30px;background:var(--act);color:#236a4e;font-size:12px;font-weight:750}
+#crmRoot .appearance-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;background:var(--col);border:1px solid var(--line);padding:16px;border-radius:16px}
+#crmRoot .appearance-options .field{margin:0}
+#crmRoot .toggle-row{grid-column:1/-1;display:flex;align-items:center;gap:9px;font-size:13px}
+#crmRoot .toggle-row input{accent-color:var(--pri)}
+#crmRoot .appearance-preview{height:75px;border-radius:13px;margin-top:12px;display:grid;place-items:center;color:white;text-shadow:0 1px 4px #0008;font-weight:700}
+#crmRoot .public-banner{transition:filter .35s ease,box-shadow .35s ease,transform .35s ease}
+#crmRoot .glow-banner:hover{filter:brightness(1.04)}
+#crmRoot .sorting-panel{margin-bottom:15px}
+#crmRoot .sort-row{display:flex;align-items:center;gap:8px;margin:9px 0}
+#crmRoot .sort-row select{min-width:0;flex:1;border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--card)}
+#crmRoot .sort-number{display:grid;place-items:center;min-width:27px;height:27px;background:var(--act);border-radius:50%;font-size:12px;font-weight:800}
+#crmRoot .editor-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:18px 0;padding-bottom:10px}
+#crmRoot .editor-tab{background:var(--col);color:#355547}
+#crmRoot .editor-tab.active{background:var(--pri);color:white}
+#crmRoot .reply-item{padding:15px;border:1px solid var(--line);border-radius:13px;margin:10px 0}
+#crmRoot .reply-item p{white-space:pre-wrap}
+@media(max-width:650px){#crmRoot .appearance-options{grid-template-columns:1fr}
+#crmRoot .sort-row{flex-wrap:wrap}
+#crmRoot .sort-row select{flex-basis:35%}
+#crmRoot #formEditor{padding:17px}}
+#crmRoot .gradient-studio{grid-column:1/-1;display:grid;gap:13px}
+#crmRoot .gradient-presets{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+#crmRoot .gradient-preset{height:52px;border:2px solid var(--line);border-radius:12px;cursor:pointer;padding:0;min-width:0;transition:transform .15s,border-color .15s}
+#crmRoot .gradient-preset:hover{transform:translateY(-2px)}
+#crmRoot .gradient-preset.selected{border:3px solid #008f7e;box-shadow:0 0 0 2px #fff inset}
+#crmRoot .gradient-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#crmRoot .gradient-color-row{display:flex;align-items:center;gap:10px}
+#crmRoot .gradient-color-row input[type=color]{width:52px;height:44px;padding:3px;cursor:pointer;border-radius:10px}
+#crmRoot .gradient-color-row input[type=text]{min-width:0;width:100%;text-transform:uppercase}
+#crmRoot .gradient-directions{display:flex;flex-wrap:wrap;gap:7px}
+#crmRoot .gradient-direction{padding:8px 12px;border:1px solid var(--line);background:var(--card);border-radius:9px;cursor:pointer}
+#crmRoot .gradient-direction.selected{background:var(--act);border-color:#008f7e;color:#00574d}
+#crmRoot .gradient-angle-line{display:flex;gap:10px;align-items:center}
+#crmRoot .gradient-angle-line input[type=range]{flex:1;min-width:0}
+#crmRoot .gradient-angle-line input[type=number]{width:80px}
+#crmRoot .gradient-studio[hidden]{display:none!important}
+@media(max-width:550px){#crmRoot .gradient-presets{grid-template-columns:repeat(3,1fr)}
+#crmRoot .gradient-controls{grid-template-columns:1fr}}
+#crmRoot .form-page{--button-color:#00AE9D}
+#crmRoot .form-page .primary{background:var(--button-color)!important;color:#fff!important;box-shadow:none}
+#crmRoot .form-page .primary:hover{filter:brightness(1.08)}
+#crmRoot .form-page .secondary{border:1px solid var(--button-color);color:var(--button-color);background:transparent}
+#crmRoot .form-page .choice:has(input:checked){background:color-mix(in srgb,var(--button-color) 19%,white);border-color:var(--button-color)}
+#crmRoot .form-page .choice input{accent-color:var(--button-color)}
+#crmRoot.crm-dark .topbar,#crmRoot.crm-dark .stat,#crmRoot.crm-dark .panel,#crmRoot.crm-dark .form-card:not(.form-page .form-card),#crmRoot.crm-dark .table-wrap,#crmRoot.crm-dark .crm-modal,#crmRoot.crm-dark dialog,#crmRoot.crm-dark .login-card{background:#142529;color:var(--text);border-color:var(--line)}
+#crmRoot.crm-dark .topbar strong,#crmRoot.crm-dark #formEditor h3{color:var(--pri)}
+#crmRoot.crm-dark .field input,#crmRoot.crm-dark .field select,#crmRoot.crm-dark .field textarea,#crmRoot.crm-dark .crm-search,#crmRoot.crm-dark .toolbar select,#crmRoot.crm-dark .sort-row select,#crmRoot.crm-dark #formEditor fieldset input:not([type=checkbox]),#crmRoot.crm-dark #formEditor fieldset select,#crmRoot.crm-dark #formEditor .appearance-options input,#crmRoot.crm-dark #formEditor .appearance-options select{background:var(--col);color:var(--text);border-color:var(--line)}
+#crmRoot.crm-dark th{background:var(--col);color:#adc4c0}
+#crmRoot.crm-dark td{border-color:var(--line)}
+#crmRoot.crm-dark .secondary,#crmRoot.crm-dark .close,#crmRoot.crm-dark .editor-tab,#crmRoot.crm-dark .gradient-direction{background:var(--col);color:var(--text);border:1px solid var(--line)}
+#crmRoot.crm-dark .secondary:hover,#crmRoot.crm-dark .editor-tab:hover{background:var(--act)}
+#crmRoot.crm-dark .primary,#crmRoot.crm-dark .editor-tab.active{background:var(--pri);color:var(--ondark,#fff)}
+#crmRoot.crm-dark .danger{background:#4a292e;color:#ffb4b7}
+#crmRoot.crm-dark .tag{background:#2b4448;color:#d1e5e1}
+#crmRoot.crm-dark .tag.green{background:#164a3b;color:#91f4c3}
+#crmRoot.crm-dark .tag.orange{background:#503e20;color:#ffd591}
+#crmRoot.crm-dark .tag.red{background:#512a30;color:#ffb2b7}
+#crmRoot.crm-dark .detail,#crmRoot.crm-dark .message,#crmRoot.crm-dark .appearance-options,#crmRoot.crm-dark #formEditor fieldset,#crmRoot.crm-dark .reply-item{background:var(--col);color:var(--text);border-color:var(--line)}
+#crmRoot.crm-dark #formEditor legend{color:var(--pri)}
+#crmRoot.crm-dark .editor-steps span,#crmRoot.crm-dark .sort-number{background:var(--act);color:var(--text)}
+#crmRoot.crm-dark .editor-tab.active{color:var(--ondark,#fff)}
+#crmRoot.crm-dark .gradient-direction.selected{background:var(--act);color:var(--text)}
+#crmRoot.crm-dark .choice:not(.form-page .choice){background:#213a3e;color:#e8f2f0}
+#crmRoot.crm-dark .muted,#crmRoot.crm-dark .hint,#crmRoot.crm-dark .stat span{color:var(--muted)}
+#crmRoot #themeToggle{white-space:nowrap}
+#crmRoot:not(.crm-dark) #appView{background:#f5f8f8}
+#crmRoot .topbar{padding:17px clamp(18px,3vw,40px);box-shadow:0 1px 0 var(--line)}
+#crmRoot .topbar strong{font-size:14px;letter-spacing:.12em;color:#003641}
+#crmRoot .wrap{max-width:1250px;margin:34px auto}
+#crmRoot .heading h1{font-size:clamp(26px,3vw,34px);font-weight:800;letter-spacing:-.04em;color:var(--text)}
+#crmRoot #dashboard>.heading{padding:6px 0 10px}
+#crmRoot #dashboard>.heading .muted{font-size:14px}
+#crmRoot #dashboard .stats{gap:16px;margin:24px 0}
+#crmRoot #dashboard .stat{min-height:128px;border-radius:18px;padding:23px;border-color:var(--line);box-shadow:0 8px 30px #123b3910}
+#crmRoot #dashboard .stat b{font-size:34px;letter-spacing:-.045em;color:var(--text)}
+#crmRoot #dashboard .stat span{font-weight:600}
+#crmRoot #dashboard .panel{border-radius:17px}
+#crmRoot #dashboard .table-wrap{border-radius:17px;box-shadow:0 10px 35px #123b390b}
+#crmRoot #dashboard th{background:var(--col);color:#627a7d;padding:17px 15px}
+#crmRoot #dashboard td{padding:17px 15px}
+#crmRoot #dashboard tbody tr:hover{background:#f7fbfa}
+#crmRoot #dashboard .toolbar{gap:12px}
+#crmRoot #dashboard .toolbar .crm-search{max-width:430px}
+#crmRoot button,#crmRoot .form-open-link{transition:background .2s ease,border-color .2s ease,transform .2s ease}
+#crmRoot button:hover{filter:brightness(.98)}
+#crmRoot #formList{width:min(860px,calc(100vw - 32px));max-width:860px;max-height:88vh;border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:0 28px 90px #102e3040}
+#crmRoot #formList h2{margin:0 0 8px;font-size:27px;letter-spacing:-.035em}
+#crmRoot #formList .hint{margin:0;line-height:1.6}
+#crmRoot #formList .editor-tabs{margin:24px 0 20px}
+#crmRoot #formList>.actions{border-top:1px solid var(--line);padding-top:20px;margin-top:22px;justify-content:flex-end}
+#crmRoot .form-management-item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:19px 20px;margin:0 0 12px;box-shadow:0 5px 18px #0c33320a}
+#crmRoot .form-management-item>strong{font-size:16px;color:var(--text);display:block;margin-bottom:14px;line-height:1.4}
+#crmRoot .form-management-item .actions{margin-top:0!important;gap:9px;align-items:center}
+#crmRoot .form-management-item .actions button{padding:10px 14px;font-size:12px}
+#crmRoot .form-open-link{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:transparent!important;color:var(--text)!important;text-decoration:none;font-size:12px;font-weight:700;box-shadow:none!important}
+#crmRoot .form-open-link:hover{border-color:var(--green2);background:transparent!important;color:var(--green)!important}
+#crmRoot.crm-dark .form-management-item{background:var(--col);border-color:var(--line);box-shadow:none}
+#crmRoot.crm-dark .form-open-link{color:var(--text)!important;border-color:var(--line)}
+#crmRoot.crm-dark .form-open-link:hover{color:var(--pri)!important;border-color:var(--pri)}
+#crmRoot.crm-dark #dashboard tbody tr:hover{background:#1b3437}
+#crmRoot.crm-dark .topbar{box-shadow:none}
+@media(max-width:650px){#crmRoot #formList{padding:18px}
+#crmRoot .form-management-item{padding:15px}
+#crmRoot .form-management-item .actions>*{flex:1 1 auto}
+#crmRoot .wrap{margin:20px auto}
+#crmRoot #dashboard .stat{padding:16px;min-height:108px}
+#crmRoot #dashboard .stat b{font-size:28px}}
+#crmRoot .crm-column-row{display:flex;gap:10px;align-items:center;margin:9px 0}
+#crmRoot .crm-column-row input{flex:1;min-width:0;padding:12px;border:1px solid var(--line);border-radius:10px}
+#crmRoot .crm-column-row button{flex-shrink:0}
+@media(max-width:600px){#crmRoot .crm-column-row{flex-wrap:wrap}}
+#crmRoot .form-page{max-width:720px!important;background:transparent!important;overflow:visible!important;padding:18px 16px 36px!important;isolation:isolate}
+#crmRoot .form-page .form-hero{display:none}
+#crmRoot .form-page .public-banner{display:block;width:100%;height:auto;max-height:340px;object-fit:contain;border-radius:18px;margin:0 auto 24px!important;box-shadow:0 14px 35px #0002}
+#crmRoot .form-page .form-card{position:relative;isolation:isolate;background:color-mix(in srgb,var(--form-bg,#003641) 83%,#07191c)!important;color:#f6fffd!important;border:1px solid color-mix(in srgb,var(--form-accent,#00AE9D) 35%,transparent)!important;border-radius:26px!important;padding:clamp(22px,5vw,38px)!important;box-shadow:0 18px 60px #0005,inset 0 1px #ffffff16;overflow:visible}
+#crmRoot .form-page .form-card::before{content:'';position:absolute;inset:-2px;z-index:-2;border-radius:28px;padding:2px;background:conic-gradient(from var(--orbit-angle,0deg),transparent 0deg,transparent 50deg,var(--form-accent,#00AE9D) 88deg,transparent 122deg,transparent 210deg,color-mix(in srgb,var(--form-accent,#00AE9D) 70%,white) 252deg,transparent 290deg,transparent 360deg);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:crm-orbit 7s linear infinite;pointer-events:none}
+#crmRoot .form-page .form-card::after{content:'';position:absolute;inset:-6px;z-index:-3;border-radius:32px;background:conic-gradient(from var(--orbit-angle,0deg),transparent 0 55deg,color-mix(in srgb,var(--form-accent,#00AE9D) 52%,transparent) 88deg,transparent 130deg,transparent 220deg,color-mix(in srgb,var(--form-accent,#00AE9D) 42%,transparent) 255deg,transparent 290deg);filter:blur(16px);opacity:.8;animation:crm-orbit 7s linear infinite;pointer-events:none}
+@property --orbit-angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+@keyframes crm-orbit{to{--orbit-angle:360deg}}
+#crmRoot .form-page .field{margin:14px 0}
+#crmRoot .form-page .field>label,#crmRoot .form-page .field strong{color:#f3fffd!important;font-weight:600}
+#crmRoot .form-page .field input:not([type=radio]):not([type=checkbox]),#crmRoot .form-page .field select,#crmRoot .form-page .field textarea{background:#ffffff12!important;color:#fff!important;border:1px solid #ffffff38!important;border-radius:14px!important;min-height:48px}
+#crmRoot .form-page .field input::placeholder{color:#d4e6e0a8}
+#crmRoot .form-page .choice{background:#ffffff0e!important;color:#f3fffd!important;border:1px solid #ffffff32!important;border-radius:13px!important}
+#crmRoot .form-page .choice:has(input:checked){background:color-mix(in srgb,var(--form-accent) 28%,#103034)!important;border-color:var(--form-accent)!important}
+#crmRoot .form-page .hint,#crmRoot .form-page .footer-note{color:#d6e8e1!important}
+#crmRoot .form-page .primary{background:var(--button-color)!important;color:var(--button-text,#fff)!important}
+#crmRoot .form-page .secondary{background:transparent!important;color:#fff!important;border-color:#ffffff66!important}
+#crmRoot .form-page .section{border-color:#ffffff20}
+@media(max-width:600px){#crmRoot .form-page{margin:0 auto!important}
+#crmRoot .form-page .form-card{padding:22px 18px!important}
+#crmRoot .form-page .public-banner{margin-bottom:18px!important}}
+@media(prefers-reduced-motion:reduce){#crmRoot .form-page .form-card::before,#crmRoot .form-page .form-card::after{animation:none}}
+#crmRoot.public-form-active{min-height:100%;background:var(--public-background,#003641)}
+#crmRoot.public-form-active{min-height:100vh;min-height:100dvh;background:var(--public-background,#003641)!important;background-attachment:fixed!important;color:var(--form-text,#fff)}
+#crmRoot.public-form-active #appView{min-height:100vh;min-height:100dvh;background:transparent!important}
+#crmRoot.public-form-active #appView>.topbar{display:none!important}
+#crmRoot.public-form-active #appView>.wrap{max-width:none!important;width:100%;min-height:100vh;min-height:100dvh;margin:0!important;padding:clamp(16px,4vw,48px) 14px 44px!important;display:flex;align-items:flex-start;justify-content:center;background:transparent!important}
+#crmRoot.public-form-active #formPage{width:100%;max-width:760px;background:transparent!important}
+#crmRoot.public-form-active .form-page{width:100%;max-width:720px!important;margin:0 auto!important;padding:0 10px 24px!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important}
+#crmRoot.public-form-active .form-page .public-banner{width:100%;height:auto;max-height:none;object-fit:contain;display:block;margin:0 auto 24px!important;border-radius:18px;box-shadow:none}
+#crmRoot.public-form-active .form-page .form-card{background:var(--form-panel-bg,var(--form-bg,#003641))!important;color:var(--form-text,#fff)!important;border:1px solid var(--form-outline,#00AE9D)!important;box-shadow:0 16px 48px #0002,inset 0 1px #ffffff14!important}
+#crmRoot.public-form-active .form-page .form-card::before{z-index:-1;opacity:1}
+#crmRoot.public-form-active .form-page .form-card::after{z-index:-2;opacity:.9;filter:blur(13px)}
+#crmRoot.public-form-active .form-page .field>label,#crmRoot.public-form-active .form-page .field strong,#crmRoot.public-form-active .form-page .field p{color:var(--form-text,#fff)!important}
+#crmRoot.public-form-active .form-page .field input:not([type=radio]):not([type=checkbox]),#crmRoot.public-form-active .form-page .field select,#crmRoot.public-form-active .form-page .field textarea{background:var(--form-input-bg,#ffffff16)!important;color:var(--form-text,#fff)!important;border-color:var(--form-input-border,#ffffff44)!important}
+#crmRoot.public-form-active .form-page .field input::placeholder{color:var(--form-muted,#c7d9d4)!important;opacity:.9}
+#crmRoot.public-form-active .form-page .choice{background:var(--form-choice-bg,#ffffff12)!important;color:var(--form-text,#fff)!important;border-color:var(--form-input-border,#ffffff44)!important}
+#crmRoot.public-form-active .form-page .choice:has(input:checked){background:var(--form-choice-selected,#00AE9D44)!important;border-color:var(--form-accent,#00AE9D)!important}
+#crmRoot.public-form-active .form-page .hint,#crmRoot.public-form-active .form-page .footer-note{color:var(--form-muted,#c7d9d4)!important}
+#crmRoot.public-form-active .form-page .secondary{color:var(--form-text,#fff)!important;border-color:var(--form-input-border,#ffffff44)!important}
+#crmRoot.public-form-active .form-page .primary{background:var(--button-color,#00AE9D)!important;color:var(--button-text,#fff)!important}
+#crmRoot.public-form-active .form-page .primary:hover{background:var(--button-color,#00AE9D)!important;filter:brightness(1.08)}
+#crmRoot.public-form-active .form-page .section{border-color:var(--form-input-border,#ffffff44)!important}
+#crmRoot.public-form-active .form-page .choice input{accent-color:var(--form-accent,#00AE9D)}
+@media(max-width:600px){#crmRoot.public-form-active #appView>.wrap{padding:14px 10px 28px!important}
+#crmRoot.public-form-active .form-page{padding:0 5px 20px!important}
+#crmRoot.public-form-active .form-page .form-card{padding:23px 17px!important;border-radius:23px!important}
+#crmRoot.public-form-active .form-page .public-banner{margin-bottom:20px!important}}
+#crmRoot .crm-fields-panel{margin:24px 0 26px;padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--bg);}
+#crmRoot .crm-fields-panel h3{margin:0 0 7px;font-size:18px;letter-spacing:-.025em}
+#crmRoot .crm-fields-panel .hint{line-height:1.6;margin:0 0 17px}
+#crmRoot .crm-fields-panel #crmColumnsEditor{display:grid;gap:9px}
+#crmRoot .crm-fields-panel .crm-column-row{display:flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:9px 10px;margin:0}
+#crmRoot .crm-fields-panel .crm-column-row::before{content:'≡';font-size:20px;color:var(--muted);line-height:1}
+#crmRoot .crm-fields-panel .crm-column-row input{border:0;box-shadow:none!important;background:transparent;padding:9px 5px;font-weight:600;color:var(--text)}
+#crmRoot .crm-fields-panel .crm-column-row input:focus{outline:2px solid var(--green2);outline-offset:1px;border-radius:6px}
+#crmRoot .crm-fields-panel .crm-column-row button{border:1px solid var(--line);background:transparent;color:var(--muted)}
+#crmRoot .crm-fields-panel #addCrmColumn{width:100%;border:1px dashed var(--green2);background:transparent;color:var(--green);margin-top:12px}
+#crmRoot.crm-dark .crm-fields-panel{background:var(--bg);border-color:var(--line)}
+#crmRoot.crm-dark .crm-fields-panel .crm-column-row{background:#1a3437;border-color:var(--line)}
+#crmRoot.crm-dark .crm-fields-panel .crm-column-row input{color:var(--text)}
+#crmRoot.crm-dark .crm-fields-panel #addCrmColumn{color:var(--pri)}
+@media(max-width:480px){#crmRoot .crm-fields-panel{padding:14px}
+#crmRoot .crm-fields-panel .crm-column-row{flex-wrap:wrap}
+#crmRoot .crm-fields-panel .crm-column-row input{flex:1 1 70%}
+#crmRoot .crm-fields-panel .crm-column-row button{margin-left:auto}}
+#crmRoot .crm-fields-panel{padding:24px!important;border-radius:19px!important;background:var(--white)!important}
+#crmRoot .crm-fields-panel .crm-fields-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px;padding-bottom:17px;border-bottom:1px solid var(--line)}
+#crmRoot .crm-fields-panel .crm-fields-head h3{margin:0 0 8px!important;border:0!important;padding:0!important;color:var(--text)!important}
+#crmRoot .crm-fields-panel .crm-fields-head .hint{margin:0!important}
+#crmRoot .crm-fields-panel .crm-column-row{padding:11px 13px!important;gap:10px!important;flex-wrap:nowrap!important}
+#crmRoot .crm-fields-panel .crm-column-row::before{content:none!important}
+#crmRoot .crm-fields-panel .crm-drag{color:var(--muted);font-size:19px;letter-spacing:-4px;flex:0 0 19px;text-align:center;user-select:none}
+#crmRoot .crm-fields-panel .crm-column-name{flex:1 1 140px;min-width:80px!important;font-size:14px}
+#crmRoot .crm-fields-panel .crm-enabled-label{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:12px;font-weight:600;color:var(--text)}
+#crmRoot .crm-fields-panel .crm-enabled-label input{appearance:none;width:35px;height:20px;border-radius:15px;border:1px solid var(--line);background:#b7c6c2;position:relative;cursor:pointer;flex-shrink:0}
+#crmRoot .crm-fields-panel .crm-enabled-label input::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:var(--card);top:2px;left:2px;transition:transform .18s}
+#crmRoot .crm-fields-panel .crm-enabled-label input:checked{background:var(--green2);border-color:var(--green2)}
+#crmRoot .crm-fields-panel .crm-enabled-label input:checked::after{transform:translateX(15px)}
+#crmRoot .crm-fields-panel .crm-row-actions{display:flex;gap:5px;border-left:1px solid var(--line);padding-left:9px}
+#crmRoot .crm-fields-panel .crm-row-actions button{min-width:29px;min-height:30px;padding:3px 6px!important;border-radius:7px;font-size:15px}
+#crmRoot .crm-fields-panel .crm-column-row[data-enabled="false"] .crm-column-name{opacity:.65}
+#crmRoot .crm-fields-panel #addCrmColumn{min-height:49px;border-radius:11px;margin-top:16px!important;font-weight:700}
+#crmRoot .crm-fields-panel .crm-fields-note{margin:16px 0 0;padding:13px 15px;border-radius:11px;background:var(--bg);font-size:12px;color:var(--muted);line-height:1.5}
+#crmRoot.crm-dark .crm-fields-panel{background:var(--col)!important;border-color:var(--line)}
+#crmRoot.crm-dark .crm-fields-panel .crm-fields-head h3{color:var(--text)!important}
+#crmRoot.crm-dark .crm-fields-panel .crm-fields-note{background:var(--bg)}
+@media(max-width:620px){#crmRoot .crm-fields-panel{padding:15px!important}
+#crmRoot .crm-fields-panel .crm-column-row{flex-wrap:wrap!important}
+#crmRoot .crm-fields-panel .crm-column-name{flex:1 1 calc(100% - 45px)}
+#crmRoot .crm-fields-panel .crm-enabled-label{margin-left:24px}
+#crmRoot .crm-fields-panel .crm-row-actions{margin-left:auto}
+#crmRoot .crm-fields-panel .crm-fields-head{display:block}}
+@keyframes crm-mobile-orbit{to{transform:rotate(360deg)}}
+@media (max-width: 720px), (hover: none) and (pointer: coarse){#crmRoot.public-form-active .form-page .form-card{
+    position:relative!important;isolation:isolate!important;overflow:visible!important;
+    box-shadow:0 18px 54px #0003,0 0 22px color-mix(in srgb,var(--form-accent,#00AE9D) 19%,transparent),inset 0 1px #ffffff1b!important;
+  }
+#crmRoot.public-form-active .form-page .form-card::before,#crmRoot.public-form-active .form-page .form-card::after{
+    content:''!important;display:block!important;position:absolute!important;pointer-events:none!important;
+    animation:crm-mobile-orbit 7s linear infinite!important;
+    transform-origin:center center!important;
+    will-change:transform;
+  }
+#crmRoot.public-form-active .form-page .form-card::before{
+    inset:-2px!important;border-radius:inherit!important;z-index:-1!important;
+    background:conic-gradient(from 0deg,transparent 0deg,transparent 52deg,var(--form-accent,#00AE9D) 88deg,transparent 128deg,transparent 210deg,color-mix(in srgb,var(--form-accent,#00AE9D) 78%,white) 255deg,transparent 295deg)!important;
+    padding:2px!important;
+    -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0)!important;
+    -webkit-mask-composite:xor!important;
+    mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0)!important;
+    mask-composite:exclude!important;
+    opacity:1!important;
+  }
+#crmRoot.public-form-active .form-page .form-card::after{
+    inset:-5px!important;border-radius:inherit!important;z-index:-2!important;
+    background:conic-gradient(from 0deg,transparent 0deg,transparent 50deg,color-mix(in srgb,var(--form-accent,#00AE9D) 65%,transparent) 88deg,transparent 135deg,transparent 210deg,color-mix(in srgb,var(--form-accent,#00AE9D) 48%,transparent) 255deg,transparent 300deg)!important;
+    filter:blur(15px)!important;opacity:.9!important;
+  }
+#crmRoot.public-form-active .form-page .primary,#crmRoot.public-form-active .form-page .choice{
+    transition:transform .22s ease,box-shadow .22s ease,filter .22s ease!important;
+  }
+#crmRoot.public-form-active .form-page .primary:active,#crmRoot.public-form-active .form-page .primary:focus-visible,#crmRoot.public-form-active .form-page .choice:active,#crmRoot.public-form-active .form-page .choice:focus-within{
+    box-shadow:0 0 0 2px color-mix(in srgb,var(--form-accent,#00AE9D) 55%,transparent),0 0 20px color-mix(in srgb,var(--form-accent,#00AE9D) 40%,transparent)!important;
+    filter:brightness(1.07);
+  }}
+@media(prefers-reduced-motion:reduce){#crmRoot.public-form-active .form-page .form-card::before,#crmRoot.public-form-active .form-page .form-card::after{animation:none!important;will-change:auto!important}}
+#crmRoot.public-form-active .form-page{max-width:760px!important}
+#crmRoot.public-form-active .form-page .public-banner{display:block!important;width:100%!important;max-height:none!important;object-fit:contain!important;border-radius:22px!important;margin:0 auto 28px!important}
+#crmRoot.public-form-active .form-page .form-card{
+  border-radius:32px!important;
+  padding:clamp(28px,6vw,58px)!important;
+  background:var(--form-panel-bg)!important;
+  box-shadow:0 25px 65px #0003,inset 0 1px #ffffff1b,0 0 28px color-mix(in srgb,var(--form-accent) 17%,transparent)!important;
+}
+#crmRoot.public-form-active .form-page .form-card::before{border-radius:inherit!important}
+#crmRoot.public-form-active .form-page .form-card::after{border-radius:inherit!important;filter:blur(19px)!important}
+#crmRoot.public-form-active .form-card .public-card-heading{margin:0 0 28px!important}
+#crmRoot.public-form-active .form-card .public-card-heading h1{font-size:clamp(28px,5vw,44px);line-height:1.13;letter-spacing:-.04em;margin:0 0 12px;color:var(--form-text)!important;font-weight:750}
+#crmRoot.public-form-active .form-card .public-card-heading p{font-size:clamp(14px,2.6vw,17px);line-height:1.5;margin:0;color:var(--form-muted)!important}
+#crmRoot.public-form-active .form-page .field>label,#crmRoot.public-form-active .form-page .field strong{font-size:clamp(16px,2.5vw,20px);line-height:1.45;font-weight:650}
+#crmRoot.public-form-active .form-page .field input:not([type=radio]):not([type=checkbox]),#crmRoot.public-form-active .form-page .field select,#crmRoot.public-form-active .form-page .field textarea{
+  width:100%;min-height:60px;border-radius:19px!important;padding:15px 19px!important;
+  box-shadow:inset 0 1px 2px #ffffff12,0 2px 12px #0001!important;
+  font-size:16px!important;transition:border-color .2s,box-shadow .2s!important;
+}
+#crmRoot.public-form-active .form-page .field input:focus,#crmRoot.public-form-active .form-page .field select:focus,#crmRoot.public-form-active .form-page .field textarea:focus{outline:none!important;border-color:var(--form-accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--form-accent) 23%,transparent)!important}
+#crmRoot.public-form-active .form-page .choice{min-height:52px;border-radius:17px!important;padding:14px 18px!important;font-size:15px!important}
+#crmRoot.public-form-active .form-page .actions{display:flex;gap:12px;align-items:stretch}
+#crmRoot.public-form-active .form-page .actions .primary{flex:1;min-height:60px;border-radius:999px!important;font-size:17px;font-weight:750;letter-spacing:-.01em;box-shadow:0 6px 24px color-mix(in srgb,var(--button-color) 24%,transparent)!important}
+#crmRoot.public-form-active .form-page .actions .secondary{min-height:60px;border-radius:999px!important}
+#crmRoot.public-form-active .form-page .hint[aria-live]{font-size:12px;letter-spacing:.05em;text-transform:uppercase;margin:0 0 18px!important}
+@media(max-width:600px){#crmRoot.public-form-active #appView>.wrap{padding:20px 12px 36px!important}
+#crmRoot.public-form-active .form-page{padding:0 3px 24px!important}
+#crmRoot.public-form-active .form-page .public-banner{border-radius:16px!important;margin-bottom:24px!important}
+#crmRoot.public-form-active .form-page .form-card{padding:30px 22px!important;border-radius:26px!important}
+#crmRoot.public-form-active .form-card .public-card-heading{margin-bottom:23px!important}
+#crmRoot.public-form-active .form-page .field input:not([type=radio]):not([type=checkbox]),#crmRoot.public-form-active .form-page .field select{min-height:58px}
+#crmRoot.public-form-active .form-page .actions .primary{min-height:58px}}
+#crmRoot.public-form-active{ isolation:isolate }
+#crmRoot.public-form-active::before{
+  content:"";
+  position:fixed;
+  inset:-14%;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    radial-gradient(ellipse at 24% 30%, #00ae9d30, transparent 47%),
+    radial-gradient(ellipse at 76% 72%, #87e5c01c, transparent 48%);
+  animation:crm-ambient-light 24s ease-in-out infinite alternate;
+}
+@keyframes crm-ambient-light{
+  from { transform:translate3d(-4%,-3%,0); opacity:.56 }
+  to   { transform:translate3d(5%,4%,0); opacity:.92 }
+}
+#crmRoot.public-form-active .form-page .form-card{
+  border:1px solid var(--form-input-border,#ffffff24)!important;
+  box-shadow:0 16px 44px #0003!important;
+}
+#crmRoot.public-form-active .form-page .form-card::before,#crmRoot.public-form-active .form-page .form-card::after{
+  content:none!important;
+  display:none!important;
+  animation:none!important;
+}
+@media(prefers-reduced-motion:reduce){#crmRoot.public-form-active::before{animation:none}}
+#crmRoot.public-form-active .form-page .choice:has(input:checked){
+  background:color-mix(in srgb,var(--form-accent,#00AE9D) 32%,var(--form-panel-bg,#003641))!important;
+  border-color:var(--form-accent,#00AE9D)!important;
+  box-shadow:inset 0 0 0 2px var(--form-accent,#00AE9D)!important;
+  font-weight:700;
+}
+#crmRoot.public-form-active .form-page .choice:has(input:checked)::after{
+  content:'✓';
+  flex:none;
+  display:grid;
+  place-items:center;
+  margin-inline-start:auto;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:var(--form-text,#fff);
+  color:var(--form-panel-bg,#003641);
+  font:700 16px/1 system-ui,sans-serif;
+}
+#crmRoot .import-panel{margin:16px 0;padding:19px;border:1px solid var(--line);border-radius:16px;background:var(--white)}
+#crmRoot .import-panel .actions{margin-top:13px}
+#crmRoot .variable-chip{padding:7px 10px;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:9px;font-size:12px}
+#crmRoot .variable-grid{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+#crmRoot .variable-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin:8px 0}
+#crmRoot .variable-row input{min-width:0;padding:10px;border:1px solid var(--line);border-radius:9px;background:var(--white);color:var(--text)}
+@media(max-width:600px){#crmRoot .variable-row{grid-template-columns:1fr 1fr}
+#crmRoot .variable-row button{grid-column:1/-1}}
+#crmRoot{--green:var(--pri);--green2:var(--pri);--dark:var(--text);--white:var(--card);--bg:var(--col);--red:#c74343;--amber:#a66b00}
+#crmRoot.crm-dark{--red:#ff8d91}
+#crmRoot.public-form-active{--green:#008f82;--green2:#00ae9d;--dark:#003641;--bg:#f5f8f8;--text:#17383c;--muted:#6c8185;--line:#e0e9e9;--white:#fff;--red:#c74343;--amber:#a66b00}
+#crmRoot label{display:revert;flex-direction:revert;gap:normal;font-size:inherit;font-weight:inherit;color:inherit}
+#crmRoot input[type=checkbox],#crmRoot input[type=radio]{padding:0;border:revert;background:revert;border-radius:revert;min-width:revert;width:auto}
+#crmRoot .tag{margin-left:0}
+#crmRoot h1{font-size:2em;margin:.67em 0;letter-spacing:normal}
+#crmRoot h3{margin:1em 0}
+#crmRoot.crm-dark{color-scheme:dark}
+#crmRoot #themeToggle{display:none}
+#crmRoot:not(.public-form-active){background:transparent;color:var(--text)}
+#crmRoot:not(.public-form-active) #appView{background:transparent}
+#crmRoot:not(.public-form-active) #appView>.wrap{margin:0 auto;padding:0;max-width:1250px}
+#crmRoot:not(.public-form-active) #loginView{min-height:60vh;background:transparent;padding:20px 0}
+#crmRoot:not(.public-form-active) .primary{background:var(--grad,var(--pri));color:var(--ondark,#fff)}
+#crmRoot:not(.public-form-active) .topbar{border-radius:22px;margin-bottom:18px}
+#crmRoot.public-form-active{position:fixed;inset:0;overflow:auto;z-index:100}
+body.crm-public{overflow:hidden}
+body.crm-public #app,body.crm-public .tabs{display:none!important}
 </style>
 </head>
 <body>
@@ -280,7 +739,79 @@ body.cp #agLink{display:none!important}
  <div class="top"><div><h1 id="agH">Aprovação geral</h1><div class="sub" id="agSub"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn p" id="agLink" target="_blank" rel="noopener">Abrir página do cliente ↗</a><button class="btn" id="agLogout" style="display:none">Sair</button></div></div>
  <div id="agpr"></div>
 </section>
-<section class="sec" id="v-formularios"><div class="top"><div><h1>Formulários</h1><div class="sub">Crie formulários personalizados e acompanhe respostas.</div></div><button class="btn p" id="formNew">+ Criar formulário</button></div><div class="grid" id="formStats"></div><div class="g2" style="margin-top:16px"><div class="card"><h3>Meus formulários</h3><div id="formList"></div></div><div class="card"><h3>Editor / visualização</h3><div id="formEditor"><p class="sub">Selecione um formulário ou crie um novo.</p></div></div></div><div class="card" style="margin-top:16px"><h3>Respostas recebidas</h3><div id="formResponses"></div></div></section>
+<section class="sec" id="v-formularios"><div id="crmRoot">
+
+<section id="loginView">
+ <div class="login-card">
+  <div class="crm-brand">GESTÃO COMERCIAL</div><h1>Acesso administrativo</h1>
+  <p class="muted">Entre para acompanhar os leads de consórcio.</p>
+  <form id="loginForm">
+   <div class="field"><label for="username">Usuário</label><input id="username" type="text" autocomplete="username" required placeholder="Digite seu usuário"></div>
+   <div class="field"><label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required placeholder="Digite sua senha"></div>
+   <div id="loginError" class="error"></div><button class="primary" style="width:100%">Entrar</button>
+  </form>
+
+ </div>
+</section>
+
+<section id="appView">
+ <header class="topbar"><strong>CRM CONSÓRCIO</strong><div class="actions"><button class="secondary small" id="themeToggle" type="button" aria-pressed="false">☾ Tema escuro</button><button class="secondary small" id="settingsButton" type="button">Alterar acesso</button><button class="secondary small" onclick="crmLogout()">Sair</button></div></header>
+ <main class="wrap">
+  <div id="dashboard">
+   <div class="heading"><div><h1>Painel administrativo</h1><div class="muted">Acompanhe e gerencie seus contatos.</div></div><div class="actions"><button class="primary" id="editFormButton" type="button">Formulários</button></div></div>
+   <div class="stats">
+    <div class="stat"><span>Formulários gerados</span><b id="countGenerated">0</b></div>
+    <div class="stat"><span>Respondidos / em atendimento</span><b id="countResponded">0</b></div>
+    <div class="stat"><span>Fechados</span><b id="countClosed">0</b></div>
+    <div class="stat"><span>Novos leads</span><b id="countHot">0</b></div>
+   </div>
+   <div class="panel" style="margin-bottom:14px"><b>Relatório de formulários</b><p class="muted" style="margin-bottom:0">Os indicadores são atualizados automaticamente conforme os formulários são enviados e os leads são movimentados.</p></div>
+   <div class="heading" style="margin:22px 0 12px"><div><h2 style="font-size:19px;margin:0">Leads recebidos</h2><div class="muted">Defina a prioridade dos critérios e a direção da ordenação.</div></div></div>
+   <div class="toolbar"><input class="crm-search" id="search" placeholder="Buscar por nome ou telefone..." oninput="renderLeads()"><select id="filterForm" aria-label="Filtrar por formulário" onchange="renderLeads()"><option value="">Todos os formulários</option></select><select id="filter" onchange="renderLeads()"><option value="all">Todos os leads</option><option value="new">Novos</option><option value="responded">Em atendimento</option><option value="closed">Fechados</option></select></div>
+   <div class="import-panel"><div class="heading"><div><b>Importar leads do Excel</b><p class="muted" style="margin:6px 0 0">Baixe o modelo, preencha os contatos e importe uma planilha .xlsx ou .xls.</p></div></div><div class="field" style="max-width:460px"><label for="importTargetForm">Formulário de destino dos leads</label><select id="importTargetForm" aria-label="Selecionar formulário para importar"><option value="">Selecione um formulário</option></select><p class="hint">Todos os leads desta planilha serão vinculados ao formulário escolhido. A coluna Formulário da planilha será ignorada.</p></div><div class="actions"><button class="secondary" type="button" onclick="downloadLeadTemplate()">↓ Baixar modelo Excel</button><button class="primary" type="button" onclick="refreshImportFormSelect();$('leadExcelFile').click()">↑ Importar planilha</button><input type="file" id="leadExcelFile" accept=".xlsx,.xls" hidden onchange="importLeadExcel(this)"></div><p id="excelImportStatus" class="hint" role="status"></p></div><div class="panel sorting-panel"><div class="heading"><div><b>Ordenação personalizada</b><p class="muted">O primeiro critério tem prioridade sobre o segundo, e assim sucessivamente.</p></div><button class="secondary small" onclick="resetSort()">Restaurar</button></div><div id="sortRules"></div></div>
+   <div class="table-wrap"><table><thead><tr><th>Lead</th><th>Bem desejado</th><th id="dynamicLeadHeaders" style="display:none"></th><th>Status</th><th>Ações</th></tr></thead><tbody id="leadRows"></tbody></table><div id="empty" class="empty">Nenhum formulário recebido ainda.</div></div>
+  </div>
+  <div id="formPage" class="hidden"></div>
+ </main>
+</section>
+<div id="modalRoot"></div>
+<dialog id="formList" class="form-card" aria-labelledby="formListTitle" style="max-height:85vh;overflow:auto">
+ <h2 id="formListTitle">Formulários</h2><p class="hint">Você pode excluir qualquer formulário, inclusive o principal. Os leads já recebidos são preservados.</p>
+ <div class="editor-tabs"><button type="button" class="editor-tab active" onclick="switchManagementTab('forms')" id="tabForms">Formulários</button><button type="button" class="editor-tab" onclick="switchManagementTab('messages')" id="tabMessages">Respostas rápidas</button></div><div id="publishedForms"></div><div id="quickRepliesPanel" class="hidden"><p class="muted">Crie mensagens para selecionar no atendimento de cada lead. Use {nome}, {bem}, {valor}, {urgencia} e {interesse} para personalizar.</p><div id="quickRepliesList"></div><div class="import-panel"><b>Variáveis personalizadas</b><p class="hint">Crie variáveis para usar nas mensagens, como {consultor} ou {agencia}. Você pode definir um valor fixo ou vincular à resposta de uma pergunta do formulário.</p><div id="customVariablesList"></div><button class="secondary small" type="button" onclick="addReplyVariable()">+ Criar variável</button></div><button class="secondary" type="button" onclick="editQuickReply()">+ Nova resposta rápida</button></div>
+ <div class="actions"><button class="secondary" id="closeFormList" type="button">Fechar</button><button class="primary" id="createFormButton" type="button">Criar formulário</button></div>
+</dialog>
+<dialog id="formEditor" class="form-card" aria-labelledby="formEditorTitle" style="max-height:85vh;overflow:auto">
+ <h2 id="formEditorTitle">Criar e editar formulário</h2><div class="editor-steps"><span>01 · Aparência</span><span>02 · Perguntas</span><span>03 · Publicação</span></div>
+ <p id="editorDescription"></p>
+ <form id="formSettings">
+  <div id="formEditorFields"></div>
+  <p id="editorMessage" role="status"></p>
+  <div class="actions"><button type="button" class="secondary" id="closeEditor">Voltar</button><button type="submit" class="primary">Salvar e publicar</button></div>
+ </form>
+</dialog>
+<dialog id="accessSettings" class="form-card" aria-labelledby="accessTitle">
+ <h2 id="accessTitle">Alterar acesso</h2>
+ <form id="accessForm">
+  <div class="field"><label for="newUser">Novo usuário</label><input id="newUser" autocomplete="username" required></div>
+  <div class="field"><label for="currentPassword">Senha atual</label><input id="currentPassword" type="password" autocomplete="current-password" required></div>
+  <div class="field"><label for="newPassword">Nova senha</label><input id="newPassword" type="password" autocomplete="new-password" required></div>
+  <p class="error" id="accessError" role="alert"></p>
+  <div class="actions"><button type="button" class="secondary" id="cancelAccess">Cancelar</button><button type="submit" class="primary">Salvar</button></div>
+ </form>
+</dialog>
+
+</div></section>
+<section class="sec" id="v-cores">
+ <div class="top"><div><h1>Cores</h1><div class="sub">Personalize as cores do site. A mudança aparece na hora e fica salva.</div></div><button class="btn" id="thReset">↺ Voltar ao padrão</button></div>
+ <div class="card pbox" id="themeBox">
+  <h3>Paletas prontas</h3><div class="pal" id="thPal"></div>
+  <h3 style="margin-top:22px">Cores personalizadas</h3>
+  <div class="cgrid" id="thGrid"></div>
+  <div class="cprev" id="thPrev">Prévia do degradê</div>
+  <div class="sub" style="margin-top:10px">Fundo, cartões e texto são ajustados separadamente para o tema claro e o escuro (o modo atual é o que você está editando).</div>
+ </div>
+</section>
+
 </main>
 </div>
 <nav class="tabs" id="navT"></nav>
@@ -332,7 +863,7 @@ var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':
 function nextD(s,f){if(f==='Diária')return add(s,1);if(f==='Semanal')return add(s,7);var d=P(s);d.setMonth(d.getMonth()+1);return iso(d)}
 var ST=[['todo','A fazer'],['doing','Em andamento'],['done','Finalizado']];var hideTD=false;try{hideTD=localStorage.getItem('demandas-hide-td')==='1'}catch(x){}
 var df='Todos',dq='',tf=[];
-var VIEWS=[['dashboard','Visão geral'],['clientes','Clientes'],['recorrentes','Recorrentes'],['vencimentos','Vencimentos'],['insights','Insights'],['processos','Processos'],['aprovacao','Post avulso'],['aprovacao-geral','Aprovação geral'],['formularios','Formulários']];
+var VIEWS=[['dashboard','Visão geral'],['clientes','Clientes'],['recorrentes','Recorrentes'],['vencimentos','Vencimentos'],['insights','Insights'],['processos','Processos'],['aprovacao','Post avulso'],['aprovacao-geral','Aprovação geral'],['formularios','Formulários'],['cores','Cores']];
 var S;
 function seed(){var t=iso(T0());return {n:10,tasks:[
 {id:1,title:'Criar calendário de conteúdo',client:'Signet',date:add(t,1),status:'todo',channel:'Instagram',notes:''},
@@ -345,7 +876,7 @@ S=(REMOTE&&REMOTE.tasks)?REMOTE:null;
 var migrar=false;
 if(!S){try{var L=JSON.parse(localStorage.getItem(K));if(L&&L.tasks){S=L;migrar=true}}catch(e){}}
 if(!S){S=seed();migrar=true}
-function norm(){S.n=S.n||10;S.clients=S.clients||[];S.admin=S.admin||{login:'gg_adm',pass:''};S.appr=S.appr||[];S.apprG=S.apprG||[];S.tags=S.tags||[];S.ins=S.ins||[];S.forms=S.forms||[];S.formReplies=S.formReplies||[];S.proc=S.proc||[{id:S.n++,title:'',text:''}]}norm();
+function norm(){S.n=S.n||10;S.clients=S.clients||[];S.admin=S.admin||{login:'gg_adm',pass:''};S.appr=S.appr||[];S.apprG=S.apprG||[];S.tags=S.tags||[];S.ins=S.ins||[];S.forms=S.forms||[];S.formReplies=S.formReplies||[];S.theme=S.theme||{};S.proc=S.proc||[{id:S.n++,title:'',text:''}]}norm();
 var saveT,warned=false,dirty=false,pendingRemote=null,touchDragging=false,lastUpd=window.__U?Date.parse(window.__U):0,COARSE=matchMedia('(pointer:coarse)').matches;
 function save(){dirty=true;pendingRemote=null;clearTimeout(saveT);saveT=setTimeout(function(){
  var ts=new Date().toISOString();lastUpd=Date.parse(ts);
@@ -397,10 +928,10 @@ function render(){
  $('#recs').innerHTML=S.recs.map(function(r){return '<div class="row"><div><strong>'+esc(r.title)+'</strong><div class="sub">'+esc(r.client)+' · '+esc(r.freq)+' · próxima: '+fmt(r.date)+'</div></div><button class="btn d" data-delrec="'+r.id+'">Remover</button></div>'}).join('')||'<div class="sub">Nenhuma recorrência cadastrada.</div>';
  var gs=[['Atrasadas',function(d){return d<0}],['Hoje',function(d){return d===0}],['Próximos 2 dias',function(d){return d>=1&&d<=2}],['Mais tarde',function(d){return d>2}]];
  $('#due').innerHTML=gs.map(function(g){var l=open.filter(function(t){return g[1](diff(t.date))}).sort(byDate);return l.length?'<div class="card" style="margin-bottom:14px"><h3>'+g[0]+' ('+l.length+')</h3>'+l.map(function(t){return '<div class="row task-open" data-id="'+t.id+'" style="cursor:pointer"><div><strong>'+esc(t.title)+'</strong><div class="sub">'+esc(t.client)+'</div></div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><span class="'+dueLbl(t)[1]+'">'+fmt(t.date)+'</span><span class="dd" style="margin:0"><button data-d="1">+1 dia</button><button data-d="3">+3 dias</button></span></div></div>'}).join('')+'</div>':''}).join('')||'<div class="card">Nenhum vencimento pendente.</div>';
- renderProc();renderTagAdmin();renderIns();updBadge();if(!(document.activeElement&&$('#appr').contains(document.activeElement)))renderAppr();var ae2=document.activeElement;if(!(ae2&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae2.tagName)&&$('#agpr').contains(ae2)))agRender();
+ renderProc();renderTagAdmin();renderIns();renderTheme();updBadge();if(!(document.activeElement&&$('#appr').contains(document.activeElement)))renderAppr();var ae2=document.activeElement;if(!(ae2&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae2.tagName)&&$('#agpr').contains(ae2)))agRender();
 }
 function view(v){var nm=v==='tagsdem'?['','Visão geral · Demandas com tags']:VIEWS.find(function(x){return x[0]===v});$('#bc').textContent=nm?nm[1]:'';document.querySelectorAll('.sec').forEach(function(x){x.classList.toggle('on',x.id==='v-'+v)});document.querySelectorAll('.nav').forEach(function(x){x.classList.toggle('on',x.dataset.v===(v==='tagsdem'?'dashboard':v))});try{window.scrollTo(0,0)}catch(e){}}
-var IC={dashboard:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',clientes:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6M17 5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5-4-5.5"/>',recorrentes:'<path d="M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5"/>',vencimentos:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',insights:'<path d="M5 20V10M12 20V4M19 20v-7"/>',processos:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',aprovacao:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>','aprovacao-geral':'<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>' ,formularios:'<path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/>'};
+var IC={dashboard:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',clientes:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6M17 5a3.5 3.5 0 0 1 0 7M22 20c0-3-2-5-4-5.5"/>',recorrentes:'<path d="M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5"/>',vencimentos:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',insights:'<path d="M5 20V10M12 20V4M19 20v-7"/>',processos:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',aprovacao:'<circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>','aprovacao-geral':'<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>' ,formularios:'<path d="M6 3h12v18H6zM9 8h6M9 12h6M9 16h4"/>',cores:'<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.6-2-.5-1.2.2-2.5 1.6-2.5H17a4 4 0 0 0 4-4C21 6.5 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/>'};
 var nh=VIEWS.map(function(v){return '<button class="nav'+(v[0]==='dashboard'?' on':'')+'" data-v="'+v[0]+'"><svg class="i" viewBox="0 0 24 24">'+IC[v[0]]+'</svg><span class="tx">'+v[1]+'</span></button>'}).join('');
 $('#navS').innerHTML=nh;$('#navT').innerHTML=nh;
 document.addEventListener('click',function(e){var b=e.target.closest('button,.task,.task-open');if(!b)return;
@@ -463,7 +994,7 @@ document.addEventListener('dragover',function(e){var c=e.target.closest&&e.targe
 document.addEventListener('dragleave',function(e){var c=e.target.closest&&e.target.closest('.col[data-st]');if(c&&!c.contains(e.relatedTarget))c.classList.remove('over')});
 document.addEventListener('drop',function(e){var c=e.target.closest&&e.target.closest('.col[data-st]');if(!c||!dragId)return;e.preventDefault();var t=S.tasks.find(function(x){return x.id===dragId});if(t){t.status=c.dataset.st;save();render()}});
 document.addEventListener('visibilitychange',function(){if(!document.hidden){runRecs();render()}});
-function ap(t){if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme')}
+function ap(t){if(t)document.documentElement.setAttribute('data-theme',t);else document.documentElement.removeAttribute('data-theme');if(window.applyTheme)applyTheme()}
 try{ap(localStorage.getItem('demandas-tema'))}catch(e){}
 var CP=location.hash==='#cliente',SK=CP?'demandas-sess-c':'demandas-sess-a',sess=null;
 try{sess=JSON.parse(sessionStorage.getItem(SK))}catch(e){}
@@ -600,7 +1131,7 @@ $('#cpLink').href=location.href.split('#')[0]+'#cliente';
 if(CP){document.body.classList.add('cp');document.title='Área do cliente'}
 
 /* ===== Sincronização em tempo real entre aparelhos ===== */
-function isEditing(){return touchDragging||dragId||document.querySelector('.modal.show')||(document.activeElement&&($('#procs').contains(document.activeElement)||$('#tbox').contains(document.activeElement)||$('#insList').contains(document.activeElement)||$('#tgList2').contains(document.activeElement)))}
+function isEditing(){return touchDragging||dragId||document.querySelector('.modal.show')||(document.activeElement&&($('#procs').contains(document.activeElement)||$('#themeBox').contains(document.activeElement)||$('#tbox').contains(document.activeElement)||$('#insList').contains(document.activeElement)||$('#tgList2').contains(document.activeElement)))}
 function applyRemote(row){
  if(!row||!row.data||!row.data.tasks)return;
  if(dirty)return;
@@ -844,21 +1375,1222 @@ document.addEventListener('keydown',function(e){if(!$('#agModal').classList.cont
  if(e.key==='ArrowLeft'){gStep(-1)}else if(e.key==='ArrowRight'){gStep(1)}});
 $('#agLink').href=location.href.split('#')[0]+'#cliente';
 
-var editingForm=null;
-function formsRender(){var fs=S.forms||[],rs=S.formReplies||[];$('#formStats').innerHTML='<div class="card"><div class="sub">Formulários</div><div class="met">'+fs.length+'</div></div><div class="card"><div class="sub">Respostas</div><div class="met">'+rs.length+'</div></div><div class="card"><div class="sub">Últimos 7 dias</div><div class="met">'+rs.filter(x=>Date.now()-Date.parse(x.date)<604800000).length+'</div></div><div class="card"><div class="sub">Ativos</div><div class="met">'+fs.filter(x=>x.active!==false).length+'</div></div>';
-$('#formList').innerHTML=fs.map(f=>'<div class="row"><div><strong>'+esc(f.title)+'</strong><div class="sub">'+(f.fields||[]).length+' pergunta(s) · '+rs.filter(x=>x.formId===f.id).length+' resposta(s)</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" data-fedit="'+f.id+'">Editar</button><button class="btn" data-fpreview="'+f.id+'">Testar</button><button class="btn d" data-fdel="'+f.id+'">Excluir</button></div></div>').join('')||'<p class="sub">Nenhum formulário criado.</p>';
-$('#formResponses').innerHTML=rs.slice().reverse().map(r=>'<div class="row"><div><strong>'+esc(r.formTitle)+' · '+esc(r.name||'Resposta')+'</strong><div class="sub">'+new Date(r.date).toLocaleString('pt-BR')+'</div><div class="note">'+r.answers.map(a=>'<b>'+esc(a.label)+':</b> '+esc(a.value)).join('<br>')+'</div></div><button class="btn d" data-rdel="'+r.id+'">Excluir</button></div>').join('')||'<p class="sub">Ainda não há respostas.</p>';}
-function formEditorRender(){var f=editingForm;if(!f)return;$('#formEditor').innerHTML='<label>Título<input id="feTitle" value="'+esc(f.title)+'"></label><label style="margin-top:8px">Descrição<textarea id="feDesc">'+esc(f.desc||'')+'</textarea></label><div>'+f.fields.map((q,i)=>'<div class="row"><div style="flex:1"><label> Pergunta<input data-fq="'+i+'" value="'+esc(q.label)+'"></label><label>Tipo<select data-ft="'+i+'"><option value="text" '+(q.type==='text'?'selected':'')+'>Texto curto</option><option value="textarea" '+(q.type==='textarea'?'selected':'')+'>Texto longo</option><option value="email" '+(q.type==='email'?'selected':'')+'>E-mail</option><option value="number" '+(q.type==='number'?'selected':'')+'>Número</option><option value="select" '+(q.type==='select'?'selected':'')+'>Lista de opções</option></select></label>'+(q.type==='select'?'<label>Opções<input data-fo="'+i+'" value="'+esc((q.options||[]).join(', '))+'"></label>':'')+'<label><input type="checkbox" data-fr="'+i+'" '+(q.required?'checked':'')+'> Obrigatória</label></div><button class="btn d" data-fqdel="'+i+'">Remover</button></div>').join('')+'</div><button class="btn" id="fAddField">+ Pergunta</button> <button class="btn p" id="fSave">Salvar</button> <button class="btn" id="fTest">Testar formulário</button> <button class="btn" id="fCancel">Cancelar</button><div id="fPreviewArea"></div>';
+
+/* ===== Cores do site ===== */
+var PRESETS=[
+ {n:'Roxo (padrão)',pri:'#7c3aed',g1:'#6d28d9',g2:'#9333ea',g3:'#c026d3'},
+ {n:'Azul oceano',pri:'#0369a1',g1:'#0284c7',g2:'#0ea5e9',g3:'#06b6d4'},
+ {n:'Verde',pri:'#047857',g1:'#059669',g2:'#10b981',g3:'#84cc16'},
+ {n:'Rosa',pri:'#be185d',g1:'#db2777',g2:'#ec4899',g3:'#f472b6'},
+ {n:'Laranja',pri:'#c2410c',g1:'#ea580c',g2:'#f97316',g3:'#f59e0b'},
+ {n:'Grafite',pri:'#334155',g1:'#1e293b',g2:'#475569',g3:'#64748b'},
+ {n:'Sicoob',pri:'#003641',g1:'#003641',g2:'#00ae9d',g3:'#7db61c'}];
+function isDarkNow(){var c=document.documentElement.getAttribute('data-theme');return c==='dark'||(!c&&matchMedia('(prefers-color-scheme: dark)').matches)}
+var HEX=/^#[0-9a-f]{6}$/i;
+function applyTheme(){
+ var T=S.theme||{},el=document.getElementById('themeCss');
+ if(!el){el=document.createElement('style');el.id='themeCss';document.head.appendChild(el)}
+ var dk=isDarkNow(),m=(T[dk?'dark':'light'])||{},r=[];
+ if(HEX.test(T.pri||'')){var p=T.pri,g1=HEX.test(T.g1||'')?T.g1:p,g2=HEX.test(T.g2||'')?T.g2:p,g3=HEX.test(T.g3||'')?T.g3:g2;
+  r.push('--pri:'+p,'--dark:'+p,'--green:'+g2,'--ondark:'+ink(p),'--grad:linear-gradient(135deg,'+g1+' 0%,'+g2+' 55%,'+g3+' 100%)','--sh:color-mix(in srgb,'+p+' 18%,transparent)');
+  if(dk)r.push('--dark:'+g2,'--ondark:'+ink(g2),'--pri:'+g2);
+  r.push('--act:color-mix(in srgb,'+p+' 16%,var(--card))')}
+ if(HEX.test(m.bg||'')){r.push('--bg:'+m.bg,'--g1:'+m.bg,'--g2:color-mix(in srgb,'+m.bg+' 88%,'+(T.pri||'#7c3aed')+')','--col:color-mix(in srgb,'+m.bg+' 92%,'+(dk?'#fff':'#000')+')')}
+ if(HEX.test(m.card||'')){r.push('--card:'+m.card,'--side:'+m.card)}
+ if(HEX.test(m.text||'')){r.push('--text:'+m.text,'--muted:color-mix(in srgb,'+m.text+' 62%,'+(m.card||'var(--card)')+')','--line:color-mix(in srgb,'+m.text+' 14%,'+(m.card||'var(--card)')+')')}
+ el.textContent=r.length?':root:root:root{'+r.join(';')+'}.nav[data-n]::after{background:var(--pri)}':'';
 }
-function formPreview(f){$('#fPreviewArea').innerHTML='<div class="note"><h3>'+esc(f.title)+'</h3><p>'+esc(f.desc||'')+'</p><form id="fTestForm">'+f.fields.map((q,i)=>'<label style="margin:10px 0">'+esc(q.label)+(q.required?' *':'')+(q.type==='textarea'?'<textarea data-fa="'+i+'" '+(q.required?'required':'')+'></textarea>':q.type==='select'?'<select data-fa="'+i+'" '+(q.required?'required':'')+'><option value="">Selecione</option>'+q.options.map(o=>'<option>'+esc(o)+'</option>').join('')+'</select>':'<input data-fa="'+i+'" type="'+(q.type==='email'?'email':q.type==='number'?'number':'text')+'" '+(q.required?'required':'')+'>')+'</label>').join('')+'<button class="btn p">Enviar teste</button></form></div>';$('#fPreviewArea').dataset.id=f.id;}
-document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;if(b.id==='formNew'){editingForm={id:'f'+Date.now(),title:'Novo formulário',desc:'',fields:[],active:true};formEditorRender();return}if(b.dataset.fedit){editingForm=S.forms.find(x=>x.id===b.dataset.fedit);formEditorRender();return}if(b.dataset.fpreview){editingForm=S.forms.find(x=>x.id===b.dataset.fpreview);formEditorRender();formPreview(editingForm);return}if(b.dataset.fdel){if(confirm('Excluir formulário?')){S.forms=S.forms.filter(x=>x.id!==b.dataset.fdel);save();formsRender()}return}if(b.dataset.rdel){if(confirm('Excluir resposta?')){S.formReplies=S.formReplies.filter(x=>x.id!==b.dataset.rdel);save();formsRender()}return}if(b.dataset.fqdel!==undefined){editingForm.fields.splice(+b.dataset.fqdel,1);formEditorRender();return}if(b.id==='fAddField'){editingForm.fields.push({label:'Pergunta',type:'text',required:false,options:[]});formEditorRender();return}if(b.id==='fTest'){editingForm.title=$('#feTitle').value;editingForm.desc=$('#feDesc').value;formPreview(editingForm);return}if(b.id==='fSave'){editingForm.title=$('#feTitle').value.trim()||'Formulário';editingForm.desc=$('#feDesc').value;var ix=S.forms.findIndex(x=>x.id===editingForm.id);if(ix<0)S.forms.push(editingForm);else S.forms[ix]=editingForm;save();formsRender();return}if(b.id==='fCancel'){editingForm=null;$('#formEditor').innerHTML='<p class="sub">Selecione ou crie um formulário.</p>';return}});
-document.addEventListener('input',function(e){var t=e.target;if(!editingForm)return;if(t.dataset.fq!==undefined)editingForm.fields[+t.dataset.fq].label=t.value;if(t.dataset.fo!==undefined)editingForm.fields[+t.dataset.fo].options=t.value.split(',').map(x=>x.trim()).filter(Boolean)});
-document.addEventListener('change',function(e){var t=e.target;if(!editingForm)return;if(t.dataset.ft!==undefined){var q=editingForm.fields[+t.dataset.ft];q.type=t.value;q.options=q.options||[];formEditorRender()}if(t.dataset.fr!==undefined)editingForm.fields[+t.dataset.fr].required=t.checked});
-document.addEventListener('submit',function(e){if(e.target.id!=='fTestForm')return;e.preventDefault();var f=S.forms.find(x=>x.id===$('#fPreviewArea').dataset.id)||editingForm;if(!f)return;var ans=f.fields.map((q,i)=>({label:q.label,value:e.target.querySelector('[data-fa="'+i+'"]')?.value||''}));S.formReplies.push({id:'r'+Date.now(),formId:f.id,formTitle:f.title,date:new Date().toISOString(),name:ans[0]?.value||'',answers:ans});save();formsRender();alert('Resposta registrada.');});
-formsRender();
+window.applyTheme=applyTheme;
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme)}catch(e){}
+function thModeVals(){var dk=isDarkNow(),d=dk?{bg:'#140b24',card:'#1f1336',text:'#f0e9ff'}:{bg:'#f3eefc',card:'#ffffff',text:'#2a1646'},m=(S.theme[dk?'dark':'light'])||{};return {dk:dk,bg:HEX.test(m.bg||'')?m.bg:d.bg,card:HEX.test(m.card||'')?m.card:d.card,text:HEX.test(m.text||'')?m.text:d.text}}
+function renderTheme(){
+ applyTheme();var box=$('#themeBox');if(!box)return;var ae=document.activeElement;if(ae&&box.contains(ae)&&ae.tagName==='INPUT')return;
+ var T=S.theme,P0=PRESETS[0],v=thModeVals();
+ var cur={pri:T.pri||P0.pri,g1:T.g1||P0.g1,g2:T.g2||P0.g2,g3:T.g3||P0.g3};
+ $('#thPal').innerHTML=PRESETS.map(function(p,i){var on=p.pri.toLowerCase()===cur.pri.toLowerCase()&&p.g2.toLowerCase()===cur.g2.toLowerCase();return '<button data-pal="'+i+'" class="'+(on?'on':'')+'"><i style="background:linear-gradient(135deg,'+p.g1+','+p.g2+','+p.g3+')"></i>'+esc(p.n)+'</button>'}).join('');
+ var f=[['pri','Cor principal',cur.pri],['g1','Degradê: início',cur.g1],['g2','Degradê: meio',cur.g2],['g3','Degradê: fim',cur.g3],['bg','Fundo ('+(v.dk?'escuro':'claro')+')',v.bg],['card','Cartões ('+(v.dk?'escuro':'claro')+')',v.card],['text','Texto ('+(v.dk?'escuro':'claro')+')',v.text]];
+ $('#thGrid').innerHTML=f.map(function(x){return '<label>'+x[1]+'<input type="color" data-thc="'+x[0]+'" value="'+x[2]+'"></label>'}).join('');
+ $('#thPrev').style.background='linear-gradient(135deg,'+cur.g1+','+cur.g2+','+cur.g3+')'}
+document.addEventListener('input',function(e){var k=e.target.dataset&&e.target.dataset.thc;if(!k)return;
+ if(k==='bg'||k==='card'||k==='text'){var mk=isDarkNow()?'dark':'light';S.theme[mk]=S.theme[mk]||{};S.theme[mk][k]=e.target.value}
+ else{if(!S.theme.pri){var P0=PRESETS[0];S.theme.pri=P0.pri;S.theme.g1=P0.g1;S.theme.g2=P0.g2;S.theme.g3=P0.g3}S.theme[k]=e.target.value}
+ applyTheme();var c=S.theme;$('#thPrev').style.background='linear-gradient(135deg,'+(c.g1||c.pri)+','+(c.g2||c.pri)+','+(c.g3||c.pri)+')';save()});
+document.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;
+ if(b.dataset.pal!==undefined){var p=PRESETS[+b.dataset.pal];S.theme.pri=p.pri;S.theme.g1=p.g1;S.theme.g2=p.g2;S.theme.g3=p.g3;applyTheme();save();renderTheme()}
+ if(b.id==='thReset'){if(!confirm('Voltar todas as cores ao padrão?'))return;S.theme={};applyTheme();save();renderTheme()}});
+applyTheme();
 
 render();if(CP)view('aprovacao-geral');
 }
+</script>
+<script>
+
+
+const crmRoot=document.getElementById('crmRoot');
+const $=id=>document.getElementById(id);
+// Supabase: chave publishable. A chave secreta/service_role nunca deve ficar neste arquivo.
+const SUPABASE_URL = 'https://yogkvjpzbagpzwseirfw.supabase.co'; // URL do projeto configurada
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_JNBImi0BvCacVcXoMkiU2A_rnyxtSL9';
+const SUPABASE_TABLE = 'consorcio_leads';
+const supabaseConfigured = () => /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(SUPABASE_URL) && !SUPABASE_URL.includes('SEU-PROJETO') && !!SUPABASE_PUBLISHABLE_KEY;
+const supabaseEndpoint = () => SUPABASE_URL.replace(/\/$/,'') + '/rest/v1/' + encodeURIComponent(SUPABASE_TABLE);
+function supabaseError(status, detail){let info;try{info=JSON.parse(detail)}catch{info={message:detail}};const message=info.message||detail||'Erro desconhecido';if(status===401)return 'Chave pública inválida ou projeto incorreto. '+message;if(status===403)return 'A política RLS não permite inserir registros. '+message;if(status===404)return 'Tabela não encontrada ou API indisponível. '+message;if(info.code==='42P01')return 'A tabela consorcio_leads não existe no schema public. '+message;if(info.code==='42703'||info.code==='PGRST204')return 'A estrutura da tabela não corresponde aos campos do formulário. '+message;return 'Supabase ('+status+'): '+message;}
+let leadsCache=[];
+let signedIn=false;
+const getLeads=()=>leadsCache;
+const saveLeads=x=>{leadsCache=x;};
+let activePage='dashboard';
+let temporaryAccess = false;
+const sessionKey = 'crm_supabase_session_v1';
+async function adminRequest(action, data = {}){
+ const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/crm_admin_v1', {
+  method: 'POST',
+  headers: {apikey: SUPABASE_PUBLISHABLE_KEY, 'Content-Type':'application/json'},
+  body: JSON.stringify({action, token:action==='form_read'?null:sessionStorage.getItem(sessionKey), data})
+ });
+ if(!response.ok) throw new Error('Falha ao conectar ao painel. Confira se o SQL foi executado no Supabase.');
+ const result = await response.json();
+ if(result.active === false) sessionStorage.removeItem(sessionKey);
+ if(result.message && action !== 'session') throw new Error(result.message);
+ return result;
+}
+const baseQuestions = {
+ name:'Nome completo *', ddd:'Telefone com DDD *', asset:'Qual bem deseja? *',
+ other:'Qual outro bem ou serviço? *', value:'Qual o valor do bem? (R$) *',
+ hasEntry:'Tem entrada? *', entry:'Qual o valor da entrada? (R$) *',
+ urgency:'Qual a urgência para adquirir o bem? *',
+ knows:'Conhece como funciona o consórcio? *', intent:'Qual seu interesse em contratar? *'
+};
+const defaultConfig = {
+ title:'Encontre o plano ideal para você.',
+ subtitle:'Conte o que você quer conquistar. Nossa equipe entra em contato para conversar sobre as opções de consórcio.',
+ cover:'', next:'Próxima', back:'Voltar', send:'Enviar formulário',
+ questions:baseQuestions, extra:[],
+ rules:{other:'Outro', entry:'Sim'},
+ buttonColor:"#00AE9D",backgroundMode:"solid",gradientEnd:"#003641",gradientAngle:135,extendBanner:false,bannerGlow:true
+};
+let config = structuredClone(defaultConfig);
+let configAvailable = false;
+let forms = {principal:{}};
+let editingFormId = null;
+let editorBanner = "";
+let editorLegacy = false;
+const crmFields = {
+ name:'Nome', phone:'WhatsApp com DDD', asset:'Bem desejado', value:'Valor do bem',
+ entry:'Valor da entrada', urgency:'Urgência (Urgente ou Compra planejada)',
+ knows:'Conhece consórcio (Sim ou Não)', intent:'Interesse (Quero contratar ou Estou pesquisando)'
+};
+// Campos configuráveis por formulário. Os valores ficam no JSON do formulário
+// e as respostas permanecem em form_answers, sem exigir novas colunas SQL.
+const defaultLeadColumns=[{key:'urgency',label:'Urgência'},{key:'knows',label:'Conhece consórcio?'},{key:'intent',label:'Interesse'}];
+function crmColumns(form){
+ const columns=Array.isArray(form?.crmColumns)?form.crmColumns:defaultLeadColumns;
+ return columns.filter(c=>c&&typeof c.key==='string'&&typeof c.label==='string');
+}
+function allCrmColumns(){
+ const byKey=new Map();
+ for(const form of Object.values(forms))for(const col of crmColumns(form))if(col.enabled!==false&&!byKey.has(col.key))byKey.set(col.key,col);
+ return [...byKey.values()];
+}
+function crmRoleOptions(){
+ const fields={...crmFields};
+ const current=forms[editingFormId]||{};
+ for(const col of crmColumns(current))if(col.enabled!==false)fields[col.key]=col.label;
+ for(const row of document.querySelectorAll('#crmColumnsEditor [data-crm-column]')){
+  const key=row.dataset.key,label=row.querySelector('[data-column-label]')?.value.trim();
+  if(key&&label&&row.dataset.enabled!=='false')fields[key]=label;
+ }
+ return fields;
+}
+function refreshCrmRoleOptions(){
+ const roles=crmRoleOptions();
+ document.querySelectorAll('#extraEditors select[name="extra-role"]').forEach(select=>{
+  const selected=select.value;
+  select.innerHTML='<option value="">Somente resposta</option>'+Object.entries(roles).map(([key,label])=>`<option value="${esc(key)}">${esc(label)}</option>`).join('');
+  select.value=selected;
+ });
+}
+function addCrmColumnEditor(col={}){
+ const key=col.key||'custom_'+crypto.randomUUID().replace(/-/g,'').slice(0,12);
+ const row=document.createElement('div');row.dataset.crmColumn='';row.dataset.key=key;
+ row.dataset.enabled=col.enabled===false?'false':'true';
+ row.className='crm-column-row';
+ row.innerHTML=`<span class="crm-drag" aria-hidden="true">⠿</span><input class="crm-column-name" data-column-label maxlength="70" aria-label="Nome do campo do CRM" placeholder="Nome do campo" value="${esc(col.label||'')}"><label class="crm-enabled-label"><input type="checkbox" data-column-enabled ${col.enabled===false?'':'checked'}> Usar no CRM</label><div class="crm-row-actions"><button type="button" data-move-up title="Mover para cima" aria-label="Mover para cima">↑</button><button type="button" data-move-down title="Mover para baixo" aria-label="Mover para baixo">↓</button><button type="button" data-edit-column title="Editar nome" aria-label="Editar nome">✎</button><button type="button" data-remove-column title="Excluir campo" aria-label="Excluir campo">×</button></div>`;
+ row.querySelector('[data-column-label]').addEventListener('input',refreshCrmRoleOptions);
+ row.querySelector('[data-column-enabled]').addEventListener('change',event=>{row.dataset.enabled=event.target.checked?'true':'false';refreshCrmRoleOptions();});
+ row.querySelector('[data-edit-column]').onclick=()=>{const input=row.querySelector('[data-column-label]');input.focus();input.select();};
+ row.querySelector('[data-move-up]').onclick=()=>{const previous=row.previousElementSibling;if(previous){previous.before(row);refreshCrmRoleOptions();}};
+ row.querySelector('[data-move-down]').onclick=()=>{const next=row.nextElementSibling;if(next){next.after(row);refreshCrmRoleOptions();}};
+ row.querySelector('[data-remove-column]').onclick=()=>{if(confirm('Excluir este campo da configuração do CRM? As respostas já recebidas serão preservadas.')){row.remove();refreshCrmRoleOptions();}};
+ $('crmColumnsEditor').append(row);refreshCrmRoleOptions();
+}
+function getLeadColumnValue(lead,col){
+ if(col.key==='urgency')return lead.urgency||leadFieldFromHistory(lead.answers,'urgency');
+ if(col.key==='knows')return lead.knows||leadFieldFromHistory(lead.answers,'knows');
+ if(col.key==='intent')return lead.intent||leadFieldFromHistory(lead.answers,'intent');
+ const a=(lead.answers||[]).find(a=>a.role===col.key);
+ return a?.answer||'';
+}
+function updateFormFilter(){
+ const filter=$('filterForm'), selected=filter.value;
+ filter.replaceChildren(new Option('Todos os formulários',''));
+ for(const [id,form] of Object.entries(forms)) filter.add(new Option(form.title || defaultConfig.title,id));
+ if(Object.hasOwn(forms,selected)) filter.value=selected;
+}
+function normalizeQuestionLabel(label){
+ return String(label||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+}
+function inferCrmRole(question){
+ const q=normalizeQuestionLabel(question);
+ if(/\b(urgencia|urgente|prazo para adquirir|quando pretende)\b/.test(q))return 'urgency';
+ if(/\b(conhece|conhecimento)\b/.test(q)&&/\b(consorcio)\b/.test(q))return 'knows';
+ if(/\b(interesse|intencao|contratar|pesquisando)\b/.test(q))return 'intent';
+ if(/\b(nome completo|seu nome|qual seu nome)\b/.test(q))return 'name';
+ if(/\b(telefone|whatsapp|celular)\b/.test(q))return 'phone';
+ if(/\b(bem desejado|qual bem|tipo de bem)\b/.test(q))return 'asset';
+ return null;
+}
+function leadValues(answers){
+ const result={};
+ for(const item of answers||[]){
+  const role=item.role||inferCrmRole(item.question);
+  if(role && String(item.answer??'').trim())result[role]=String(item.answer).trim();
+ }
+ return result;
+}
+function leadFieldFromHistory(answers,role){
+ const item=(answers||[]).find(a=>(a.role||inferCrmRole(a.question))===role && String(a.answer??'').trim());
+ return item?String(item.answer).trim():'';
+}
+const publicFormId = new URLSearchParams(location.search).get('form');
+
+function normalizeForm(saved = {}){
+ return {...defaultConfig, ...saved,
+  questions:{...baseQuestions,...saved.questions},
+  rules:{...defaultConfig.rules,...saved.rules},
+  extra:Array.isArray(saved.extra)?saved.extra:[]};
+}
+
+function formLink(id){
+ return location.origin + location.pathname + '?form=' + encodeURIComponent(id);
+}
+
+async function copyFormLink(id){
+ const url=formLink(id);
+ try{await navigator.clipboard.writeText(url);alert('Link copiado: '+url);}
+ catch{prompt('Copie o link do formulário:',url);}
+}
+
+async function loadFormConfig(){
+ try{
+  const saved = await adminRequest('form_read');
+  forms = saved.forms ?? {principal:saved};
+  config = normalizeForm(forms[publicFormId || 'principal']);
+  configAvailable = true;
+  updateFormFilter();
+ }catch{
+  configAvailable = false;
+ }
+}
+
+const conditionOptions = {
+ asset:['Carro','Moto','Caminhão','Procedimento estético','Serviços','Outro'],
+ hasEntry:['Sim','Não'], urgency:['Urgente','Compra planejada'],
+ knows:['Sim','Não'], intent:['Quero contratar','Estou pesquisando']
+};
+const editField = (label, name, value, attributes='', id=name) =>
+ '<div class="field"><label for="edit-'+id+'">'+esc(label)+'</label><input id="edit-'+id+'" name="'+name+'" value="'+esc(value)+'" '+attributes+'></div>';
+const options = (values, selected) => values.map(value =>
+ '<option value="'+esc(value)+'"'+(value===selected?' selected':'')+'>'+esc(value)+'</option>').join('');
+
+const percentOperators = {
+ gte:'Maior ou igual a', gt:'Maior que', eq:'Igual a',
+ lt:'Menor que', lte:'Menor ou igual a'
+};
+function matchesEntryPercent(entry, assetValue, operator, percent){
+ if(!Number.isFinite(entry) || !Number.isFinite(assetValue) || assetValue<=0) return false;
+ const actual = Math.round(entry / assetValue * 10000) / 100;
+ switch(operator){
+  case 'gte': return actual >= percent;
+  case 'gt': return actual > percent;
+  case 'eq': return actual === percent;
+  case 'lt': return actual < percent;
+  case 'lte': return actual <= percent;
+  default: return false;
+ }
+}
+
+function readOptions(value){
+ return [...new Set(value.split(',').map(option=>option.trim()).filter(Boolean))];
+}
+
+function refreshRoutes(){
+ const blocks = [...$('extraEditors').children].filter(el=>el.matches('fieldset'));
+ blocks.forEach((block,index)=>{
+  const field = block.querySelector('[name="extra-field"]');
+  const selected = block.pendingField ?? field.value ?? ''; 
+  delete block.pendingField;
+  field.replaceChildren(new Option('Sempre',''));
+  if(index>0 || editorLegacy) field.add(new Option('Entrada em % do valor do bem','entryPercent'));
+  if(editorLegacy){
+   for(const key of ['asset','hasEntry','urgency','knows','intent']){
+    field.add(new Option(baseQuestions[key],key));
+   }
+  }
+  for(const prev of blocks.slice(0,index)){
+   field.add(new Option(prev.querySelector('[name="extra-title"]').value || 'Pergunta sem título',prev.dataset.key));
+  }
+  if([...field.options].some(option=>option.value===selected)) field.value=selected;
+  else if(selected){field.add(new Option('Condição anterior',selected));field.value=selected;}
+  block.updateCondition();
+  const container = block.querySelector('[data-routes]');
+  const type = block.querySelector('[name="extra-type"]').value;
+  const choices = readOptions(block.querySelector('[name="extra-options"]').value);
+  container.replaceChildren();
+  block.querySelector('[data-choices]').hidden = type!=='Opções';
+  if(type!=='Opções' || !choices.length) return;
+  const targets = blocks.slice(index+1).map((target,offset)=>[
+   target.dataset.key,
+   (index+offset+2)+'. '+(target.querySelector('[name="extra-title"]').value.trim() || 'Pergunta sem título')
+  ]);
+  for(const choice of choices){
+   const label = document.createElement('label');
+   label.style.display='block';
+   label.textContent = 'Se responder “'+choice+'” → ';
+   const select = document.createElement('select');
+   for(const [key,title] of [['next','Próxima pergunta'],...targets,['submit','Ir para o envio']]){
+    select.add(new Option(title,key));
+   }
+   const saved = block.routes.get(choice);
+   if([...select.options].some(option=>option.value===saved)) select.value=saved;
+   else block.routes.delete(choice);
+   select.onchange = ()=>block.routes.set(choice,select.value);
+   label.append(select);
+   container.append(label);
+  }
+ });
+}
+
+let extraEditorId = 0;
+function addQuestionEditor(question = {}){
+ const id = ++extraEditorId;
+ const block = document.createElement('fieldset');
+ block.style.margin = '12px 0';
+ block.dataset.key = question.id || 'question-'+crypto.randomUUID();
+ block.pendingField = question.field;
+ block.routes = new Map((question.routes ?? []).map(route=>[route.answer,route.target]));
+ block.innerHTML = '<legend>Pergunta</legend>'+
+ editField('Pergunta','extra-title',question.title ?? '', 'required maxlength="200"','extra-title-'+id)+
+ '<label>Tipo <select name="extra-type"><option value="Texto">Texto</option><option value="Opções"'+(question.type==='Opções'?' selected':'')+'>Botões</option>'+(question.type==='Número'?'<option value="Número" selected>Número</option>':'')+'</select></label>'+
+ '<div data-choices>'+editField('Textos dos botões separados por vírgula','extra-options',(question.options ?? []).join(', '),'maxlength="500"','extra-options-'+id)+'</div>'+
+ '<p><label>Usar no CRM <select name="extra-role"><option value="">Somente resposta</option>'+
+ Object.entries(crmRoleOptions()).map(([key,label])=>'<option value="'+key+'"'+(key===question.role?' selected':'')+'>'+esc(label)+'</option>').join('')+
+ '</select></label></p>'+
+ '<label>Mostrar se <select name="extra-field"></select></label> '+
+ '<label data-answer>Resposta igual a <input name="extra-match" value="'+esc(question.match ?? '')+'"></label>'+
+ '<div data-percent hidden><label>Comparação <select name="extra-operator">'+
+ Object.entries(percentOperators).map(([key,label])=>'<option value="'+key+'"'+(key===question.operator?' selected':'')+'>'+label+'</option>').join('')+
+ '</select></label> <label>Percentual (%) <input name="extra-percent" type="number" min="0" step="0.01" value="'+esc(question.percent ?? 50)+'" required></label>'+
+ '<p class="hint">Exemplo com 50%. Para um bem de R$ 100.000, a entrada de R$ 50.000 corresponde a 50%. Sem entrada corresponde a 0%.</p></div>'+
+ '<p><label><input type="checkbox" name="extra-required"'+(question.required?' checked':'')+'> Obrigatória</label></p>'+
+ '<div data-routes></div><p><button class="secondary move-up" type="button">↑ Subir</button> <button class="secondary move-down" type="button">↓ Descer</button> <button class="danger" type="button">Excluir pergunta</button></p>';
+ block.querySelector('.move-up').onclick=()=>{const prev=block.previousElementSibling;if(prev&&prev.matches('fieldset')){prev.before(block);refreshRoutes();}};
+ block.querySelector('.move-down').onclick=()=>{const next=block.nextElementSibling;if(next&&next.matches('fieldset')){next.after(block);refreshRoutes();}};
+ const field = block.querySelector('[name="extra-field"]');
+ const match = block.querySelector('[name="extra-match"]');
+ block.updateCondition = () => {
+  const usesPercent = field.value === 'entryPercent';
+  match.disabled = !field.value || usesPercent;
+  match.required = !match.disabled;
+  block.querySelector('[data-answer]').hidden = match.disabled;
+  block.querySelector('[data-percent]').hidden = !usesPercent;
+  block.querySelector('[name="extra-percent"]').disabled = !usesPercent;
+ };
+ field.addEventListener('change',block.updateCondition);
+ block.querySelector('button.danger').addEventListener('click',()=>{
+  if(confirm('Excluir esta pergunta do rascunho? A mudança entra no ar ao salvar e publicar.')){
+   block.remove();
+   refreshRoutes();
+   $('editorMessage').textContent = 'Pergunta removida do rascunho.';
+  }
+ });
+ for(const name of ['extra-title','extra-type','extra-options']){
+  block.querySelector('[name="'+name+'"]').addEventListener('change',refreshRoutes);
+ }
+ $('extraEditors').append(block);
+ refreshCrmRoleOptions();
+}
+
+function isBanner(value){
+ return /^https:\/\//i.test(value) || /^data:image\/jpeg;base64,[a-z0-9+/=]+$/i.test(value);
+}
+
+async function prepareBanner(file){
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size>10*1024*1024){
+  throw new Error('Selecione um JPG, PNG ou WebP de até 10 MB.');
+ }
+ const url = URL.createObjectURL(file);
+ try{
+  const image = new Image();
+  image.src = url;
+  await image.decode();
+  const canvas = document.createElement('canvas');
+  canvas.width = 1200;
+  canvas.height = 400;
+  const ctx = canvas.getContext('2d');
+  const scale = Math.min(1200/image.width,400/image.height);
+  const width = image.width*scale, height = image.height*scale;
+  ctx.fillStyle = $('edit-background').value;
+  ctx.fillRect(0,0,1200,400);
+  ctx.drawImage(image,(1200-width)/2,(400-height)/2,width,height);
+  for(const size of [1200,960,720,600]){
+   const output = document.createElement('canvas');
+   output.width=size;
+   output.height=size/3;
+   output.getContext('2d').drawImage(canvas,0,0,output.width,output.height);
+   for(const quality of [.86,.73,.60,.48,.35]){
+    const encoded=output.toDataURL('image/jpeg',quality);
+    if(encoded.length<=40000) return encoded;
+   }
+  }
+  throw new Error('A imagem ficou grande demais após a compressão.');
+ }finally{
+  URL.revokeObjectURL(url);
+ }
+}
+
+function updateBannerPreview(){
+ const image = $('bannerPreview');
+ image.hidden = !isBanner(editorBanner);
+ if(image.hidden) image.removeAttribute('src');
+ else image.src = editorBanner;
+}
+
+function renderFormEditor(draft){
+ editorBanner = draft.cover || '';
+ const editor = $('formEditorFields');
+ editor.innerHTML = '<h3>Capa e botões</h3>'+
+ editField('Título','title',draft.title,'required maxlength="150"')+
+ '<div class="field"><label for="bannerUpload">Banner do topo</label>'+
+ '<input id="bannerUpload" type="file" accept="image/jpeg,image/png,image/webp">'+
+ '<p class="hint">Tamanho recomendado: 1200 × 400 px (3:1). JPG, PNG ou WebP de até 10 MB.</p>'+
+ '<img id="bannerPreview" alt="Prévia do banner" style="width:100%;max-width:480px;border-radius:12px">'+
+ '<p><button type="button" class="secondary" id="removeBanner">Remover imagem</button></p></div>'+
+ '<div class="field"><label for="edit-buttonColor">Cor dos botões do formulário</label><div class="actions"><input id="edit-buttonColor" name="buttonColor" type="color" value="'+esc(draft.buttonColor||"#00AE9D")+'"><input id="buttonColorHex" aria-label="Código HEX dos botões" maxlength="7" value="'+esc(draft.buttonColor||"#00AE9D")+'"></div><p class="hint">Cor dos botões Próxima, Voltar, Enviar e opções selecionadas.</p></div>'+
+ '<div class="field"><label for="edit-background">Cor de fundo</label><div class="actions">'+
+ '<input id="edit-background" name="background" type="color" value="'+esc(draft.background || '#101810')+'">'+
+ '<input id="backgroundHex" aria-label="Código HEX da cor de fundo" placeholder="#003641" maxlength="7" required pattern="#?[0-9a-fA-F]{6}" value="'+esc(draft.background || '#101810')+'">'+
+ '</div></div>'+
+  `<div class="appearance-options"><div class="field"><label>Estilo do fundo</label><select name="backgroundMode" id="backgroundMode"><option value="solid">Cor sólida</option><option value="gradient">Degradê</option></select></div><div class="gradient-studio" id="gradientStudio" hidden><label>Escolha um degradê</label><div class="gradient-presets" id="gradientPresets"></div><div class="gradient-controls"><div class="field"><label>Cor inicial</label><div class="gradient-color-row"><input type="color" id="gradientStartPicker" aria-label="Selecionar cor inicial"><input type="text" id="gradientStartHex" maxlength="7" aria-label="HEX da cor inicial"></div></div><div class="field"><label>Cor final</label><div class="gradient-color-row"><input type="color" name="gradientEnd" id="gradientEnd" value="${esc(draft.gradientEnd||'#003641')}"><input type="text" id="gradientEndHex" maxlength="7" aria-label="HEX da cor final"></div></div></div><label>Direção do degradê</label><div class="gradient-directions" id="gradientDirections"></div><div class="gradient-angle-line"><input type="range" id="gradientAngleSlider" min="0" max="360" step="1" aria-label="Ângulo do degradê"><input type="number" name="gradientAngle" id="gradientAngle" min="0" max="360" value="${esc(draft.gradientAngle??135)}" aria-label="Ângulo em graus"><span>graus</span></div></div><label class="toggle-row"><input type="checkbox" name="extendBanner" ${draft.extendBanner?'checked':''}> Estender as cores do banner para o fundo (efeito ambiente)</label><label class="toggle-row"><input type="checkbox" name="bannerGlow" ${draft.bannerGlow!==false?'checked':''}> Brilho nos botões (cor principal do formulário)</label></div><div id="appearancePreview" class="appearance-preview">Prévia do fundo</div>`+
+  '<section class="crm-fields-panel"><div class="crm-fields-head"><div><h3>Campos e filtros do CRM</h3><p class="hint">Defina quais respostas aparecerão no CRM e na planilha de leads.</p></div></div><div id="crmColumnsEditor"></div><button type="button" class="secondary" id="addCrmColumn">＋ Adicionar campo ao CRM</button><p class="crm-fields-note">Os campos ativados ficam disponíveis em <b>Usar no CRM</b> e aparecem na tabela de leads. Use ↑ e ↓ para ordenar.</p></section>'+
+  '<h3>Perguntas do formulário</h3>'+
+ (editorLegacy ? Object.keys(baseQuestions).map(key=>editField(baseQuestions[key],'legacy-'+key,draft.questions[key],'required maxlength="200"')).join('')+
+ '<p><label>Detalhar o bem <select name="rule-other">'+options(['Outro','Sempre'],draft.rules.other)+'</select></label></p>'+
+ '<p><label>Mostrar valor da entrada <select name="rule-entry">'+options(['Sim','Sempre'],draft.rules.entry)+'</select></label></p>' : '')+
+ '<p class="hint">Associe perguntas aos campos do CRM para preencher automaticamente os dados dos leads.</p>'+
+ '<div id="extraEditors"></div><p><button type="button" id="addExtra" class="secondary">Adicionar pergunta</button></p>'+
+ '';
+ const btnPicker=$('edit-buttonColor'),btnHex=$('buttonColorHex');
+ btnPicker.addEventListener('input',()=>{btnHex.value=btnPicker.value.toUpperCase();});
+ btnHex.addEventListener('input',()=>{let v=btnHex.value.trim();if(!v.startsWith('#'))v='#'+v;if(/^#[0-9a-f]{6}$/i.test(v))btnPicker.value=v;});
+ const picker=$('edit-background'), hex=$('backgroundHex');
+ const endPicker=$('gradientEnd'),endHex=$('gradientEndHex');
+ const startPicker=$('gradientStartPicker'),startHex=$('gradientStartHex');
+ const angle=$('gradientAngle'),angleSlider=$('gradientAngleSlider');
+ const mode=$('backgroundMode'),studio=$('gradientStudio');
+ const presets=[['#00AE9D','#003641'],['#003641','#008E7F'],['#142B32','#00AE9D'],['#0B1D23','#305E65'],['#F1FBF8','#00AE9D'],['#003641','#8FDACB']];
+ const validHex=value=>/^#[0-9a-f]{6}$/i.test(value)?value.toUpperCase():null;
+ const previewAppearance=()=>{
+  const isGradient=mode.value==='gradient';studio.hidden=!isGradient;
+  $('appearancePreview').style.background=isGradient?`linear-gradient(${angle.value}deg, ${picker.value}, ${endPicker.value})`:picker.value;
+  document.querySelectorAll('#gradientPresets button').forEach((btn,i)=>btn.classList.toggle('selected',presets[i][0].toLowerCase()===picker.value.toLowerCase()&&presets[i][1].toLowerCase()===endPicker.value.toLowerCase()));
+  document.querySelectorAll('#gradientDirections button').forEach(btn=>btn.classList.toggle('selected',Number(btn.dataset.angle)===Number(angle.value)));
+ };
+ const syncColors=()=>{hex.value=picker.value.toUpperCase();startPicker.value=picker.value;startHex.value=hex.value;endHex.value=endPicker.value.toUpperCase();previewAppearance();};
+ picker.addEventListener('input',syncColors);
+ startPicker.addEventListener('input',()=>{picker.value=startPicker.value;syncColors();});
+ endPicker.addEventListener('input',syncColors);
+ [hex,startHex].forEach(field=>field.addEventListener('input',()=>{const v=validHex(field.value.startsWith('#')?field.value:'#'+field.value);if(v){picker.value=v;syncColors();}}));
+ endHex.addEventListener('input',()=>{const v=validHex(endHex.value.startsWith('#')?endHex.value:'#'+endHex.value);if(v){endPicker.value=v;syncColors();}});
+ mode.value=draft.backgroundMode||'solid';
+ angleSlider.value=angle.value;
+ angle.addEventListener('input',()=>{angle.value=Math.max(0,Math.min(360,Number(angle.value)||0));angleSlider.value=angle.value;previewAppearance();});
+ angleSlider.addEventListener('input',()=>{angle.value=angleSlider.value;previewAppearance();});
+ mode.addEventListener('change',previewAppearance);
+ $('gradientPresets').innerHTML=presets.map(([a,b],i)=>`<button type="button" class="gradient-preset" data-preset="${i}" style="background:linear-gradient(135deg,${a},${b})" aria-label="Degradê ${i+1}"></button>`).join('');
+ $('gradientPresets').addEventListener('click',event=>{const btn=event.target.closest('[data-preset]');if(!btn)return;const [a,b]=presets[Number(btn.dataset.preset)];picker.value=a;endPicker.value=b;mode.value='gradient';syncColors();});
+ $('gradientDirections').innerHTML=[[0,'↑'],[45,'↗'],[90,'→'],[135,'↘'],[180,'↓'],[225,'↙'],[270,'←'],[315,'↖']].map(([a,s])=>`<button type="button" class="gradient-direction" data-angle="${a}" aria-label="Ângulo ${a} graus">${s}</button>`).join('');
+ $('gradientDirections').addEventListener('click',event=>{const btn=event.target.closest('[data-angle]');if(!btn)return;angle.value=btn.dataset.angle;angleSlider.value=angle.value;previewAppearance();});
+ syncColors();
+  updateBannerPreview();
+ const uploader=$('bannerUpload'), remove=$('removeBanner');
+ const submit=$('formSettings').querySelector('[type="submit"]');
+ remove.onclick=()=>{editorBanner='';uploader.value='';updateBannerPreview();};
+ uploader.onchange=async ()=>{
+  const file=uploader.files[0];
+  if(!file) return;
+  uploader.disabled=remove.disabled=submit.disabled=true;
+  try{
+   const banner=await prepareBanner(file);
+   if(uploader.isConnected && $('formEditor').open){
+    editorBanner=banner;
+    updateBannerPreview();
+    $('editorMessage').textContent='Banner pronto para publicar.';
+   }
+  }catch(error){
+   if(uploader.isConnected) $('editorMessage').textContent=error.message;
+  }finally{
+   uploader.value='';
+   if(uploader.isConnected) uploader.disabled=remove.disabled=submit.disabled=false;
+  }
+ };
+ crmColumns(draft).forEach(addCrmColumnEditor);
+ $('addCrmColumn').onclick=()=>addCrmColumnEditor();
+ (Array.isArray(draft.extra)?draft.extra:[]).forEach(addQuestionEditor);
+ refreshRoutes();
+ $('addExtra').onclick = ()=>{
+  addQuestionEditor({type:'Texto',required:true});
+  refreshRoutes();
+  $('extraEditors').lastElementChild.querySelector('[name="extra-title"]').focus();
+ };
+}
+
+function renderFormList(){
+ const container = $('publishedForms');
+ container.replaceChildren();
+ for(const [id,saved] of Object.entries(forms)){
+  const row = document.createElement('div');
+  row.className = 'form-management-item';
+  const title = document.createElement('strong');
+  title.textContent = saved.title || defaultConfig.title;
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  actions.style.marginTop = '8px';
+  const edit = document.createElement('button');
+  edit.type = 'button';
+  edit.className = 'secondary';
+  edit.textContent = 'Editar';
+  edit.onclick = ()=>openFormEditor(id);
+  const open = document.createElement('a');
+  open.className = 'form-open-link';
+  open.setAttribute('aria-label','Abrir formulário para preenchimento');
+  open.href = formLink(id);
+  open.target = '_blank';
+  open.rel = 'noopener';
+  open.textContent = 'Abrir para preencher ↗';
+  const remove=document.createElement('button');
+  remove.type='button';remove.className='danger small';remove.textContent='Excluir formulário';
+  remove.disabled=false;remove.title='Excluir formulário definitivamente';
+  remove.onclick=()=>deleteForm(id);
+  const copy=document.createElement('button');
+  copy.type='button';copy.className='secondary';copy.textContent='Copiar link';
+  copy.onclick=()=>copyFormLink(id);
+  actions.append(edit,open,copy,remove);
+  row.append(title,actions);
+  container.append(row);
+ }
+}
+
+async function showFormList(){
+ if(!signedIn || temporaryAccess) return;
+ await loadFormConfig();
+ if(!configAvailable){alert('Não foi possível carregar os formulários no Supabase.');return;}
+ renderFormList();
+ $('formList').showModal();
+}
+
+function openFormEditor(id){
+ editingFormId = id ?? crypto.randomUUID();
+ editorLegacy = !!id && !forms[id]?.custom;
+ $('formSettings').querySelector('[type="submit"]').disabled=false;
+ $('formList').close();
+ $('editorMessage').textContent = '';
+ $('formEditorTitle').textContent = id ? 'Editar formulário' : 'Criar formulário';
+ $('editorDescription').textContent = id
+  ? 'Ao publicar, o formulário continua no mesmo link.'
+  : 'Ao publicar, este formulário ganha um link próprio.';
+ try{
+  renderFormEditor(id ? normalizeForm(forms[id]||{}) : structuredClone(defaultConfig));
+  $('formEditor').showModal();
+ }catch(error){
+  console.error('Falha ao abrir editor:',error);
+  $('editorMessage').textContent='Erro ao abrir editor: '+error.message;
+  $('formEditor').showModal();
+ }
+}
+$('editFormButton').onclick = showFormList;
+$('createFormButton').onclick = ()=>openFormEditor();
+$('closeFormList').onclick = ()=>$('formList').close();
+$('closeEditor').onclick = ()=>$('formEditor').close();
+$('formEditor').addEventListener('close',()=>{
+ if(signedIn && !temporaryAccess){
+  renderFormList();
+  switchManagementTab('forms');
+  $('formList').showModal();
+ }
+});
+$('formSettings').onsubmit = async event => {
+ event.preventDefault();
+ const form = event.currentTarget;
+ const button = form.querySelector('[type="submit"]');
+ const fields = new FormData(form);
+ const extra = Array.from($('extraEditors').querySelectorAll('fieldset'), block=>{
+  const get = name => block.querySelector('[name="extra-'+name+'"]');
+  const choices = readOptions(get('options').value);
+  const type = get('type').value;
+  const routes = type==='Opções' ? choices.map(answer=>({answer,target:block.routes.get(answer)}))
+   .filter(route=>route.target && route.target!=='next') : [];
+  return {id:block.dataset.key, title:get('title').value.trim(), type,
+   options:choices, routes, role:get('role').value,
+   field:get('field').value, match:get('match').value, required:get('required').checked,
+   ...(get('field').value==='entryPercent' ? {operator:get('operator').value, percent:Number(get('percent').value)} : {})};
+ });
+ if((!editorLegacy && !extra.length) || extra.some(question=>!question.title || (question.type==='Opções' && !question.options.length))){
+  $('editorMessage').textContent = 'Adicione pelo menos uma pergunta e preencha os textos dos botões, quando houver.';
+  return;
+ }
+ const draft = {...(forms[editingFormId] ?? {}),title:fields.get('title').trim(),
+  buttonColor:fields.get('buttonColor'),
+  cover:editorBanner,background:fields.get('background'),backgroundMode:fields.get('backgroundMode'),gradientEnd:fields.get('gradientEnd'),gradientAngle:Number(fields.get('gradientAngle')),extendBanner:fields.get('extendBanner')==='on',bannerGlow:fields.get('bannerGlow')==='on',imageHeader:true,
+  custom:!editorLegacy,next:'Próxima',back:'Voltar',send:'Enviar formulário'};
+ if(editorLegacy){
+  draft.questions=Object.fromEntries(Object.keys(baseQuestions).map(key=>[key,fields.get('legacy-'+key).trim()]));
+  draft.rules={other:fields.get('rule-other'),entry:fields.get('rule-entry')};
+ }
+
+ draft.extra = extra;
+ draft.crmColumns=Array.from($('crmColumnsEditor').querySelectorAll('[data-crm-column]')).map(row=>({key:row.dataset.key,label:row.querySelector('[data-column-label]').value.trim(),enabled:row.querySelector('[data-column-enabled]').checked})).filter(c=>c.label);
+ button.disabled = true;
+ try{
+  const id = editingFormId;
+  const result = await adminRequest('form_publish',{id,form:draft});
+  if(!result.updated) throw new Error('A publicação não foi confirmada.');
+  forms[id] = draft;
+  updateFormFilter();
+  config = normalizeForm(forms.principal || {});
+  $('formEditor').close();
+  await loadLeads();
+ }catch(error){
+  $('editorMessage').textContent = error.message;
+ }finally{
+  button.disabled = false;
+ }
+};
+
+async function loadLeads(){
+ if(!signedIn || temporaryAccess)return;
+ try{
+ const rows=await adminRequest('leads');
+ leadsCache=rows.map(r=>{
+ const l={id:String(r.id),formId:r.form_id || 'principal',created:r.created_at,name:r.name||'Lead sem nome',ddd:r.ddd||'',phone:r.phone||'',asset:r.asset==='Outro'?(r.asset_other||'Outro'):(r.asset||''),value:Number(r.asset_price)||0,hasEntry:r.has_entry,entry:Number(r.entry_amount)||0,urgency:r.urgency==='Planejamento'?'Compra planejada':r.urgency,knows:r.knows_consorcio,intent:r.intent,status:r.status==='Fechado'?'closed':r.status==='Em atendimento'?'responded':'new'};
+ l.answers=Array.isArray(r.form_answers)?r.form_answers.filter(item=>typeof item?.question==='string' && typeof item.answer==='string'):[];
+ l.urgency=l.urgency||leadFieldFromHistory(l.answers,'urgency');
+ l.knows=l.knows||leadFieldFromHistory(l.answers,'knows');
+ l.intent=l.intent||leadFieldFromHistory(l.answers,'intent');
+ return l;
+ });renderLeads();
+ }catch(e){console.error(e);$('empty').textContent='Erro ao carregar leads: '+e.message;}
+}
+const accessSettings = $('accessSettings');
+const accessForm = $('accessForm');
+$('settingsButton').addEventListener('click', () => {
+ $('accessError').textContent = '';
+ accessSettings.showModal();
+});
+$('cancelAccess').addEventListener('click', () => accessSettings.close());
+accessSettings.addEventListener('close', () => accessForm.reset());
+accessForm.addEventListener('submit', async event => {
+ event.preventDefault();
+ const button = accessForm.querySelector('[type="submit"]');
+ const username = $('newUser').value.trim();
+ if(!username){
+  $('accessError').textContent = 'Informe o novo usuário.';
+  return;
+ }
+ button.disabled = true;
+ $('accessError').textContent = '';
+ try{
+  const result = await adminRequest('change', {
+   username,
+   currentPassword:$('currentPassword').value,
+   newPassword:$('newPassword').value
+  });
+  if(result?.updated !== true) throw new Error('O servidor não confirmou a alteração.');
+  sessionStorage.removeItem(sessionKey);
+  location.replace('?admin');
+ }catch(error){
+  $('accessError').textContent = error.message;
+ }finally{
+  button.disabled = false;
+ }
+});
+async function enterDashboard(session){
+ temporaryAccess = session.temporary === true;
+ signedIn=true;$('loginView').style.display='none';$('appView').style.display='block';
+ $('password').value='';
+ if(temporaryAccess){
+  $('dashboard').classList.add('hidden');
+  $('newUser').value = 'adm';
+  $('accessError').textContent = 'Troque a senha inicial para liberar o painel.';
+  accessSettings.showModal();
+  return;
+ }
+ await loadFormConfig();
+ showDashboard();
+}
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();$('loginError').textContent='';
+ const button=e.target.querySelector('button');button.disabled=true;
+ try{
+ const session = await adminRequest('login', {username:$('username').value.trim(), password:$('password').value});
+ sessionStorage.setItem(sessionKey, session.token);
+ await enterDashboard(session);
+ }catch(err){$('loginError').textContent=err.message;}finally{button.disabled=false;}
+});
+async function crmLogout(){
+ try{
+ await adminRequest('logout');
+ signedIn=false;leadsCache=[];$('appView').style.display='none';$('loginView').style.display='grid';
+ }catch(err){alert(err.message);}
+}
+function showDashboard(){crmRoot.classList.remove('public-form-active');crmRoot.style.removeProperty('background');crmRoot.style.removeProperty('background-image');activePage='dashboard';$('dashboard').classList.remove('hidden');$('formPage').classList.add('hidden');renderLeads();loadLeads();}
+if(publicFormId !== null){
+ document.body.appendChild(crmRoot);crmRoot.classList.add('public-form-active');document.body.classList.add('crm-public');
+ $('loginView').style.display='none';
+ $('appView').style.display='block';
+ document.querySelector('.topbar').style.display='none';
+ $('dashboard').classList.add('hidden');
+ $('formPage').classList.remove('hidden');
+ $('formPage').textContent = 'Carregando formulário…';
+ loadFormConfig().then(()=>{
+  if(configAvailable && Object.hasOwn(forms,publicFormId || 'principal')) showLeadForm();
+  else $('formPage').textContent = configAvailable
+   ? 'Este formulário não foi encontrado.'
+   : 'Não foi possível carregar o formulário. Atualize a página e tente novamente.';
+ });
+}else{
+ adminRequest('session').then(session=>{if(session.active)enterDashboard(session);})
+  .catch(error=>{$('loginError').textContent=error.message;});
+}
+function showLeadForm(){activePage='form';$('dashboard').classList.add('hidden');$('formPage').classList.remove('hidden');$('formPage').innerHTML=`
+ <div class="form-page"><header class="form-hero"><a class="secondary small" style="display:inline-block;margin-bottom:16px" href="?admin">Área administrativa</a><div class="crm-brand">CONSÓRCIO</div><h1>${esc(config.title)}</h1><p>${esc(config.subtitle)}</p></header><div class="form-card">
+ <div class="public-card-heading"><h1>${esc(config.title || "Fale com a gente")}</h1><p>${esc(config.subtitle || "Informe seus dados e conte seu interesse.")}</p></div>
+ <form id="leadForm">
+  <div class="section"><div class="field"><label>Nome completo *</label><input name="name" required placeholder="Digite seu nome"></div>
+  <div class="field"><label>Telefone com DDD *</label><div class="two"><input name="ddd" inputmode="numeric" maxlength="2" pattern="[0-9]{2}" placeholder="DDD" required aria-label="DDD"><input name="phone" inputmode="numeric" maxlength="10" pattern="[0-9]{8,9}" placeholder="Número de telefone" required aria-label="Número de telefone"></div><div class="hint">Informe o DDD separado do número.</div></div></div>
+  <div class="section"><div class="field"><label>Qual bem deseja? *</label><div class="choices">
+   ${['Carro','Moto','Caminhão','Procedimento estético','Serviços','Outro'].map(x=>`<label class="choice"><input type="radio" name="asset" value="${x}" required> ${x}</label>`).join('')}
+  </div></div><div class="field hidden" id="otherWrap"><label>Qual outro bem ou serviço? *</label><input name="other" id="otherInput" placeholder="Descreva"></div>
+  <div class="field"><label>Qual o valor do bem? (R$) *</label><input name="value" id="assetValue" inputmode="decimal" placeholder="Ex.: 80.000" required></div></div>
+  <div class="section"><div class="field"><label>Tem entrada? *</label><div class="choices"><label class="choice"><input type="radio" name="hasEntry" value="Sim" required> Sim</label><label class="choice"><input type="radio" name="hasEntry" value="Não" required> Não</label></div></div>
+  <div class="field hidden" id="entryWrap"><label>Qual o valor da entrada? (R$) *</label><input name="entry" id="entryValue" inputmode="decimal" placeholder="Ex.: 20.000"><button type="button" class="secondary" id="noEntry" style="margin-top:8px">Não tenho entrada</button></div></div>
+  <div class="section"><div class="field"><label>Qual a urgência para adquirir o bem? *</label><div class="choices"><label class="choice"><input type="radio" name="urgency" value="Urgente" required> Urgente</label><label class="choice"><input type="radio" name="urgency" value="Compra planejada" required> Compra planejada / futura</label></div></div></div>
+  <div class="section"><div class="field"><label>Conhece como funciona o consórcio? *</label><div class="choices"><label class="choice"><input type="radio" name="knows" value="Sim" required> Sim</label><label class="choice"><input type="radio" name="knows" value="Não" required> Não</label></div></div>
+  <div class="field"><label>Qual seu interesse em contratar? *</label><div class="choices"><label class="choice"><input type="radio" name="intent" value="Quero contratar" required> Quero contratar</label><label class="choice"><input type="radio" name="intent" value="Estou pesquisando" required> Estou pesquisando</label></div></div></div>
+  <div class="actions" style="margin-top:20px">
+   <button type="button" class="secondary" id="backQuestion">Voltar</button>
+   <button type="button" class="primary" id="nextQuestion">Próxima</button>
+  </div>
+ </form></div><div class="footer-note">Atendimento sujeito à análise e às condições do grupo de consórcio.</div></div>`;
+ const form = $('leadForm');
+ if(config.custom) form.querySelectorAll('.section').forEach(section=>section.remove());
+ {
+  crmRoot.classList.add('public-form-active');
+  const page = document.querySelector('.form-page');
+  const color = /^#[0-9a-f]{6}$/i.test(config.background) ? config.background : '#003641';
+  page.style.setProperty('--form-bg',color);
+  const endColor=/^#[0-9a-f]{6}$/i.test(config.gradientEnd)?config.gradientEnd:color;
+  const angle=Number.isFinite(Number(config.gradientAngle))?Number(config.gradientAngle):135;
+  const background=config.backgroundMode==='gradient'?`linear-gradient(${angle}deg,${color},${endColor})`:color;
+  crmRoot.style.setProperty('--public-background',background);
+  
+  crmRoot.style.background=background;
+  crmRoot.style.backgroundSize='cover';crmRoot.style.backgroundRepeat='no-repeat';
+  page.style.background='transparent';
+  if(config.extendBanner && isBanner(config.cover)){
+   crmRoot.style.backgroundImage=`linear-gradient(180deg,transparent 0%,${color} 85%),url("${config.cover}")`;
+   crmRoot.style.backgroundSize='cover';crmRoot.style.backgroundPosition='center top';
+  }
+  // Contraste automático: também funciona com fundos claros escolhidos no editor.
+  const rgb=hex=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));
+  const light=hex=>{const [r,g,b]=rgb(hex);return (r*299+g*587+b*114)/1000>155;};
+  const panelColor=config.backgroundMode==='gradient'?`linear-gradient(${angle}deg,${color},${endColor})`:color;
+  const isLight=light(color)&&(config.backgroundMode!=='gradient'||light(endColor));
+  const textColor=isLight?'#152c2c':'#f6fffd';
+  const softText=isLight?'#3c5554':'#d0e9e6';
+  const tint=isLight?'#000000':'#ffffff';
+  page.style.setProperty('--form-panel-bg',panelColor);
+  page.style.setProperty('--form-text',textColor);
+  page.style.setProperty('--form-muted',softText);
+  page.style.setProperty('--form-input-bg',isLight?'#0000000b':'#ffffff16');
+  page.style.setProperty('--form-choice-bg',isLight?'#00000008':'#ffffff12');
+  page.style.setProperty('--form-input-border',isLight?'#00000035':'#ffffff44');
+  const header = document.querySelector('.form-hero');
+  page.style.setProperty('--form-accent',/^#[0-9a-f]{6}$/i.test(config.buttonColor)?config.buttonColor:'#00AE9D');
+  page.style.setProperty('--button-color',/^#[0-9a-f]{6}$/i.test(config.buttonColor)?config.buttonColor:'#00AE9D');
+  page.style.setProperty('--form-outline',/^#[0-9a-f]{6}$/i.test(config.buttonColor)?config.buttonColor:'#00AE9D');
+  page.style.setProperty('--form-choice-selected',`color-mix(in srgb,${/^#[0-9a-f]{6}$/i.test(config.buttonColor)?config.buttonColor:'#00AE9D'} 26%,transparent)`);
+  page.classList.add('interactive-glow');
+  page.style.setProperty('--button-text',light(/^#[0-9a-f]{6}$/i.test(config.buttonColor)?config.buttonColor:'#00AE9D')?'#092421':'#ffffff');
+  if(isBanner(config.cover)){
+   const banner=document.createElement('img');
+   banner.src=config.cover;
+   banner.alt='';banner.className='public-banner'+' glow-banner';
+   banner.style.cssText='display:block;width:100%;height:auto;border-radius:18px;margin-bottom:24px';
+   header.replaceWith(banner);
+  }else header.remove();
+ }
+ const cover = document.querySelector('.form-hero');
+ if(cover && config.cover){
+  const link = document.createElement('a');
+  link.href = config.cover;
+  if(link.protocol === 'https:'){
+   cover.style.backgroundImage = 'linear-gradient(#101810b3,#101810e6),url("'+encodeURI(link.href).replaceAll('"','%22')+'")';
+   cover.style.backgroundSize = 'cover';
+   cover.style.backgroundPosition = 'center';
+  }
+ }
+ form.querySelectorAll('.field').forEach(field => {
+  field.querySelector('label').textContent = config.questions[field.querySelector('input').name];
+ });
+ const controls = $('backQuestion').parentElement;
+ config.extra.forEach((question,index)=>{
+  const field = document.createElement('div');
+  field.className = 'field';
+  field.dataset.extra = index;
+  const name = 'extra-'+index;
+  field.innerHTML = '<label for="'+name+'">'+esc(question.title)+'</label>';
+  if(question.type==='Opções'){
+   field.innerHTML = '<div role="group" aria-label="'+esc(question.title)+'">'+
+    '<p><strong>'+esc(question.title)+'</strong></p><div class="choices">'+
+    question.options.map(choice=>'<label class="choice"><input type="radio" name="'+name+'" value="'+esc(choice)+'"'+
+     (question.required?' required':'')+'> '+esc(choice)+'</label>').join('')+'</div></div>';
+   form.insertBefore(field,controls);
+   return;
+  }
+  const input = document.createElement('input');
+  input.id = input.name = name;
+  input.required = question.required;
+  input.type = question.type==='Número'?'number':'text';
+  if(input.type==='number') input.step='any';
+  if(input.type==='text') input.maxLength=500;
+  field.append(input);
+  form.insertBefore(field,controls);
+ });
+ setupQuestions(form);
+}
+function setupQuestions(form){
+ const questions = Array.from(form.querySelectorAll('.field'));
+ const controls = $('backQuestion').parentElement;
+ const progress = document.createElement('p');
+ progress.className = 'hint';
+ progress.setAttribute('aria-live', 'polite');
+ form.prepend(progress);
+
+ for (const question of questions) form.insertBefore(question, controls);
+ form.querySelectorAll('.section').forEach(section => section.remove());
+
+ const history = [];
+ let current = questions[0];
+ const readAnswer = question => {
+  const input = question.querySelector('input,select');
+  return input.type==='radio' ? (question.querySelector('input:checked')?.value ?? '') : input.value;
+ };
+ const answered = () => [...history,current].filter(step=>step?.dataset.extra !== undefined)
+  .map(step=>({question:config.extra[step.dataset.extra], answer:readAnswer(step)}))
+  .filter(item=>item.answer !== '');
+ const applicable = () => questions.filter(question => {
+  if(question.id === 'otherWrap') return config.rules.other === 'Sempre' || form.asset.value === 'Outro';
+  if(question.id === 'entryWrap') return config.rules.entry === 'Sempre' || form.hasEntry.value === 'Sim';
+  if(question.dataset.extra === undefined) return true;
+  const rule = config.extra[question.dataset.extra];
+  if(config.custom){
+   if(!rule.field) return true;
+   const previous=answered();
+   if(rule.field==='entryPercent'){
+    const values=leadValues(previous.map(item=>({role:item.question.role,answer:item.answer})));
+    return values.value !== undefined && values.entry !== undefined &&
+     matchesEntryPercent(moneyNumber(values.entry),moneyNumber(values.value),rule.operator,rule.percent);
+   }
+   return previous.some(item=>item.question.id===rule.field &&
+    item.answer.trim().toLowerCase()===rule.match.trim().toLowerCase());
+  }
+  if(rule.field==='entryPercent'){
+   const input = $('entryValue');
+   const entry = input.dataset.none || (form.hasEntry.value==='Não' && config.rules.entry!=='Sempre')
+    ? 0 : moneyNumber(input.value);
+   if(!form.hasEntry.value || (form.hasEntry.value==='Sim' && !input.dataset.none && !entry)) return false;
+   return matchesEntryPercent(entry,moneyNumber(form.elements.value.value),rule.operator,rule.percent);
+  }
+  const answer = rule.field === 'hasEntry' && $('entryValue').dataset.none ? 'Não' : form.elements[rule.field]?.value;
+  return !rule.field || answer === rule.match;
+ });
+ $('backQuestion').textContent = config.back;
+ if($('noEntry')){
+ $('noEntry').onclick = () => {
+  $('entryValue').dataset.none = 'true';
+  $('entryValue').value = '';
+  advanceQuestion(false);
+ };
+ $('entryValue').oninput = () => delete $('entryValue').dataset.none;
+ form.querySelectorAll('[name="hasEntry"]').forEach(input => input.addEventListener('change',()=>{
+  delete $('entryValue').dataset.none;
+  $('entryValue').value = '';
+ }));
+ }
+ function nextQuestion(){
+  const steps = applicable();
+  const rule = config.extra[current.dataset.extra];
+  const target = rule?.routes?.find(route=>route.answer===readAnswer(current))?.target;
+  if(target==='submit') return null;
+  if(target){
+   const destination = questions.findIndex(step=>config.extra[step.dataset.extra]?.id===target);
+   if(destination>questions.indexOf(current)) return steps.find(step=>questions.indexOf(step)>=destination);
+  }
+  return steps.find(step=>questions.indexOf(step)>questions.indexOf(current));
+ }
+
+ function renderQuestion(focus){
+  questions.forEach(question => question.classList.toggle('hidden', question !== current));
+  progress.textContent = 'Pergunta ' + (history.length + 1);
+  $('backQuestion').classList.toggle('hidden', !history.length);
+  $('nextQuestion').textContent = nextQuestion() ? config.next : config.send;
+  if(focus){
+   current.tabIndex = -1;
+   current.focus();
+  }
+ }
+
+ $('backQuestion').addEventListener('click', () => {
+  if(!history.length) return;
+  current = history.pop();
+  renderQuestion(true);
+ });
+
+ form.addEventListener('change', event=>{
+  if(event.target.type==='radio' && current.contains(event.target)){
+   const submitButton = $('nextQuestion');
+   if(submitButton.disabled) return;
+   if(nextQuestion()) advanceQuestion(false);
+   else submitButton.textContent = config.send;
+  }
+ });
+ form.noValidate = true;
+ form.addEventListener('submit', event => event.preventDefault());
+ $('nextQuestion').addEventListener('click', () => advanceQuestion(true));
+
+ function advanceQuestion(confirmSend){
+  if($('nextQuestion').disabled) return;
+  for(const input of current.querySelectorAll('input,select')){
+   if(input.id === 'entryValue' && input.dataset.none) continue;
+   if(input.type !== 'radio' && !input.value.trim() && (input.required || current.dataset.extra === undefined)){
+    input.setCustomValidity('Preencha este campo para continuar.');
+   }else if(input.inputMode === 'decimal' && moneyNumber(input.value) <= 0){
+    input.setCustomValidity('Informe um valor maior que zero.');
+   }
+   const valid = input.reportValidity();
+   input.setCustomValidity('');
+   if(!valid) return;
+  }
+  const next = nextQuestion();
+  if(!next){
+   if(!confirmSend){
+    $('nextQuestion').textContent = config.send;
+    $('nextQuestion').focus();
+    return;
+   }
+   submitLead(form, answered().map(item=>({
+    question:item.question.title, answer:item.answer, role:item.question.role || inferCrmRole(item.question.title)
+   })));
+   return;
+  }
+  history.push(current);
+  current = next;
+  renderQuestion(true);
+ }
+
+ renderQuestion(false);
+}
+function moneyNumber(v){return Number(String(v||'').replace(/\./g,'').replace(',','.').replace(/[^\d.]/g,''))||0;}
+function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2});}
+function customLeadRow(answers){
+ // Save the actual answer of each question mapped to a CRM field.
+ // Custom button labels must not be discarded by a fixed-value whitelist.
+ const values = leadValues(answers);
+ const phone = String(values.phone ?? '').replace(/[^0-9]/g,'').replace(/^55(?=[0-9]{10,11}$)/,'');
+ const validPhone = /^[0-9]{10,11}$/.test(phone);
+ const price = moneyNumber(values.value);
+ const entry = moneyNumber(values.entry);
+ const clean = key => String(values[key] ?? '').trim() || null;
+ const urgency = clean('urgency');
+ return {
+  name:clean('name'), ddd:validPhone?phone.slice(0,2):null,
+  phone:validPhone?phone.slice(2):null,
+  asset:clean('asset'), asset_price:price>0?price:null,
+  entry_amount:entry, has_entry:values.entry===undefined?null:entry>0?'Sim':'Não',
+  urgency:urgency==='Compra planejada'?'Planejamento':urgency,
+  knows_consorcio:clean('knows'), intent:clean('intent'), status:'Novo'
+ };
+}
+function legacyLeadRow(fd){
+ const amount=moneyNumber(fd.get('value'));
+ const entry=moneyNumber(fd.get('entry'));
+ const hasEntry=($('entryValue').dataset.none || entry<=0)?'Não':'Sim';
+ if(amount<=0) throw new Error('Informe um valor válido para o bem.');
+ const lead={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),created:new Date().toISOString(),name:fd.get('name').trim(),ddd:fd.get('ddd'),phone:fd.get('phone'),asset:fd.get('asset')==='Outro'?fd.get('other').trim():fd.get('asset'),value:amount,hasEntry,entry:hasEntry==='Sim'?entry:0,urgency:fd.get('urgency'),knows:fd.get('knows'),intent:fd.get('intent'),status:'new'};
+
+ return {name:lead.name,ddd:lead.ddd,phone:lead.phone,asset:fd.get('asset'),asset_other:fd.get('asset')==='Outro'?lead.asset:null,asset_price:lead.value,has_entry:lead.hasEntry,entry_amount:lead.entry,urgency:lead.urgency==='Compra planejada'?'Planejamento':'Urgente',knows_consorcio:lead.knows,intent:lead.intent,status:'Novo'}; 
+}
+async function submitLead(form, answers){
+ const fd=new FormData(form);
+ const submitButton=$('nextQuestion');if(submitButton){submitButton.disabled=true;submitButton.textContent='Enviando...';$('backQuestion').disabled=true;}
+ try{
+  if(!supabaseConfigured()) throw new Error('Informe a URL real do projeto na constante SUPABASE_URL (Supabase > Project Settings > API).');
+  const row=config.custom ? customLeadRow(answers) : legacyLeadRow(fd);
+  if(answers.length) row.form_answers=answers;
+  if(publicFormId && publicFormId!=='principal') row.form_id=publicFormId;
+  const response=await fetch(supabaseEndpoint(),{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Prefer':'return=minimal'},body:JSON.stringify(row)});
+  if(!response.ok){const detail=await response.text();throw new Error(supabaseError(response.status,detail));}
+  if(signedIn)await loadLeads();
+  $('formPage').innerHTML=`<div class="form-page"><div class="form-card" style="text-align:center;padding:40px 25px"><div style="font-size:42px;color:var(--green)">✓</div><h1>Formulário enviado!</h1><p class="muted">Obrigado pelo interesse. Nossa equipe poderá entrar em contato em breve.</p><button class="secondary" onclick="showLeadForm()">Novo formulário</button></div></div>`;
+ }catch(err){console.error(err);alert('Não foi possível enviar o formulário. '+(err instanceof TypeError?'Falha de rede ou bloqueio de CORS. Verifique a URL e a conexão.':err.message));if(submitButton){submitButton.disabled=false;submitButton.textContent=config.send;$('backQuestion').disabled=false;}}
+}
+
+function renderLeads(){
+ const formId=$('filterForm').value;
+ const all=getLeads().filter(lead=>!formId || lead.formId===formId);$('countGenerated').textContent=all.length;$('countResponded').textContent=all.filter(x=>x.status==='responded').length;$('countClosed').textContent=all.filter(x=>x.status==='closed').length;$('countHot').textContent=all.filter(x=>x.status==='new').length;
+ const q=($('search')?.value||'').toLowerCase(),filter=$('filter')?.value||'all';
+ let rows=all.filter(l=>(l.name+' '+l.ddd+l.phone).toLowerCase().includes(q));
+ if(filter!=='all')rows=rows.filter(l=>l.status===filter);
+ rows.sort(compareLeads);
+ const columns=allCrmColumns();
+ const head=$('leadRows').closest('table').querySelector('thead tr');
+ head.innerHTML='<th>Lead</th><th>Bem desejado</th>'+columns.map(c=>'<th>'+esc(c.label)+'</th>').join('')+'<th>Status</th><th>Ações</th>';
+ $('leadRows').innerHTML=rows.map(l=>`<tr>
+ <td><b>${esc(l.name)}</b><br><span class="muted">(${esc(l.ddd)}) ${esc(l.phone)}</span></td><td>${esc(l.asset)}</td>${columns.map(c=>'<td>'+esc(getLeadColumnValue(l,c)||'—')+'</td>').join('')}<td>${statusTag(l.status)}</td><td><div class="actions"><button class="secondary small" onclick="showDetails('${l.id}')">Ver resposta</button><button class="secondary small" onclick="editLead('${l.id}')">Editar</button><button class="danger small" onclick="deleteLead('${l.id}')" title="Excluir este lead definitivamente">Excluir</button></div></td></tr>`).join('');
+ $('empty').classList.toggle('hidden',rows.length>0);
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function statusTag(s){return s==='closed'?'<span class="tag red">Fechado</span>':s==='responded'?'<span class="tag orange">Em atendimento</span>':'<span class="tag">Novo</span>';}
+function showDetails(id){
+ const l=getLeads().find(x=>x.id===id);if(!l)return;
+ const msg='';
+ $('modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="crm-modal"><div class="modal-head"><div><h2>${esc(l.name)}</h2><span class="muted">Lead recebido em ${new Date(l.created).toLocaleString('pt-BR')}</span></div><button class="close" onclick="closeModal()">✕</button></div>
+ <p>${statusTag(l.status)}</p>
+ <div class="detail-grid">
+ ${detail('Telefone','('+l.ddd+') '+l.phone)}${detail('Bem desejado',l.asset)}${detail('Valor do bem',money(l.value))}${detail('Tem entrada?',l.hasEntry)}${detail('Valor da entrada',l.hasEntry==='Sim'?money(l.entry):'Não possui')}${detail('Urgência',l.urgency)}${detail('Conhece consórcio?',l.knows)}${detail('Interesse',l.intent)}${allCrmColumns().filter(c=>!['urgency','knows','intent'].includes(c.key)).map(c=>detail(c.label,getLeadColumnValue(l,c))).join('')}${l.answers.map(item=>detail(item.question,item.answer)).join('')}
+ </div>
+ <h3 style="font-size:15px;margin:20px 0 8px">Respostas rápidas</h3><div class="field"><label>Selecionar resposta rápida</label><select id="leadMessageTemplate" onchange="updateLeadMessage('${l.id}')"></select></div><div class="message" id="leadMessagePreview">Selecione uma resposta rápida para visualizar a mensagem.</div>
+ <div class="actions" style="margin-top:16px"><button class="secondary" onclick="editLead('${l.id}')">Editar lead</button><button class="primary" ${l.phone?"":"disabled"} onclick="openWhatsApp('${l.id}')">Abrir WhatsApp</button><button class="secondary" onclick="copyMessage('${l.id}')">Copiar mensagem</button><button class="secondary" onclick="setStatus('${l.id}','responded')">Marcar em atendimento</button><button class="danger" onclick="setStatus('${l.id}','closed')">Fechar lead</button><button class="danger" onclick="deleteLead('${l.id}')">Excluir lead</button></div>
+ </div></div>`;
+ populateLeadMessages(l);
+}
+function detail(k,v){return `<div class="detail"><small>${k}</small><b>${esc(v)}</b></div>`;}
+function closeModal(){$('modalRoot').innerHTML='';}
+async function openWhatsApp(id){
+ const lead=getLeads().find(item=>item.id===id);
+ if(!lead?.phone) return;
+ const message=selectedMessage(lead);
+ const url='https://wa.me/55'+lead.ddd+lead.phone.replace(/\D/g,'')+(message?'?text='+encodeURIComponent(message):'');
+ const tab = window.open('about:blank','_blank');
+ if(!tab){alert('Permita a abertura de novas janelas para acessar o WhatsApp.');return;}
+ tab.opener = null;
+ tab.location.replace(url);
+ if(lead.status!=='new') return;
+ try{
+  if(configAvailable) await adminRequest('whatsapp_open',{id});
+  else await adminRequest('status',{id,status:'Em atendimento'});
+  closeModal();
+  await loadLeads();
+ }catch(error){
+  alert('O WhatsApp abriu, mas não foi possível atualizar o status: '+error.message);
+ }
+}
+function copyMessage(id){const l=getLeads().find(x=>x.id===id);if(l)navigator.clipboard?.writeText(selectedMessage(l)).then(()=>alert('Mensagem copiada.')).catch(()=>alert(selectedMessage(l)));}
+async function setStatus(id,status){
+ try{
+ const dbStatus=status==='closed'?'Fechado':status==='responded'?'Em atendimento':'Novo';
+ await adminRequest('status', {id, status:dbStatus});
+ closeModal();await loadLeads();
+ }catch(e){alert('Não foi possível atualizar o status: '+e.message);}
+}
+
+function editLead(id){
+ const l=getLeads().find(x=>x.id===id);if(!l)return;
+ const field=(label,key,value,type='text')=>`<div class="field"><label for="edit_${key}">${label}</label><input id="edit_${key}" type="${type}" value="${esc(value??'')}"></div>`;
+ $('modalRoot').innerHTML=`<div class="modal-bg"><div class="crm-modal"><div class="modal-head"><h2>Editar lead</h2><button class="close" onclick="closeModal()">✕</button></div><form id="leadEditForm" onsubmit="saveEditedLead(event,'${l.id}')">
+ ${field('Nome','name',l.name==='Lead sem nome'?'':l.name)}
+ <div class="detail-grid">${field('DDD','ddd',l.ddd)}${field('Telefone','phone',l.phone)}</div>
+ ${field('Bem desejado','asset',l.asset)}
+ ${field('Valor do bem (R$)','value',l.value||'','number')}
+ ${field('Valor da entrada (R$)','entry',l.entry||'','number')}
+ ${field('Urgência','urgency',l.urgency)}
+ ${field('Conhece consórcio?','knows',l.knows)}
+ ${field('Interesse','intent',l.intent)}
+ <p class="hint" id="leadEditStatus" role="status">Campos em branco serão mantidos sem informação.</p>
+ <div class="actions"><button class="primary" type="submit">Salvar alterações</button><button class="secondary" type="button" onclick="closeModal()">Cancelar</button></div></form></div></div>`;
+}
+async function saveEditedLead(event,id){
+ event.preventDefault();const form=event.target,button=form.querySelector('[type=submit]'),message=$('leadEditStatus');
+ const get=k=>$('edit_'+k).value.trim();const ddd=get('ddd').replace(/\D/g,''),phone=get('phone').replace(/\D/g,'');
+ if((ddd||phone)&&(!/^\d{2}$/.test(ddd)||!/^\d{8,9}$/.test(phone))){message.textContent='Informe DDD com 2 dígitos e telefone com 8 ou 9 dígitos, ou deixe ambos vazios.';return;}
+ const number=k=>get(k)===''?null:Number(get(k));
+ const data={name:get('name')||null,ddd:ddd||null,phone:phone||null,asset:get('asset')||null,asset_price:number('value'),entry_amount:number('entry'),urgency:get('urgency')||null,knows_consorcio:get('knows')||null,intent:get('intent')||null};
+ button.disabled=true;message.textContent='Salvando alterações...';
+ try{
+  // A edição usa a sessão administrativa. Não expor credenciais privilegiadas no HTML.
+  const result=await adminRequest('lead_update',{id,...data});
+  if(result?.updated===false)throw Error('O servidor não confirmou a atualização.');
+  closeModal();await loadLeads();
+ }catch(error){message.textContent='Não foi possível salvar: '+error.message+'. A função crm_admin_v1 do Supabase precisa permitir a ação lead_update.';button.disabled=false;}
+}
+
+async function deleteForm(id){
+ const title=forms[id]?.title||'este formulário';
+ if(!confirm('Excluir definitivamente "'+title+'"? O link deixará de funcionar. Os leads já recebidos serão preservados.'))return;
+ try{
+  const result=await adminRequest('form_delete',{id});
+  if(result?.updated!==true && result?.deleted!==true)throw new Error('O servidor não confirmou a exclusão. A função crm_admin_v1 precisa aceitar form_delete.');
+  delete forms[id];updateFormFilter();renderFormList();await loadLeads();
+ }catch(error){alert('Não foi possível excluir o formulário: '+error.message+(error.message==='Operação inválida.'?'\n\nA função SQL crm_admin_v1 precisa ser atualizada no Supabase.':''));}
+}
+async function deleteLead(id){
+ const lead=getLeads().find(x=>x.id===id);if(!lead)return;
+ if(!confirm('Excluir definitivamente o lead de '+lead.name+'? Esta ação não pode ser desfeita.'))return;
+ try{
+  const result=await adminRequest('lead_delete',{id});
+  if(result?.updated!==true && result?.deleted!==true)throw new Error('O servidor não confirmou a exclusão. Atualize a função crm_admin_v1 no Supabase para aceitar lead_delete.');
+  closeModal();await loadLeads();
+ }catch(error){alert('Não foi possível excluir o lead: '+error.message);}
+}
+const replyStorage='crm_quick_replies_v2';
+const sortStorage='crm_sort_rules_v2';
+let quickReplies=JSON.parse(localStorage.getItem(replyStorage)||'[]');
+let sortRules=JSON.parse(localStorage.getItem(sortStorage)||'[{"field":"urgency","direction":"asc"},{"field":"asset","direction":"asc"},{"field":"created","direction":"desc"}]');
+const sortFields={urgency:'Urgência',asset:'Bem desejado',intent:'Interesse',name:'Nome do lead',status:'Status',value:'Valor do bem',entry:'Valor da entrada',created:'Data de cadastro'};
+function compareLeads(a,b){for(const rule of sortRules){let av=a[rule.field],bv=b[rule.field];if(rule.field==='created'){av=new Date(av).getTime();bv=new Date(bv).getTime();}if(['value','entry','created'].includes(rule.field)){av=Number(av)||0;bv=Number(bv)||0;}else{av=String(av||'').toLocaleLowerCase('pt-BR');bv=String(bv||'').toLocaleLowerCase('pt-BR');}const diff=typeof av==='number'?av-bv:av.localeCompare(bv,'pt-BR',{numeric:true});if(diff)return rule.direction==='desc'?-diff:diff;}return new Date(b.created)-new Date(a.created);}
+function persistSort(){localStorage.setItem(sortStorage,JSON.stringify(sortRules));renderSortRules();renderLeads();}
+function resetSort(){sortRules=[{field:'urgency',direction:'asc'},{field:'asset',direction:'asc'},{field:'created',direction:'desc'}];persistSort();}
+function moveSort(i,delta){const j=i+delta;if(j<0||j>=sortRules.length)return;[sortRules[i],sortRules[j]]=[sortRules[j],sortRules[i]];persistSort();}
+function renderSortRules(){const el=$('sortRules');if(!el)return;el.innerHTML=sortRules.map((r,i)=>`<div class="sort-row"><span class="sort-number">${i+1}</span><select aria-label="Critério ${i+1}" onchange="sortRules[${i}].field=this.value;persistSort()">${Object.entries(sortFields).map(([key,label])=>`<option value="${key}" ${r.field===key?'selected':''}>${label}</option>`).join('')}</select><select aria-label="Direção ${i+1}" onchange="sortRules[${i}].direction=this.value;persistSort()"><option value="asc" ${r.direction==='asc'?'selected':''}>Crescente ↑</option><option value="desc" ${r.direction==='desc'?'selected':''}>Decrescente ↓</option></select><button class="secondary small" onclick="moveSort(${i},-1)" title="Subir">↑</button><button class="secondary small" onclick="moveSort(${i},1)" title="Descer">↓</button><button class="danger small" onclick="sortRules.splice(${i},1);persistSort()" title="Remover">×</button></div>`).join('')+`<button class="secondary small" onclick="sortRules.push({field:'created',direction:'desc'});persistSort()">+ Adicionar critério</button>`;}
+function switchManagementTab(tab){$('publishedForms').classList.toggle('hidden',tab!=='forms');$('quickRepliesPanel').classList.toggle('hidden',tab!=='messages');$('tabForms').classList.toggle('active',tab==='forms');$('tabMessages').classList.toggle('active',tab==='messages');$('createFormButton').classList.toggle('hidden',tab!=='forms');if(tab==='messages'){renderQuickReplies();renderCustomVariables();}}
+function renderQuickReplies(){$('quickRepliesList').innerHTML=quickReplies.map((r,i)=>`<div class="reply-item"><strong>${esc(r.title)}</strong><p class="muted">${esc(r.body).slice(0,180)}</p><div class="actions"><button class="secondary small" onclick="editQuickReply(${i})">Editar</button><button class="danger small" onclick="deleteQuickReply(${i})">Excluir</button></div></div>`).join('')||'<p class="muted">Nenhuma resposta rápida cadastrada.</p>';}
+function editQuickReply(i=-1){const r=quickReplies[i]||{title:'',body:''};$('modalRoot').innerHTML=`<div class="modal-bg"><div class="crm-modal"><h2>${i<0?'Nova':'Editar'} resposta rápida</h2><div class="field"><label>Nome do template</label><input id="replyTitle" maxlength="90" value="${esc(r.title)}" placeholder="Ex.: Primeiro contato"></div><div class="field"><label>Mensagem</label><textarea id="replyBody" rows="8" placeholder="Olá, {nome}!">${esc(r.body)}</textarea></div><p class="hint">Clique em uma variável para inserir no texto:</p><div class="variable-grid" id="replyVariableChips"></div><div class="actions"><button class="primary" onclick="saveQuickReply(${i})">Salvar</button><button class="secondary" onclick="closeModal()">Cancelar</button></div></div></div>`;renderReplyChips();}
+const variableStorage='crm_custom_message_variables_v1';
+let customVariables=JSON.parse(localStorage.getItem(variableStorage)||'[]');
+function persistVariables(){localStorage.setItem(variableStorage,JSON.stringify(customVariables));renderCustomVariables();}
+function addReplyVariable(){customVariables.push({key:'',value:''});renderCustomVariables();}
+function updateReplyVariable(i,field,value){customVariables[i][field]=value.trim();localStorage.setItem(variableStorage,JSON.stringify(customVariables));}
+function removeReplyVariable(i){customVariables.splice(i,1);persistVariables();}
+function renderCustomVariables(){const root=$('customVariablesList');if(!root)return;root.innerHTML=customVariables.map((v,i)=>`<div class="variable-row"><input aria-label="Nome da variável" placeholder="Nome: consultor" value="${esc(v.key)}" oninput="updateReplyVariable(${i},'key',this.value)"><input aria-label="Valor ou campo" placeholder="Valor ou campo: nome" value="${esc(v.value)}" oninput="updateReplyVariable(${i},'value',this.value)"><button class="danger small" onclick="removeReplyVariable(${i})">Excluir</button></div>`).join('');}
+function renderReplyChips(){const keys=['nome','bem','valor','urgencia','interesse',...customVariables.map(v=>v.key).filter(v=>/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(v))];$('replyVariableChips').innerHTML=[...new Set(keys)].map(k=>`<button type="button" class="variable-chip" onclick="insertReplyVariable('${k}')">{${k}}</button>`).join('');}
+function insertReplyVariable(key){const el=$('replyBody');const start=el.selectionStart,end=el.selectionEnd;el.setRangeText('{'+key+'}',start,end,'end');el.focus();}
+function saveQuickReply(i){const title=$('replyTitle').value.trim(),body=$('replyBody').value.trim();if(!title||!body){alert('Preencha o nome e a mensagem.');return;}if(i<0)quickReplies.push({title,body});else quickReplies[i]={title,body};localStorage.setItem(replyStorage,JSON.stringify(quickReplies));closeModal();renderQuickReplies();}
+function deleteQuickReply(i){if(!confirm('Excluir esta resposta rápida?'))return;quickReplies.splice(i,1);localStorage.setItem(replyStorage,JSON.stringify(quickReplies));renderQuickReplies();}
+function formatReply(body,l){const standard={nome:(l.name||'').split(' ')[0],bem:l.asset||'',valor:money(l.value),urgencia:l.urgency||'',interesse:l.intent||''};const vars={...standard};for(const v of customVariables){if(!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(v.key))continue;const field=String(v.value||'').trim();const answer=(l.answers||[]).find(a=>normalizeQuestionLabel(a.question)===normalizeQuestionLabel(field)||a.role===field);vars[v.key.toLowerCase()]=standard[field.toLowerCase()]??l[field]??answer?.answer??field;}return body.replace(/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g,(match,key)=>Object.hasOwn(vars,key.toLowerCase())?String(vars[key.toLowerCase()]??''):match);}
+function populateLeadMessages(l){const sel=$('leadMessageTemplate');if(!sel)return;sel.innerHTML='<option value="">Selecione uma resposta rápida (opcional)</option>'+quickReplies.map((r,i)=>`<option value="${i}">${esc(r.title)}</option>`).join('');}
+function selectedMessage(l){const sel=$('leadMessageTemplate');const index=sel?.value;if(index!==undefined&&index!==''&&quickReplies[Number(index)])return formatReply(quickReplies[Number(index)].body,l);return '';}
+function updateLeadMessage(id){const l=getLeads().find(x=>x.id===id);if(l&&$('leadMessagePreview'))$('leadMessagePreview').textContent=selectedMessage(l)||'Nenhuma resposta rápida selecionada. O WhatsApp abrirá sem mensagem preenchida.';}
+const excelColumns=['Nome','DDD','Telefone','Bem desejado','Valor do bem','Valor da entrada','Urgência','Conhece consórcio','Interesse','Formulário'];
+function refreshImportFormSelect(){
+ const sel=$('importTargetForm');if(!sel)return;
+ const previous=sel.value;
+ sel.replaceChildren(new Option('Selecione um formulário',''));
+ for(const [id,form] of Object.entries(forms||{}))sel.add(new Option((form?.title|| (id==='principal'?'Principal':id))+' — '+id,id));
+ if(Object.hasOwn(forms,previous))sel.value=previous;
+}
+function downloadLeadTemplate(){if(typeof XLSX==='undefined'){alert('Biblioteca Excel indisponível. Verifique sua conexão.');return;}const example=['Maria Silva','31','999999999','Automóvel',50000,5000,'Compra planejada','Sim','Quero contratar','principal'];const ws=XLSX.utils.aoa_to_sheet([excelColumns,example]);ws['!cols']=excelColumns.map(x=>({wch:Math.max(x.length+4,18)}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Leads');XLSX.writeFile(wb,'modelo_importacao_leads.xlsx');}
+// Importação tolerante: campos inválidos são descartados individualmente.
+async function importLeadExcel(input){
+ const status=$('excelImportStatus'),file=input.files?.[0];if(!file)return;
+ status.textContent='Lendo planilha...';
+ try{
+  if(typeof XLSX==='undefined')throw Error('Biblioteca Excel indisponível. Verifique a conexão.');
+  const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+  const sheet=wb.Sheets[wb.SheetNames[0]];
+  if(!sheet)throw Error('Nenhuma aba encontrada no arquivo.');
+  const rows=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
+  if(!rows.length)throw Error('A planilha está vazia.');
+  refreshImportFormSelect();
+  const targetForm=$('importTargetForm')?.value;
+  if(!targetForm||!Object.hasOwn(forms,targetForm))throw Error('Selecione um formulário de destino antes de importar.');
+  const normalized=[];let ignored=0,discarded=0;
+  const cleanText=v=>String(v??'').trim();
+  const parseAmount=v=>{
+   const str=cleanText(v);if(!str)return null;
+   const compact=str.replace(/\s|R\$/gi,'');
+   if(!/^[+-]?[\d.,]+$/.test(compact))return null;
+   const n=moneyNumber(str);
+   return Number.isFinite(n)&&n>=0?n:null;
+  };
+  for(let i=0;i<rows.length;i++){
+   const r=rows[i],get=k=>cleanText(r[k]);
+   if(Object.values(r).every(v=>!cleanText(v))){ignored++;continue;}
+   const name=get('Nome')||null;
+   const rawDdd=get('DDD'),rawPhone=get('Telefone');
+   const ddd=rawDdd.replace(/\D/g,''),phone=rawPhone.replace(/\D/g,'');
+   let digits='';
+   if(!rawDdd&&!rawPhone)digits='';
+   else if(!rawDdd&&/^\d{10,11}$/.test(phone))digits=phone;
+   else if(/^\d{2}$/.test(ddd)&&/^\d{8,9}$/.test(phone))digits=ddd+phone;
+   else discarded++;
+   const formId=targetForm;
+   const price=parseAmount(get('Valor do bem'));
+   const entry=parseAmount(get('Valor da entrada'));
+   if(get('Valor do bem')&&price===null)discarded++;
+   if(get('Valor da entrada')&&entry===null)discarded++;
+   const lead={name,ddd:digits?digits.slice(0,2):null,phone:digits?digits.slice(2):null,
+    asset:get('Bem desejado')||null,asset_price:price,entry_amount:entry,
+    has_entry:entry===null?null:entry>0?'Sim':'Não',urgency:get('Urgência')||null,
+    knows_consorcio:get('Conhece consórcio')||null,intent:get('Interesse')||null,
+    status:'Novo',form_id:formId};
+   // Não cadastrar linhas que só contenham um ID de formulário.
+   if(!name&&!digits&&!lead.asset&&price===null&&entry===null&&!lead.urgency&&!lead.knows_consorcio&&!lead.intent){ignored++;continue;}
+   normalized.push(lead);
+  }
+  if(!normalized.length)throw Error('Nenhum lead com dados aproveitáveis foi encontrado.');
+  if(normalized.length>500)throw Error('Importe no máximo 500 leads por arquivo.');
+  if(!confirm('Importar '+normalized.length+' lead(s) para '+($('importTargetForm').selectedOptions[0]?.textContent||targetForm)+'? Dados inválidos serão deixados em branco e '+ignored+' linha(s) sem dados serão ignoradas.')){status.textContent='Importação cancelada.';return;}
+  let done=0,failed=0;
+  // Envios individuais impedem que uma linha rejeitada cancele toda a planilha.
+  for(const lead of normalized){
+   try{
+    // Em erros de validação do banco, tenta novamente sem os campos opcionais.
+    // Erros de rede, autenticação e permissões não podem ser resolvidos deixando campos vazios.
+    const optional=['intent','knows_consorcio','urgency','has_entry','entry_amount','asset_price','asset','phone','ddd','name'];
+    const payload={...lead};let saved=false;
+    for(let attempt=0;attempt<=optional.length;attempt++){
+     const res=await fetch(supabaseEndpoint(),{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_PUBLISHABLE_KEY,'Prefer':'return=minimal'},body:JSON.stringify(payload)});
+     if(res.ok){saved=true;break;}
+     if([401,403,404,429].includes(res.status)||res.status>=500)break;
+     let err={};try{err=await res.json();}catch(e){}
+     const message=String(err.message||err.details||'');
+     const field=optional.find(k=>Object.hasOwn(payload,k)&&(message.includes(k)||message.includes('"'+k+'"')));
+     if(field){delete payload[field];discarded++;continue;}
+     // Sem indicação de campo, não remova valores arbitrariamente.
+     break;
+    }
+    if(saved)done++;else failed++;
+   }catch(e){failed++;}
+   if((done+failed)%10===0)status.textContent=(done+failed)+' de '+normalized.length+' registros processados...';
+  }
+  try{await loadLeads();}catch(e){}
+  status.textContent='Importação finalizada: '+done+' lead(s) salvos, '+failed+' rejeitados pelo banco, '+ignored+' linhas ignoradas e '+discarded+' campos inválidos desconsiderados.';
+  if(failed)status.textContent+=' Se houver rejeições, verifique permissões e campos obrigatórios no Supabase.';
+ }catch(err){status.textContent='Erro na importação: '+err.message;}finally{input.value='';}
+}
+
+renderSortRules();
+
+setInterval(()=>{if(signedIn&&activePage==='dashboard'&&!document.hidden)loadLeads();},15000);
+
+if(publicFormId===null){
+ var syncCrmDark=function(){var c=document.documentElement.getAttribute('data-theme');var dk=c==='dark'||(!c&&matchMedia('(prefers-color-scheme: dark)').matches);crmRoot.classList.toggle('crm-dark',dk)};
+ syncCrmDark();
+ new MutationObserver(syncCrmDark).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+ try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncCrmDark)}catch(e){}
+}
+
 </script>
 </body>
 </html>
