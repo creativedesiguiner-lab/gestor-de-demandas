@@ -449,6 +449,7 @@ async function publicForm(id){
   catch(e2){return msg('Não foi possível carregar o formulário. Recarregue a página para tentar de novo.')}}
  applyTheme(th);
  if(!f)return msg('Formulário não encontrado. O link pode estar incorreto ou o formulário foi removido.');
+ if(f.color&&f.color.a)applyTheme({id:'custom',a:f.color.a,b:f.color.b||f.color.a});
  document.title=f.title||'Formulário';
  if(f.active===false)return msg('Este formulário não está recebendo respostas no momento.');
  var show=function(){
@@ -1065,12 +1066,14 @@ function formEditorRender(){
   '<label style="margin-top:10px">Descrição (aparece no topo)<textarea id="feDesc" rows="2">'+esc(f.desc||'')+'</textarea></label>'+
   '<div class="tgl" style="margin:16px 0 8px">Perguntas</div>'+fields+
   '<button type="button" class="btn" id="fAddField" style="margin-top:2px">+ Pergunta</button>'+
+  '<div class="tgl" style="margin:18px 0 8px">Cores do formulário</div><label class="inl"><input type="checkbox" id="feOwn"'+(f.color?' checked':'')+'> Usar cores próprias neste formulário (desmarcado = cores do site)</label>'+(f.color?'<div class="pals" style="margin-top:10px">'+PALS.map(function(p){return '<button type="button" class="pal'+(f.color.a===p.a&&f.color.b===p.b?' on':'')+'" data-fpal="'+p.id+'"><i style="--a:'+p.a+';--b:'+p.b+'"></i>'+p.name.replace(' (padrão)','')+'</button>'}).join('')+'</div><div class="fg" style="margin-top:10px"><label>Cor principal<input type="color" id="feA" value="'+f.color.a+'" style="padding:2px;width:100%;height:46px"></label><label>Cor secundária (degradê)<input type="color" id="feB" value="'+f.color.b+'" style="padding:2px;width:100%;height:46px"></label></div>':'')+
   '<div class="tgl" style="margin:18px 0 8px">Ao enviar</div>'+
   '<label>Mensagem de agradecimento<textarea id="feThanks" rows="2" placeholder="Obrigado! Sua resposta foi enviada.">'+esc(f.thanks||'')+'</textarea></label>'+
   '<label style="margin-top:10px">Texto do botão<input id="feBtn" value="'+esc(f.btn||'')+'" placeholder="Enviar"></label>'+
   '<label class="inl" style="margin-top:12px"><input type="checkbox" id="feActive"'+(f.active!==false?' checked':'')+'> Aceitando respostas</label>'+
   '<div class="act"><button type="button" class="btn" id="fCancel">Fechar editor</button><div><button type="button" class="btn" id="fTest">Pré-visualizar</button><button type="button" class="btn p" id="fSave">Salvar</button></div></div><div id="fPreviewArea"></div>'}
-function formPreview(){var f=editingForm;if(!f)return;$('#fPreviewArea').innerHTML='<div class="pfprev"><div class="tgl">Pré-visualização — nada é enviado</div>'+formHtml(f)+'</div>'}
+function pvStyle(c){if(!c)return '';var A=h2r(c.a),B=h2r(c.b),l=function(x){return (x[0]*299+x[1]*587+x[2]*114)/1000};return '--pri:'+c.a+';--grad:linear-gradient(135deg,'+c.a+','+c.b+');--onpri:'+(((l(A)+l(B))/2)>158?'#1f1235':'#fff')+';'}
+function formPreview(){var f=editingForm;if(!f)return;$('#fPreviewArea').innerHTML='<div class="pfprev" style="'+pvStyle(f.color)+'"><div class="tgl">Pré-visualização — nada é enviado</div>'+formHtml(f)+'</div>'}
 function csvCell(v){v=String(v==null?'':v);if(/^[=+\-@]/.test(v))v="'"+v;v=v.replace(/"/g,'""');return /[;"\n\r]/.test(v)?'"'+v+'"':v}
 function exportCsv(){
  var rs=(S.formReplies||[]).filter(function(r){return frSel==='all'||r.formId===frSel});
@@ -1094,6 +1097,7 @@ $('#v-formularios').addEventListener('click',function(e){
  if(!editingForm)return;
  if(d.fqdel!==undefined){fSync();editingForm.fields.splice(+d.fqdel,1);formEditorRender();return}
  if(d.fup!==undefined||d.fdn!==undefined){fSync();var i=+(d.fup!==undefined?d.fup:d.fdn),j=d.fup!==undefined?i-1:i+1,F=editingForm.fields;if(j<0||j>=F.length)return;var t=F[i];F[i]=F[j];F[j]=t;formEditorRender();return}
+ if(d.fpal){fSync();var pl=PALS.find(function(x){return x.id===d.fpal});editingForm.color={a:pl.a,b:pl.b};formEditorRender();formPreview();return}
  if(d.fdup!==undefined){fSync();var q=JSON.parse(JSON.stringify(editingForm.fields[+d.fdup]));editingForm.fields.splice(+d.fdup+1,0,q);formEditorRender();return}
  if(b.id==='fAddField'){fSync();editingForm.fields.push({label:'',type:'text',required:false,options:[]});formEditorRender();var inp=$('#formEditor [data-fq="'+(editingForm.fields.length-1)+'"]');if(inp)inp.focus();return}
  if(b.id==='fTest'){fSync();formPreview();return}
@@ -1104,14 +1108,16 @@ $('#v-formularios').addEventListener('click',function(e){
   save();formsRender();formEditorRender();toast('Formulário salvo — o link está pronto.');return}
  if(b.id==='fCancel'){editingForm=null;formEditorRender();return}});
 $('#v-formularios').addEventListener('input',function(e){var t=e.target,f=editingForm;if(!f||!t.dataset)return;
- if(t.dataset.fq!==undefined)f.fields[+t.dataset.fq].label=t.value;
+ if(t.id==='feA'||t.id==='feB'){f.color={a:$('#feA').value,b:$('#feB').value};var pv=$('#fPreviewArea .pfprev');if(pv)pv.style.cssText=pvStyle(f.color);document.querySelectorAll('#formEditor .pal').forEach(function(x){x.classList.remove('on')})}
+ else if(t.dataset.fq!==undefined)f.fields[+t.dataset.fq].label=t.value;
  else if(t.dataset.fo!==undefined)f.fields[+t.dataset.fo].options=t.value.split('\n').map(function(x){return x.trim()}).filter(Boolean)});
 $('#v-formularios').addEventListener('change',function(e){var t=e.target,f=editingForm;
  if(t.id==='frSel'){frSel=t.value;formsRender();return}
  if(!f||!t.dataset)return;
  if(t.dataset.ft!==undefined){fSync();var q=f.fields[+t.dataset.ft];q.type=t.value;q.options=q.options||[];formEditorRender();return}
  if(t.dataset.fr!==undefined){f.fields[+t.dataset.fr].required=t.checked;return}
- if(t.id==='feActive'){f.active=t.checked}});
+ if(t.id==='feActive'){f.active=t.checked}
+ if(t.id==='feOwn'){fSync();var st=S.theme&&S.theme.a?S.theme:PALS[0];f.color=t.checked?{a:st.a,b:st.b||st.a}:null;if(!t.checked)delete f.color;formEditorRender();formPreview()}});
 $('#v-formularios').addEventListener('submit',function(e){if(e.target.closest('#fPreviewArea')){e.preventDefault();toast('Pré-visualização: nada foi enviado.')}});
 formsRender();
 
